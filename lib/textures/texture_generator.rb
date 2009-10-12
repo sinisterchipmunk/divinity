@@ -1,20 +1,13 @@
 class Textures::TextureGenerator < Textures::Texture
-  @@generated_textures = {}
-  def initialize(opt = { })
+  @@generated_textures = HashWithIndifferentAccess.new
+  def initialize(opt = HashWithIndifferentAccess.new)
     super()
     @surface = nil
     @options = opt
   end
   
   def options=(opt)
-    modified = false
-    opt.each do |name, value|
-      #do it this way so that any options
-      #that are not overridden are not lost
-      @options[name] = value
-      modified = true
-    end
-    free_resources if modified
+    set_options(opt)
   end
   
   def set_option(s, t)
@@ -43,7 +36,7 @@ class Textures::TextureGenerator < Textures::Texture
       end
       "#{k}=#{v}"
     end
-    "#{self.class.name.underscore}-#{key.join(".")}".gsub(/[^a-zA-Z0-9\.\-_\[\]\=\+\^\\\/]/, '')[0..200]
+    "#{self.class.name.underscore}-#{key.join(".")}".gsub(/[^a-zA-Z0-9\.\-_\[\]\=\+\^\\\/]/, '')
   end
 
   def generate

@@ -1,0 +1,3 @@
+actor :player do
+  
+end

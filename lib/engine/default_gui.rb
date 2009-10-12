@@ -1,5 +1,5 @@
 module Engine::DefaultGUI
-  attr_reader :interface
+  attr_reader :frame
   @@interface_builders = HashWithIndifferentAccess.new
 
   include Interface::Containers
@@ -8,25 +8,23 @@ module Engine::DefaultGUI
   delegate :add, :to => :interface
 
   def init_default_gui
-    #interface = 	  Engine::GUI::PrimaryInterface.new(frame_manager)
-    #interface.attach!
-    @interface = Frame.new(:title_bar => false, :pinned => true) do |i|
+    @frame = Frame.new(:title_bar => false, :pinned => true) do |i|
       i.location = [0, 0]
       i.size = [width, height]
       i.layout = BorderLayout.new
       i.root_panel.background_visible = false
     end
 
-    frame_manager.add interface
-
+    frame_manager.theme = theme(:default)
+    frame_manager.add frame
     assume_interface :main_menu
   end
   @@interface_builders ||= HashWithIndifferentAccess.new
 
   def assume_interface(name)
     raise "Interface not found: #{name}" unless @@interface_builders[name]
-    interface.remove_all_components
-    @@interface_builders[name].apply_to(self, interface)
+    frame.remove_all_components
+    @@interface_builders[name].apply_to(self, frame)
   end
 
   def fire_interface_action(action)
@@ -37,11 +35,11 @@ module Engine::DefaultGUI
     end
   end
 
-  def self.for_interface(name, &blk)
+  def self.interface(name, &blk)
     @@interface_builders[name] = Interface::Builder.new(&blk)
   end
 
-  Dir.glob("interfaces/*.rb").each do |fi|
+  Dir.glob("modules/*/interfaces/*.rb").each do |fi|
     next if File.directory? fi or fi =~ /\.svn/
     eval File.read(fi), binding, __FILE__, __LINE__
   end

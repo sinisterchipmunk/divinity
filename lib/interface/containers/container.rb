@@ -11,6 +11,14 @@ module Interface
         process_block &blk if block_given?
       end
 
+      def parent=(a)
+        super
+        @children.each do |ch|
+          # Updates things like @frame
+          ch.parent = self
+        end
+      end
+
       def process_block(&blk)
         if block_given?
           ((blk.arity == 0 or blk.arity == -1) ? self.instance_eval(&blk) : (blk.call(self)))

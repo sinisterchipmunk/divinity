@@ -1,7 +1,7 @@
 class Interface::Managers::FrameManager
   include Helpers::RenderHelper
   attr_reader :viewport
-  attr_accessor :theme
+  attr_reader :theme
   delegate :x, :y, :width, :height, :size, :bounds, :to => :viewport
 
   def initialize
@@ -14,11 +14,16 @@ class Interface::Managers::FrameManager
     @mouse_button_down = false
     @last_key_event = nil
     @last_mouse_click_event = nil
-    @theme = Interface::Themes::DefaultTheme.new
+    @theme = Interface::Theme.new
   end
 
   def should_update_viewport?
     @should_update_viewport
+  end
+
+  def theme=(a)
+    @theme = a
+    @frames.each { |f| f.apply_theme! }
   end
 
   def should_update_viewport=(a)
@@ -79,7 +84,7 @@ class Interface::Managers::FrameManager
         #and once in Component. Obviously, this is a Bad Thing. Hence the comments.
         b = frame.screen_bounds
         Gl.glPushAttrib(GL_COLOR_BUFFER_BIT | GL_LIST_BIT | GL_TRANSFORM_BIT | GL_SCISSOR_BIT)
-        Gl.glScissor(b.x+1, @viewport.height - b.y - b.height, b.width+1, b.height+1)
+        Gl.glScissor(b.x, @viewport.height - b.y - b.height - 1, b.width, b.height)
         #glTranslated( frame.bounds.x,  frame.bounds.y, 0)
         frame.render
         #glTranslated(-frame.bounds.x, -frame.bounds.y, 0)

@@ -1,6 +1,6 @@
 class Textures::RoundRectGenerator < Textures::TextureGenerator
   
-  def initialize(opt = { })
+  def initialize(opt = HashWithIndifferentAccess.new)
     super(opt)
     @color_format = GL_RGBA
   end
@@ -27,7 +27,7 @@ class Textures::RoundRectGenerator < Textures::TextureGenerator
                  :edge => true,
                  :raise_size => 6,
                  :raised => true
-               }
+               }.with_indifferent_access
     options.reverse_merge! defaults
   end
   

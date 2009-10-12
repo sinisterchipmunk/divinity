@@ -2,10 +2,11 @@ require 'dependencies'
 
 class DivinityEngine
   include Gl
+  extend Engine::ContentLoader
   include Engine::Delegation
   include Engine::DefaultRenderBlock
   include Engine::DefaultUpdateBlock
-  include Engine::Actors
+  include Engine::Content
   include Engine::DefaultGUI
 
   attr_reader :frame_manager, :state, :ticks, :interval

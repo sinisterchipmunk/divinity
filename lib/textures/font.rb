@@ -1,4 +1,6 @@
 class Textures::Font < Textures::TextureGenerator
+  attr_reader :max_glyph_size
+
   @@instantiated_fonts = { }
   def self.select(options = { })
     options ||= { }

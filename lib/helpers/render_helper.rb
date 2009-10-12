@@ -8,6 +8,14 @@ module Helpers::RenderHelper
     glPopMatrix
   end
 
+  def scissor(x, y, w, h)
+    glPushAttrib(GL_SCISSOR_BIT)
+    glScissor(x, y, w, h)
+    glEnable(GL_SCISSOR_TEST)
+    yield
+    glPopAttrib
+  end
+
   def ortho(width, height)
     glDisable(GL_DEPTH_TEST)
     glMatrixMode(GL_PROJECTION)

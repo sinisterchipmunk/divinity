@@ -6,20 +6,28 @@ module Interface
       include Geometry
       include Textures
 
-      attr_reader :valid, :theme, :background_texture, :border_size
+      attr_reader :valid, :background_texture, :border_size
       delegate :x, :y, :width, :height, :to => :bounds
       
       def initialize(options = {})
         super()
         @bounds = Geometry::Rectangle.new
         @valid = false
-        @theme = Interface::Themes::DefaultTheme.new
         @background_texture = Textures::RoundRectGenerator.new
         @border_size = 3
         @background_visible = true
-        apply_theme!(@theme.select(theme_selection))
+        update_background_texture
 
         options.each { |k,v| self.send("#{k}=", v) }
+      end
+
+      def theme
+        if frame_manager and frame_manager.theme then
+          # Allow theme elements with this exact class name (Interface::Whatever) to override the :primary, :etc
+          # TODO: Make this support some flavor of inheritance.
+          frame_manager.theme.select(self.class, frame_manager.theme.select(theme_selection))
+        else HashWithIndifferentAccess.new
+        end
       end
 
       def background_visible=(a)
@@ -41,17 +49,10 @@ module Interface
       end
 
       def update_background_texture
-        if frame_manager and @theme != frame_manager.theme
-          @theme = frame_manager.theme
-          apply_theme!(@theme.select(theme_selection))
-        end
+        background_texture.set_options theme
         background_texture.set_option(:raise_size, border_size)
         background_texture.set_option(:width,  self.bounds.width)
         background_texture.set_option(:height, self.bounds.height)
-      end
-
-      def apply_theme!(theme_options)
-        theme_options.each { |key, value| background_texture.set_option key, value }
       end
 
       def size=(s)
@@ -94,7 +95,9 @@ module Interface
         return unless visible?
         b = bounds
         glTranslated( b.x,  b.y, 0)
-        paint
+        #scissor b.x, frame_manager.height - b.y - b.height, b.width+3, b.height+1 do
+          paint
+        #end
         glTranslated(-b.x, -b.y, 0)
       end
       
@@ -109,14 +112,14 @@ module Interface
       #must be explicitly called
       def paint_background
         return unless background_visible?
-        background_texture.bind
-        glBegin(GL_QUADS)
-          background_texture.coord2f(0, 0); glVertex2i(0, 0)
-          background_texture.coord2f(0, 1); glVertex2i(0, bounds.height+1)
-          background_texture.coord2f(1, 1); glVertex2i(bounds.width+1, bounds.height+1)
-          background_texture.coord2f(1, 0); glVertex2i(bounds.width+1, 0)
-        glEnd
-        background_texture.unbind
+        background_texture.bind do
+          glBegin(GL_QUADS)
+            background_texture.coord2f(0, 0); glVertex2i(0, 0)
+            background_texture.coord2f(0, 1); glVertex2i(0, bounds.height)
+            background_texture.coord2f(1, 1); glVertex2i(bounds.width, bounds.height)
+            background_texture.coord2f(1, 0); glVertex2i(bounds.width, 0)
+          glEnd
+        end
       end
       
       def paint(); raise "Component::paint must be overridden"; end
