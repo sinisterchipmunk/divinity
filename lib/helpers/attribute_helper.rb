@@ -15,6 +15,18 @@ module Helpers::AttributeHelper
               else
                 raise "Only one argument expected"
               end
+              if self.respond_to? :validate
+                self.validate
+              end
+              @#{name}
+            end
+
+            def #{name}=(v)
+              @#{name} = v
+              if self.respond_to? :validate
+                self.validate
+              end
+              @#{name}
             end
           end_code
           eval code, binding, __FILE__, line

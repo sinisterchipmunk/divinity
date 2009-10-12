@@ -28,18 +28,33 @@ class Interface::Builder
     options = { :constraints => options } unless options.kind_of? Hash
 
     constraints = options.delete :constraints
+    text = text.to_s.titleize unless text.kind_of? String
     label = Interface::Components::Label.new(text, options, &block)
     @component.add label, constraints
   end
 
-  def text_field(name, options = { }, &block)
+  def image(path, options = { }, &block)
+    constraints = options.delete(:constraints)
+    img = Interface::Components::Image.new(path, options, &block)
+    @component.add img, constraints
+  end
+
+  def text_field(object, method, options = { }, &block)
     options = { :constraints => options } unless options.kind_of? Hash
 
     constraints = options.delete :constraints
-    field = Interface::Components::TextField.new(options, &block)
+    field = Interface::Components::TextField.new(object, method, options, &block)
     @component.add field, constraints
   end
   
+  def radio_button(object, method, value, options = { }, &block)
+    options = { :constraints => options } unless options.kind_of? Hash
+
+    constraints = options.delete :constraints
+    field = Interface::Components::RadioButton.new(object, method, value, options, &block)
+    @component.add field, constraints
+  end
+
   def button(action, options = { :label => kind })
     @next_interface = action
     options = { :label => options } if options.kind_of? String
@@ -71,10 +86,12 @@ class Interface::Builder
   end
 
   def respond_to?(*args, &block)
-    @component.respond_to?(*args, &block)
+    super or @component.respond_to?(*args, &block) or @engine.respond_to?(*args, &block)
   end
 
   def method_missing(name, *args, &block)
-    @component.send(name, *args, &block)
+    return @component.send(name, *args, &block) if @component.respond_to? name
+    return @engine.send(name, *args, &block) if @engine.respond_to? name
+    super
   end
 end

@@ -74,6 +74,11 @@ module Interface
         if @center
           @center.bounds = Rectangle.new(buf.x, buf.y, buf.width - buf.x, buf.height - buf.y)
         end
+
+        [@north, @south, @east, @west, @center].each do |comp|
+          raise "No room to lay out component #{comp.inspect} in container #{parent.inspect}" if comp and
+                  (comp.width == 0 or comp.height == 0)
+        end
       end
     
       protected
@@ -95,8 +100,8 @@ module Interface
         [@north, @south].each do |comp|
           if not comp.nil?
             d = yield(comp)
-            dim.width = max(d.width, dim.width)
-            dim.height += d.height + @vgap
+            dim.width = max(d.width, dim.width) + (cont.bordersize*2)
+            dim.height += d.height + @vgap + (cont.bordersize*2)
           end
         end
         dim.width = 64 if dim.width == 0

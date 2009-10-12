@@ -2,8 +2,10 @@ class Resources::Image < Textures::Texture
   include ::Geometry
   include Magick
 
-  attr_reader :size, :image_list, :path
-  delegate :width, :height, :to => :size
+  attr_reader :image_list, :path
+
+  def width; @size.width; end
+  def height; @size.height; end
 
   @@image_lists = {}
 
@@ -17,6 +19,6 @@ class Resources::Image < Textures::Texture
   end
 
   def surface
-    SDL::Surface.loadFromString(@image_list.to_blob { self.format = "PNG" })
+    @surface ||= SDL::Surface.loadFromString(@image_list.to_blob { self.format = "PNG" })
   end
 end

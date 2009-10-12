@@ -5,8 +5,9 @@ class DivinityEngine
   include Engine::Delegation
   include Engine::DefaultRenderBlock
   include Engine::DefaultUpdateBlock
+  include Engine::Actors
   include Engine::DefaultGUI
-  
+
   attr_reader :frame_manager, :state, :ticks, :interval
   attr_accessor :clear_on_render, :width, :height, :color_depth, :fullscreen
 
@@ -86,6 +87,7 @@ class DivinityEngine
       call_blocks :before_init
       SDL.init(SDL::INIT_VIDEO) and err("initialize SDL")
       SDL.setGLAttr(SDL::GL_DOUBLEBUFFER,1) and err("enable double-buffering")
+      SDL::Event.enable_unicode
       err("set video mode") unless (@sdl_screen = SDL.setVideoMode(width,height,color_depth,sdl_video_mode_flags))
       glEnable(GL_BLEND)
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)

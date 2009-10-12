@@ -38,4 +38,12 @@ class Fixnum
   def min(a)
     self < a ? self : a
   end
+
+  [ 2, 3, 4, 6, 8, 10, 12, 20, 100 ].each do |sides|
+    code = <<-end_code
+      def d#{sides}; Math::Dice.new self, #{sides}; end
+      def limit(upper, lower = nil); self > upper ? upper : (lower && self < lower ? lower : self); end
+    end_code
+    eval code
+  end
 end

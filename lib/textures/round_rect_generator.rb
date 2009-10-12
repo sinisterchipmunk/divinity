@@ -50,7 +50,7 @@ class Textures::RoundRectGenerator < Textures::TextureGenerator
     if bg
       bg = bg.image_list
       if options[:scale_or_tile] == :scale
-        bg.resize! options[:width], options[:height]
+        bg = bg.resize options[:width], options[:height]
       else
         newbg = Magick::ImageList.new
         newbg.new_image(options[:width], options[:height])
@@ -69,7 +69,7 @@ class Textures::RoundRectGenerator < Textures::TextureGenerator
 
         bg = bg.composite(mask, CenterGravity, CopyOpacityCompositeOp)
       end
-      canvas = bg.flip
+      canvas = bg
     end
     draw = Magick::Draw.new
 
@@ -111,5 +111,8 @@ class Textures::RoundRectGenerator < Textures::TextureGenerator
     #...and not have to worry about it any more. But then, if I could get the raw
     #data, I wouldn't need SDL at all, because OpenGL takes raw data as a parameter.
     return surface
+  rescue
+    puts "ERROR COMPUTING:\n#{options.to_yaml}"
+    raise $!
   end
 end

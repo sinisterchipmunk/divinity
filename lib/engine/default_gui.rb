@@ -30,6 +30,7 @@ module Engine::DefaultGUI
   end
 
   def fire_interface_action(action)
+    return action.call(self) if action.kind_of? Proc
     case action
       when :quit then stop!
       else assume_interface(action)

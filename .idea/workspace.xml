@@ -24,64 +24,64 @@
   <component name="FileColors" enabled="false" enabledForTabs="false" />
   <component name="FileEditorManager">
     <leaf>
+      <file leaf-file-name="new_game.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/interfaces/new_game.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="8" column="25" selection-start="237" selection-end="237" vertical-scroll-proportion="0.1487965">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="text_field.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/interface/components/text_field.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="76" column="4" selection-start="2100" selection-end="2100" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="attributes.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/interfaces/attributes.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="19" column="40" selection-start="814" selection-end="814" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="builder.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/interface/builder.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="49" selection-start="1272" selection-end="1272" vertical-scroll-proportion="0.0">
+            <state line="52" column="46" selection-start="1799" selection-end="1799" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="label.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/interface/components/label.rb">
+      <file leaf-file-name="input_component.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/interface/components/input_component.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="0" selection-start="323" selection-end="323" vertical-scroll-proportion="0.0">
+            <state line="9" column="0" selection-start="276" selection-end="276" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="text_field.rb" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/lib/interface/components/text_field.rb">
+      <file leaf-file-name="actor.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/world/actor.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="47" column="23" selection-start="1055" selection-end="1055" vertical-scroll-proportion="0.78599733">
+            <state line="17" column="4" selection-start="500" selection-end="500" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="component.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/interface/components/component.rb">
+      <file leaf-file-name="main_menu.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/interfaces/main_menu.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="20" selection-start="56" selection-end="56" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gui.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/interface/gui.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="9" selection-start="26" selection-end="26" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="default_theme.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/interface/themes/default_theme.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="26" selection-start="524" selection-end="524" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="new_game.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/interfaces/new_game.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="0" selection-start="205" selection-end="205" vertical-scroll-proportion="0.0">
+            <state line="9" column="0" selection-start="282" selection-end="282" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -97,22 +97,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/dependencies.rb" />
-        <option value="$PROJECT_DIR$/lib/textures/texture_generator.rb" />
         <option value="$PROJECT_DIR$/lib/interface/layouts/grid_layout.rb" />
-        <option value="$PROJECT_DIR$/interfaces/single_player.rb" />
-        <option value="$PROJECT_DIR$/divinity_test.rb" />
-        <option value="$PROJECT_DIR$/lib/engine/default_gui.rb" />
-        <option value="$PROJECT_DIR$/interfaces/main_menu.rb" />
-        <option value="$PROJECT_DIR$/lib/interface/components/component.rb" />
+        <option value="$PROJECT_DIR$/lib/interface/containers/container.rb" />
+        <option value="$PROJECT_DIR$/lib/resources/image.rb" />
         <option value="$PROJECT_DIR$/lib/textures/round_rect_generator.rb" />
-        <option value="$PROJECT_DIR$/lib/interface/components/label.rb" />
-        <option value="$PROJECT_DIR$/lib/interface/themes/default_theme.rb" />
+        <option value="$PROJECT_DIR$/lib/interface/components/image.rb" />
+        <option value="$PROJECT_DIR$/lib/interface/components/radio_button.rb" />
+        <option value="$PROJECT_DIR$/interfaces/abilities.rb" />
         <option value="$PROJECT_DIR$/interfaces/new_game.rb" />
         <option value="$PROJECT_DIR$/lib/interface/builder.rb" />
-        <option value="$PROJECT_DIR$/lib/listeners/key_listener.rb" />
-        <option value="$PROJECT_DIR$/lib/listeners/action_listener.rb" />
+        <option value="$PROJECT_DIR$/actors/player.rb" />
         <option value="$PROJECT_DIR$/lib/interface/components/text_field.rb" />
+        <option value="$PROJECT_DIR$/lib/helpers/attribute_helper.rb" />
+        <option value="$PROJECT_DIR$/lib/world/actor.rb" />
+        <option value="$PROJECT_DIR$/lib/interface/components/input_component.rb" />
+        <option value="$PROJECT_DIR$/interfaces/attributes.rb" />
+        <option value="$PROJECT_DIR$/lib/interface/components/label.rb" />
       </list>
     </option>
   </component>
@@ -184,83 +184,49 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="lib" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="textures" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="divinity" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="divinity" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lib" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="listeners" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="divinity" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="divinity" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lib" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="interface" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="divinity" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="divinity" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lib" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="interface" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="components" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="divinity" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="divinity" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="interfaces" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="divinity" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="divinity" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="extensions" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="divinity" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="divinity" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="data" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="divinity" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="divinity" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="actors" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -316,18 +282,18 @@
     <option name="DETECT_NESTED_COPIES" value="false" />
     <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
     <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
-    <configuration useDefault="true">C:\Documents and Settings\comackenzie\Application Data\Subversion</configuration>
+    <configuration useDefault="true">C:\Documents and Settings\Colin\Application Data\Subversion</configuration>
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
     <supportedVersion>125</supportedVersion>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-4" y="-4" width="1448" height="908" extended-state="6" />
+    <frame x="-4" y="-4" width="1688" height="1058" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.219323" sideWeight="0.6634409" order="0" side_tool="false" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21893848" sideWeight="0.6634409" order="0" side_tool="false" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" />
@@ -370,117 +336,114 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/divinity_test.rb">
+    <entry file="file://$PROJECT_DIR$/lib/helpers/container_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="60" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/interfaces/main_menu.rb">
+    <entry file="file://$PROJECT_DIR$/lib/helpers/render_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="49" selection-start="120" selection-end="120" vertical-scroll-proportion="0.0">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/interface/components/button.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="20" selection-start="71" selection-end="944" vertical-scroll-proportion="0.0">
+        <state line="18" column="0" selection-start="312" selection-end="411" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/textures/round_rect_generator.rb">
+    <entry file="file://$PROJECT_DIR$/lib/listeners/mouse/button_mouse_listener.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="32" selection-start="989" selection-end="989" vertical-scroll-proportion="0.6287979">
+        <state line="36" column="44" selection-start="1176" selection-end="1176" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/engine/default_gui.rb">
+    <entry file="file://$PROJECT_DIR$/lib/interface/components/radio_button.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="64" selection-start="384" selection-end="384" vertical-scroll-proportion="0.0">
+        <state line="39" column="55" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/interface/components/label.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="0" selection-start="323" selection-end="323" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/interfaces/new_game.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="0" selection-start="205" selection-end="205" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/interface/themes/default_theme.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="26" selection-start="524" selection-end="524" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/interface/builder.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="49" selection-start="1272" selection-end="1272" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/interface/gui.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="9" selection-start="26" selection-end="26" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/interface/components/component.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="20" selection-start="56" selection-end="56" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/listeners/action_listener.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="6" selection-start="6" selection-end="6" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1255299761359" expanded="true" signature="32:69" placeholder=" ... end" />
-            <marker date="1255299761359" expanded="true" signature="60:65" placeholder=" ... end" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/listeners/mouse_listener.rb">
+    <entry file="file://$PROJECT_DIR$/interfaces/single_player.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/listeners/key_listener.rb">
+    <entry file="file://$PROJECT_DIR$/actors/player.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="6" selection-start="6" selection-end="6" vertical-scroll-proportion="0.0">
+        <state line="1" column="2" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/textures/font.rb">
+    <entry file="file://$PROJECT_DIR$/interfaces/main_menu.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="9" column="0" selection-start="282" selection-end="282" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/helpers/attribute_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="0" selection-start="902" selection-end="902" vertical-scroll-proportion="0.5207878">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/world/actor.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="4" selection-start="500" selection-end="500" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/interface/components/text_field.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="23" selection-start="1055" selection-end="1055" vertical-scroll-proportion="0.78599733">
+        <state line="76" column="4" selection-start="2100" selection-end="2100" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/interface/components/input_component.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="0" selection-start="276" selection-end="276" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/attributes.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="40" selection-start="814" selection-end="814" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/interface/components/label.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="34" selection-start="343" selection-end="343" vertical-scroll-proportion="0.16739607">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/interface/builder.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="46" selection-start="1799" selection-end="1799" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/new_game.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="25" selection-start="237" selection-end="237" vertical-scroll-proportion="0.1487965">
           <folding />
         </state>
       </provider>

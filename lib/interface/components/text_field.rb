@@ -1,43 +1,59 @@
-class Interface::Components::TextField < Interface::Components::Component
+class Interface::Components::TextField < Interface::Components::InputComponent
   theme_selection :text
-  attr_reader :font_options, :value, :padding
+  attr_reader :font_options, :padding
   attr_accessor :color
   attr_accessor :caret_position
 
   include Listeners::KeyListener
 
-  def initialize(options = {}, &block)
-    @value = options[:value] || ""
+  def initialize(object, method, options = {}, &block)
     @color = [ 0, 0, 0, 1 ]
     @font_options = {}
     @caret_position = 0
     @padding = 4
-    super(options)
+    super(object, method, options)
 
     key_listeners << self
 
     yield if block_given?
   end
-
-  def key_typed(evt)
-    puts 'typed'
-    puts evt.inspect
-  end
-
-  def key_released(evt)
-    puts 'released'
-    puts evt.inspect
-  end
-
+  
   def key_pressed(evt)
-    puts 'pressed'
-    puts evt.inspect
-
-    @value.concat evt.sym.chr
-    @caret_position += 1
+    case evt.sym
+      when SDL::Key::UP
+      when SDL::Key::DOWN
+      when SDL::Key::LEFT
+        @caret_position -= 1
+        @caret_position = 0 if @caret_position < 0
+      when SDL::Key::RIGHT
+        @caret_position += 1
+        @caret_position = self.value.length if @caret_position > self.value.length
+      when SDL::Key::ESCAPE
+      when SDL::Key::BACKSPACE
+        unless self.value.blank?
+          self.value = self.value[0...(@caret_position-1)] + self.value[@caret_position..-1]
+          @caret_position -= 1
+        end
+      when SDL::Key::HOME
+        @caret_position = 0
+      when SDL::Key::END
+        @caret_position = self.value.length
+      when SDL::Key::RETURN
+        # No enter key accepted here
+      else
+        if evt.unicode != 0
+          case evt.unicode
+            when 0
+            else
+              self.value.insert(@caret_position, evt.unicode.chr)
+              @caret_position += 1
+          end
+        end
+    end
   end
 
   def paint
+    self.value = self.value.to_s unless self.value.kind_of? String
     paint_background
     glColor4fv(@color)
     leftmost = border_size + padding
@@ -58,6 +74,7 @@ class Interface::Components::TextField < Interface::Components::Component
   end
 
   def size
+    self.value = self.value.to_s unless self.value.kind_of? String
     Font.select(font_options).sizeof(value)
   end
 

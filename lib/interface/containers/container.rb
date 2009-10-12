@@ -49,6 +49,7 @@ module Interface
         @layout.add_layout_component(comp, constraints) if @layout
         @children <<= comp
         self.invalidate
+        comp
       end
       
       def remove(comp)
@@ -56,6 +57,7 @@ module Interface
         @layout.remove_layout_component(comp) if @layout
         @children.delete comp
         self.invalidate
+        comp
       end
 
       def remove_all_components
@@ -66,17 +68,17 @@ module Interface
       
       def minimum_size
         return @layout.minimum_layout_size(self) if @layout
-        Dimension.new(0, 0)
+        Dimension.new(64, 64)
       end
       
       def maximum_size
         return @layout.maximum_layout_size(self) if @layout
-        Dimension.new(0, 0)
+        Dimension.new(64, 64)
       end
       
       def preferred_size
         return @layout.preferred_layout_size(self) if @layout
-        Dimension.new(0, 0)
+        Dimension.new(64, 64)
       end
 
       def contains?(point)
