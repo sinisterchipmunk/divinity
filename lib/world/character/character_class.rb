@@ -1,19 +1,14 @@
-class World::Character::CharacterClass
-  include Helpers::AttributeHelper
-  random_access_attr :id, :name, :description, :hit_die, :class_skills, :skill_points, :base_attack_type
+class World::Character::CharacterClass < Resources::Content
+  random_access_attr :hit_die, :class_skills, :skill_points, :base_attack_type
 
-  def initialize(id, &block)
-    @id = id
+  def revert_to_defaults!
     name id.to_s.titleize
-    description "No Description"
     base_attack_type :primary
     hit_die :d6
     @alignments = []
     @primary_saving_throws = []
     @proficient_with = []
     @level_blocks = []
-
-    yield_with_or_without_scope(&block) if block_given?
   end
 
   def levels(&block)

@@ -10,7 +10,7 @@ module Engine::ContentLoader
     code = <<-end_code
     def #{name}(id, &block)
       r = self.#{plural}[id]
-      r = self.#{plural}[id] = #{class_name}.new(id, &block) if r.nil?
+      r = self.#{plural}[id] = #{class_name}.new(id, self, &block) if r.nil?
       r.instance_eval &block if block_given?
       r
     end

@@ -7,12 +7,17 @@ class Interface::Components::InputComponent < Interface::Components::Component
     @target, @method = target, method
     @last_value = nil
     @value = options[:value]
-    @value ||= target.send("#{method}") if target and method
+    @value ||= self.value #target.send("#{method}") if target and method
   end
 
   def value
     if target and method
-      target.send(method)
+      if target.respond_to? method
+        r = target.send(method)
+      else
+        r = eval "target.#{method}", binding, __FILE__, __LINE__
+      end
+      r
     else
       @value
     end
@@ -20,7 +25,11 @@ class Interface::Components::InputComponent < Interface::Components::Component
 
   def value=(a)
     if target and method
-      target.send("#{method}=", a)
+      if target.respond_to? method
+        target.send("#{method}=", a)
+      else
+        eval "#{target}.#{method} = a", binding, __FILE__, __LINE__
+      end
     else
       @value = a
     end

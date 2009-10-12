@@ -1,11 +1,8 @@
-class World::Character::Race
-  include Helpers::AttributeHelper
-  random_access_attr :id, :name, :favored_class, :speed, :size, :constitution, :charisma, :strength, :intelligence,
-                     :dexterity, :wisdom, :feats, :skill_points, :description
+class World::Character::Race < Resources::Content
+  random_access_attr :favored_class, :speed, :size, :constitution, :charisma, :strength, :intelligence,
+                     :dexterity, :wisdom, :feats, :skill_points
 
-  def initialize(id, &block)
-    @id = id
-    @name = id.to_s.titleize
+  def revert_to_defaults!
     @abilities, @skills, @saving_throws, @attack_bonuses, @armor_class_bonuses, @languages, @bonus_languages =
             [], [], [], [], [], [], []
     @immunities, @proficiencies = [], []
@@ -23,9 +20,6 @@ class World::Character::Race
     wisdom       0
     feats        0
     skill_points 0
-    description "No Description"
-
-    yield_with_or_without_scope(&block) if block_given?
   end
 
   def minimum(options)

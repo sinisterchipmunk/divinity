@@ -1,18 +1,13 @@
-class Interface::Theme
-  include Helpers::AttributeHelper
-  random_access_attr :id, :name
+class Interface::Theme < Resources::Content
   attr_reader :options
 
   def set(type, options)
     self.select(type).merge! options
   end
 
-  def initialize(id = nil, &block)
-    @id = id
-    @name = id.to_s.titleize
+  def initialize(id = nil, engine = nil, &block)
     @options = HashWithIndifferentAccess.new
-
-    yield_with_or_without_scope(&block) if block_given?
+    super(id, engine, &block)
   end
 
   def select(type = :default, defaults = (@options[:default] || HashWithIndifferentAccess.new))

@@ -1,20 +1,20 @@
-class World::Actor
-  include Helpers::AttributeHelper
+class World::Actor < Resources::Content
   SEXES = [ :male, :female ]
   ATTRIBUTES = [ :strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma ]
 
-  random_access_attr :name, :id, :sex, :race
+  random_access_attr :sex, :race
   random_access_attr *ATTRIBUTES
 
-  def initialize(id, &block)
-    @id, @name = id, id.to_s.titleize
+  def revert_to_defaults!
+    @name = id.to_s.titleize
     @sex = :male
 
     reroll_attributes!
-    yield_with_or_without_scope(&block) if block_given?
   end
 
   def validate # callback fires whenever random_access_attr changes something
+    @race = engine.race(@race) if @race.kind_of? Symbol or @race.kind_of? String
+
     # attributes are assigned a text value when they come in from text_field; convert them to ints
     ATTRIBUTES.each do |a|
       self.send("#{a}=", self.send(a).to_i) unless self.send(a).kind_of? Fixnum

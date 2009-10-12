@@ -1,15 +1,9 @@
-class World::Character::Language
-  include Helpers::AttributeHelper
-  random_access_attr :id, :name, :alphabet, :description, :secret
+class World::Character::Language < Resources::Content
+  random_access_attr :alphabet, :secret
 
-  def initialize(id, &block)
-    @id = id
-    name id.to_s.titleize
+  def revert_to_defaults!
     alphabet id
-    description "No Description"
     secret false
-
-    yield_with_or_without_scope(&block) if block_given?
   end
 
   def secret?
