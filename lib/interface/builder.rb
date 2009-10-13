@@ -40,19 +40,15 @@ class Interface::Builder
   end
 
   def text_field(object, method, options = { }, &block)
-    options = { :constraints => options } unless options.kind_of? Hash
-
-    constraints = options.delete :constraints
-    field = Interface::Components::TextField.new(object, method, options, &block)
-    @component.add field, constraints
+    build_input_component object, method, options, Interface::Components::TextField, &block
   end
-  
-  def radio_button(object, method, value, options = { }, &block)
-    options = { :constraints => options } unless options.kind_of? Hash
 
-    constraints = options.delete :constraints
-    field = Interface::Components::RadioButton.new(object, method, value, options, &block)
-    @component.add field, constraints
+  def text_area(object, method, options = { }, &block)
+    build_input_component object, method, options, Interface::Components::TextArea, &block
+  end
+
+  def radio_button(object, method, value, options = { }, &block)
+    build_input_component object, method, options.merge(:value => value), Interface::Components::RadioButton, &block
   end
 
   def button(action, options = { :label => kind })
@@ -68,6 +64,13 @@ class Interface::Builder
     options.each { |k,v| builder.send("#{k}=", v)}
     b.action_listeners << builder
     @component.add b, constraints
+  end
+
+  def build_input_component(object, method, options, klass, &block)
+    options = { :constraints => options } unless options.kind_of? Hash
+    constraints = options.delete :constraints
+    field = klass.new(object, method, options, &block)
+    @component.add field, constraints
   end
 
   def apply_to(engine, component)

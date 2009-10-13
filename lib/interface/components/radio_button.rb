@@ -6,6 +6,10 @@ class Interface::Components::RadioButton < Interface::Components::InputComponent
   theme_selection :secondary
 
   def initialize(object, method, value, options = {}, &block)
+    if value.kind_of? Hash
+      options.merge! value
+      value = options.delete :value
+    end
     @button_value = value
     
     super(object, method, options)

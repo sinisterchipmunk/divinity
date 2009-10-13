@@ -25,10 +25,10 @@ class Interface::Components::InputComponent < Interface::Components::Component
 
   def value=(a)
     if target and method
-      if target.respond_to? method
+      if target.respond_to? "#{method}="
         target.send("#{method}=", a)
       else
-        eval "#{target}.#{method} = a", binding, __FILE__, __LINE__
+        eval "target.#{method} = a", binding, __FILE__, __LINE__
       end
     else
       @value = a
