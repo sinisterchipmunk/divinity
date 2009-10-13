@@ -7,7 +7,6 @@ class Interface::Components::TextField < Interface::Components::InputComponent
   include Listeners::KeyListener
 
   def initialize(object, method, options = {}, &block)
-    @color = [ 0, 0, 0, 1 ]
     @font_options = {}
     @caret_position = 0
     @padding = 4
@@ -18,7 +17,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
 
     yield if block_given?
   end
-  
+
   def key_pressed(evt)
     case evt.sym
       when SDL::Key::UP
@@ -76,7 +75,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
   def paint
     self.value = self.value.to_s unless self.value.kind_of? String
     paint_background
-    glColor4fv(@color)
+    glColor4fv(foreground_color)
     leftmost = border_size + padding
     rightmost = width - ((border_size + padding) * 2)
     b = screen_bounds
@@ -89,7 +88,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
 
       if Interface::GUI.focus == self
         x = Font.select(font_options).sizeof(value[0...caret_position]).width + leftmost
-        glColor4fv(color)
+        glColor4fv(foreground_color)
         glDisable(GL_TEXTURE_2D)
         glBegin(GL_LINES)
           glVertex2i(x, border_size + padding)
@@ -97,7 +96,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
         glEnd
         glEnable(GL_TEXTURE_2D)
       end
-      glTranslated(@scroll, 0, 0)    
+      glTranslated(@scroll, 0, 0)
 
       glColor4f(1,1,1,1)
     end

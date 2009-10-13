@@ -3,30 +3,52 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
   attr_reader :font_options, :padding
   attr_accessor :color
   attr_accessor :caret_position
+  attr_accessor :read_only
 
   include Listeners::KeyListener
+  include Listeners::MouseListener
 
   def initialize(object, method, options = {}, &block)
-    @color = [ 0, 0, 0, 1 ]
     @font_options = {}
     @caret_position = 0
     @padding = 4
     @scroll = 0
+    @read_only = true
     super(object, method, options)
 
     key_listeners << self
+    mouse_listeners << self
+    @last_value = self.value
 
     yield if block_given?
   end
 
+  def update(delta)
+    super
+    if self.value != @last_value
+      @scroll = 0
+      move_caret self.value.length - @caret_position # force to bottom
+      @last_avlue = self.value
+    end
+  end
+
+  def mouse_pressed(evt)
+    if evt.button == 4 # TODO: Make these constants somewhere. 4 is wheelup, 5 is wheeldown.
+      move_caret_vertical(-1)
+      @scroll -= Font.select.height
+      check_caret_scroll
+    elsif evt.button == 5
+      move_caret_vertical(1)
+      @scroll += Font.select.height
+      check_caret_scroll
+    end
+  end
+
   def key_pressed(evt)
+    return if read_only
     case evt.sym
-      when SDL::Key::UP
-        x, y = pixel_position(@caret_position)
-        @caret_position = offset_from_pixel(x, y - Font.select.height)
-      when SDL::Key::DOWN
-        x, y = pixel_position(@caret_position)
-        @caret_position = offset_from_pixel(x, y + Font.select.height)
+      when SDL::Key::UP    then move_caret_vertical(-1)
+      when SDL::Key::DOWN  then move_caret_vertical(1)
       when SDL::Key::LEFT  then move_caret -1
       when SDL::Key::RIGHT then move_caret 1
       when SDL::Key::ESCAPE
@@ -52,6 +74,11 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
     end
   end
 
+  def move_caret_vertical(amount)
+    x, y = pixel_position(@caret_position)
+    move_caret offset_from_pixel(x, y + Font.select.height*amount) - @caret_position
+  end
+
   def move_caret(amount)
     @caret_position += amount
     @caret_position = self.value.length if @caret_position > self.value.length
@@ -61,34 +88,27 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
   end
 
   def check_caret_scroll
-#    if Font.select.sizeof(self.value[0...@caret_position]).width - @scroll < 0
-#      @scroll -= Font.select.height
-#      @scroll = 0 if @scroll < 0
-#      check_caret_scroll
-#    end
+    y = pixel_position(@caret_position)[1]
 
-    #if Font.select.sizeof(self.value[0...@caret_position]).width - @scroll > width - ((border_size + padding) * 2)
-    #if
-#      @scroll += Font.select.height
-#      @scroll = pixel_position(@caret_position)[1] if @scroll > pixel_position(@caret_position)[1]
-#      check_caret_scroll
-#    end
-
-    @scroll = 0
+    if y - @scroll < 0 # caret is above the top of the viewable area
+      @scroll -= Font.select.height
+    elsif y + Font.select.height - @scroll > height - ((border_size + padding) * 2) # caret is below the bottom of the viewable area
+      @scroll += Font.select.height
+    end
   end
 
   def paint
     self.value = self.value.to_s unless self.value.kind_of? String
     paint_background
-    glColor4fv(@color)
+    glColor4fv(foreground_color)
     topmost = border_size + padding
     leftmost = border_size + padding
     rightmost = width - ((border_size + padding) * 2)
     bottommost = height - ((border_size + padding) * 2)
     b = screen_bounds
 
-    scissor b.x+leftmost, frame_manager.height - b.y - b.height + border_size + padding, rightmost,
-            b.height+1-border_size-padding do
+    scissor b.x+leftmost, frame_manager.height - (b.y + b.height - border_size - padding), rightmost,
+            b.height+1-(border_size+padding)*2 do
       push_matrix do
         glTranslated(leftmost, -@scroll + topmost, 0)
         render_text
@@ -183,12 +203,12 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
         break
       end
     end
+    offset = value.length if offset > value.length
     offset
   end
 
   def backspace!
     offset = @caret_position
-    offset -= self.value[0..offset].count("\n")
 
     left = (offset > 0) ? self.value[0...(offset-1)] : ""
     right = self.value[offset..-1]
@@ -196,6 +216,7 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
   end
 
   def render_caret
+    return if read_only
     x, y = pixel_position(@caret_position)
     glColor4fv(color)
     glDisable(GL_TEXTURE_2D)

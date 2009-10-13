@@ -36,7 +36,7 @@ class Interface::Components::Button < Interface::Components::Component
     x = (self.bounds.width - size.width) / 2
     y = (self.bounds.height - size.height) / 2
     (x += 2 and y += 2) if @state & ButtonState::MOUSE_DOWN > 0
-    glColor4f(0,0,0,1)
+    glColor4fv foreground_color
     Font.select.put(x, y, @caption)
     glColor4f(1,1,1,1)
   end

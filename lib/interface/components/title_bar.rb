@@ -13,7 +13,7 @@ module Interface
       def paint
         paint_background
         
-        glColor4f(0,0,0,1)
+        glColor4f(foreground_color)
         Font.select.put(12, ((25 - Font.select.height) / 2).to_i, @caption)
         glColor4f(1,1,1,1)
         #TODO: Make title bar display stuff.

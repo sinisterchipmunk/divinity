@@ -6,7 +6,7 @@ module Interface
       include Geometry
       include Textures
 
-      attr_reader :valid, :background_texture, :border_size
+      attr_reader :valid, :background_texture, :border_size, :foreground_color
       delegate :x, :y, :width, :height, :to => :bounds
       
       def initialize(options = {})
@@ -16,6 +16,7 @@ module Interface
         @background_texture = Textures::RoundRectGenerator.new
         @border_size = 3
         @background_visible = true
+        @foreground_color = [ 0, 0, 0, 1 ]
         update_background_texture
 
         options.each { |k,v| self.send("#{k}=", v) }
@@ -49,6 +50,11 @@ module Interface
       end
 
       def update_background_texture
+        @foreground_color = theme[:foreground_color] if theme[:foreground_color]
+        unless @foreground_color.kind_of? Array and @foreground_color.length == 4 and 
+               @foreground_color.select { |i| not i.kind_of? Fixnum or i < 0 || i > 1 }.length == 0
+          raise "Foreground color should be an array of four numbers between 0 and 1 (ie [1,1,1,1] for white)"
+        end
         background_texture.set_options theme
         background_texture.set_option(:raise_size, border_size)
         background_texture.set_option(:width,  self.bounds.width)

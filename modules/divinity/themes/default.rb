@@ -25,8 +25,13 @@ theme :default do
                   :rady => 8,
                   :stroke_color => 'black'
 
-  set :text, :fill_color => '#eeeeee',
-             :radx => 0, :rady => 0,
-             :stroke_color => 'black',
-             :raised => false
+  set :text, :radx => 0, :rady => 0,
+             :stroke_color => 'silver',
+             :raised => true,
+             :raised_size => 2,
+             :foreground_color => [ 1, 1, 1, 1 ],
+             :background_image => Resources::Image.new("data/ui/background.bmp"),
+             :scale_or_tile => :tile,
+             :fill_opacity => 0.6,
+             :fill_color => "#110000"
 end
