@@ -1,9 +1,6 @@
 class Interface::Components::RadioButton < Interface::Components::InputComponent
-  include Listeners::Mouse::ButtonMouseListener
-  attr_reader :state
-  attr_reader :action_listeners
-  attr_accessor :button_value
-  theme_selection :secondary
+  include Interface::Components::Button::InstanceMethods
+  attr_reader :button_value
 
   def initialize(object, method, value, options = {}, &block)
     if value.kind_of? Hash
@@ -13,49 +10,37 @@ class Interface::Components::RadioButton < Interface::Components::InputComponent
     @button_value = value
     
     super(object, method, options)
-    @action_listeners = [ self ]
-    self.mouse_listeners <<= self
-    @caption = options[:caption] || value.to_s.titleize
-    @state = 0
+    caption = options[:caption] || value.to_s.titleize
+    init_variables(caption)
     yield if block_given?
   end
 
+  def button_value=(a)
+    self.value = a if self.value == @button_value
+    @button_value = a
+    invalidate  # FIXME: Not sure why I'm doing this, but it feels right. Need to see if it's really necessary.
+    a
+  end
+
   def action_performed(evt)
+    puts 'performed'
     self.value = button_value
-  end
-
-  def minimum_size
-    Dimension.new(1, 1)
-  end
-
-  def maximum_size
-    Dimension.new(1024,1024)
-  end
-
-  def preferred_size
-    Dimension.new(Font.select.width(@caption) + 10, Font.select.height + 10)
   end
 
   def update(delta)
     if value == button_value
       background_texture.set_option :brightness, DOWN_SHADE
+      @state = BUTTON_DOWN
     else
+      update_state
       option = NORM_SHADE
-      option = OVER_SHADE if @state & Interface::Components::Button::ButtonState::MOUSE_OVER > 0
-      option = DOWN_SHADE if @state & Interface::Components::Button::ButtonState::MOUSE_DOWN > 0
+      option = OVER_SHADE if @mouse_state & MOUSE_OVER > 0
+      if @mouse_state & MOUSE_DOWN > 0
+        option = DOWN_SHADE
+        @state = BUTTON_DOWN
+      end
       background_texture.set_option :brightness, option
     end
     super
-  end
-
-  def paint
-    paint_background
-    size = Font.select.sizeof(@caption)
-    x = (self.bounds.width - size.width) / 2
-    y = (self.bounds.height - size.height) / 2
-    (x += 2 and y += 2) if @state & Interface::Components::Button::ButtonState::MOUSE_DOWN > 0 or value == button_value
-    glColor4fv(foreground_color)
-    Font.select.put(x, y, @caption)
-    glColor4f(1,1,1,1)
   end
 end

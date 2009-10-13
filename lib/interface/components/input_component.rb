@@ -37,9 +37,9 @@ class Interface::Components::InputComponent < Interface::Components::Component
 
   def update(delta)
     super
-#    if self.value != @last_value # value has changed, update the target
-#      target.send("#{method}=", self.value)
-#      @last_value = self.value
-#    end
+    if self.value != @last_value # value has changed, update the target
+      @last_value = self.value
+      self.value_changed if self.respond_to? :value_changed
+    end
   end
 end

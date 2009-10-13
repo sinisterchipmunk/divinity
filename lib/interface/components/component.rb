@@ -1,3 +1,18 @@
+# NOTE that it is up to the individual Component implementation to take care of its own display lists!
+# Component#paint doesn't do anything, so having Component maintain its own lists, while preferable, would
+# lead to errors because Component can't decide whether or not *this* render pass is going to be the same
+# as all the others, or if some condition has changed to affect what is going to be rendered (for instance,
+# self.background_visible?)
+#
+# On the flip side, Component can (and does) take care of the display lists for #paint_background, because
+# this is something it can rely on without outside interference.
+#
+# If that was hard to follow, another reason Component can't manage all of its display lists is Container,
+# which is a Component that in turn holds other Components. If all of these were maintaining display lists
+# of each others', then there'd be big problems, including rendering nested children exponentially greater
+# number of times. Since Component has no concept of "children," it would be foolish (not to mention anti-OO)
+# to try to write special cases for all of them.
+#
 module Interface
   module Components
     class Component
@@ -22,6 +37,42 @@ module Interface
         options.each { |k,v| self.send("#{k}=", v) }
       end
 
+      def scissor(*args, &block)
+        x, y, w, h, = (if args.length == 0 then [ bounds.x, bounds.y, bounds.width, bounds.height ]
+        elsif args.length == 1
+          b = args[0]
+          if b.kind_of? Rectangle then [ b.x + bounds.x, b.y + bounds.y, b.width, b.height ]
+          elsif b.kind_of? Array then [ b[0] + bounds.x, b[1] + bounds.y, b[2], b[3] ]
+          else [ b+bounds.x, b+bounds.y, b, b ] 
+          end
+        else
+          args
+        end)
+
+        # Invert y for GUIness
+        # After it's inverted, it'll be at the top-left instead of the bottom-left; height still goes upward
+        # so we need to translate it down by adding height.
+        y = frame_manager.height - (y + h)
+        frame_manager.scissor x, y, w, h, &block
+      end
+
+      def update(time)
+        return unless enabled?
+        cur = size
+        min = minimum_size
+        invalidate if cur.width < min.width or cur.height < min.height
+        validate if not valid
+      end
+
+      def render
+        return unless visible?
+        b = bounds
+        push_matrix do
+          glTranslated( b.x,  b.y, 0)
+          paint
+        end
+      end
+      
       def theme
         if frame_manager and frame_manager.theme then
           # Allow theme elements with this exact class name (Interface::Whatever) to override the :primary, :etc
@@ -39,6 +90,7 @@ module Interface
       def validate()
         @valid = true
         update_background_texture
+        #@background_list.rebuild! if @background_list
       end
 
       def theme_selection
@@ -88,23 +140,9 @@ module Interface
         point.x >= screen_bounds.x && point.x <= screen_bounds.x+screen_bounds.width &&
         point.y >= screen_bounds.y && point.y <= screen_bounds.y+screen_bounds.height
       end
-    
-      def update(time)
-        return unless enabled?
-        cur = size
-        min = minimum_size
-        invalidate if cur.width < min.width or cur.height < min.height
-        validate if not valid
-      end
-    
-      def render
-        return unless visible?
-        b = bounds
-        glTranslated( b.x,  b.y, 0)
-        #scissor b.x, frame_manager.height - b.y - b.height, b.width+3, b.height+1 do
-          paint
-        #end
-        glTranslated(-b.x, -b.y, 0)
+
+      def font
+        Font.select
       end
       
       def minimum_size(); raise "Component::minimum_size must be overridden"; end
@@ -118,14 +156,20 @@ module Interface
       #must be explicitly called
       def paint_background
         return unless background_visible?
-        background_texture.bind do
-          glBegin(GL_QUADS)
-            background_texture.coord2f(0, 0); glVertex2i(0, 0)
-            background_texture.coord2f(0, 1); glVertex2i(0, bounds.height)
-            background_texture.coord2f(1, 1); glVertex2i(bounds.width, bounds.height)
-            background_texture.coord2f(1, 0); glVertex2i(bounds.width, 0)
-          glEnd
-        end
+#        if @background_list
+#          @background_list.call
+#        else
+#          @background_list = OpenGL::DisplayList.new(1, false) do
+            background_texture.bind do
+              glBegin(GL_QUADS)
+                background_texture.coord2f(0, 0); glVertex2i(0, 0)
+                background_texture.coord2f(0, 1); glVertex2i(0, bounds.height)
+                background_texture.coord2f(1, 1); glVertex2i(bounds.width, bounds.height)
+                background_texture.coord2f(1, 0); glVertex2i(bounds.width, 0)
+              glEnd
+            end
+#          end
+#        end
       end
       
       def paint(); raise "Component::paint must be overridden"; end

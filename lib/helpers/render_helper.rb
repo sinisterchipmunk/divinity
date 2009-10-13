@@ -8,18 +8,23 @@ module Helpers::RenderHelper
     glPopMatrix
   end
 
-  def scissor(x, y, w, h)
-    glPushAttrib(GL_SCISSOR_BIT)
-    glScissor(x, y, w, h)
-    glEnable(GL_SCISSOR_TEST)
+  def push_attrib(attrib = GL_ALL_ATTRIB_BITS)
+    glPushAttrib attrib
     yield
     glPopAttrib
+  end
+
+  def scissor(x, y, w, h)
+    push_attrib GL_SCISSOR_BIT do
+      glScissor(x, y, w, h)
+      yield
+    end
   end
 
   def ortho(width, height)
     glDisable(GL_DEPTH_TEST)
     glMatrixMode(GL_PROJECTION)
-    glPushMatrix()
+    push_matrix do
       glLoadIdentity()
       #We swap Y and HEIGHT here because most GUI development
       #works top-down, UNLIKE OpenGL. This reverses it.
@@ -27,15 +32,13 @@ module Helpers::RenderHelper
       glOrtho(0, width, height,  0,       -1, 1)
       glMatrixMode(GL_MODELVIEW)
       glEnable(GL_SCISSOR_TEST)
-      clip = Gl.glGetIntegerv(GL_SCISSOR_BOX)
-      glPushMatrix()
+      push_matrix do
         glLoadIdentity()
         yield
         glMatrixMode(GL_PROJECTION)
-      glPopMatrix()
-      glScissor(clip[0], clip[1], clip[2], clip[3])
+      end
       glMatrixMode(GL_MODELVIEW)
-    glPopMatrix()
+    end
     glEnable(GL_DEPTH_TEST)
   end
 end

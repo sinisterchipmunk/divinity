@@ -13,9 +13,11 @@ class Textures::Font < Textures::TextureGenerator
     @max_glyph_size = Dimension.new
     @image_size = Dimension.new
     bind { } # generate the font
+    @display_list = OpenGL::DisplayList.new(256) { |i| build_list(i) }
   end
   
   def sizeof(str)
+    str = str.join("\n") if str.kind_of? Array
     size = Dimension.new
     size.height = self.height
     maxw = 0
@@ -37,36 +39,45 @@ class Textures::Font < Textures::TextureGenerator
     sizeof(str).width
   end
   
+  def height
+    @max_glyph_size.height
+  end
+
   def put(x, y, str)
+    str = str.to_s.split(/\n/) unless str.kind_of? Array
+    
     bind do
-      tw  = (@max_glyph_size.width - 1)  / @image_size.width
-      th  = (@max_glyph_size.height) / @image_size.height
       push_matrix do
         glTranslated(x, y, 0)
-        str.each_byte do |i|
-          ch = i
-          ch = ch.chr if ch.kind_of? Fixnum
-          metrics = @metrics[i]
-
-          tx = (i % 16).to_i * (@max_glyph_size.width+1)
-          ty = (i / 16).to_i * (@max_glyph_size.height+1)
-          tx /= @image_size.width
-          ty /= @image_size.height
-
-          glBegin(GL_QUADS)
-            coord2f(tx+tw,    1-ty   ); glVertex2i(@max_glyph_size.width, @max_glyph_size.height)
-            coord2f(tx+tw,    1-ty+th); glVertex2i(@max_glyph_size.width,                      0)
-            coord2f(tx,       1-ty+th); glVertex2i(                    0,                      0)
-            coord2f(tx,       1-ty   ); glVertex2i(                    0, @max_glyph_size.height)
-          glEnd()
-          glTranslatef(metrics.width+2, 0, 0)
+        str.each do |line|
+          push_matrix { @display_list.call(line) }
+          glTranslated(0, self.height, 0)
         end
       end
     end
   end
-  
-  def height
-    @max_glyph_size.height
+
+  def build_list(index)
+    i = index
+    return if i == 0
+    tw  = (@max_glyph_size.width - 1)  / @image_size.width
+    th  = (@max_glyph_size.height) / @image_size.height
+    ch = i.chr
+    metrics = @metrics[i]
+
+    tx = (i % 16).to_i * (@max_glyph_size.width+1)
+    ty = (i / 16).to_i * (@max_glyph_size.height+1)
+    tx /= @image_size.width
+    ty /= @image_size.height
+
+    # we don't bind the texture here because it's bound in #put just once (as opposed to once per char if we do it here)
+    glBegin(GL_QUADS)
+      coord2f(tx+tw,    1-ty   ); glVertex2i(@max_glyph_size.width, @max_glyph_size.height)
+      coord2f(tx+tw,    1-ty+th); glVertex2i(@max_glyph_size.width,                      0)
+      coord2f(tx,       1-ty+th); glVertex2i(                    0,                      0)
+      coord2f(tx,       1-ty   ); glVertex2i(                    0, @max_glyph_size.height)
+    glEnd()
+    glTranslatef(metrics.width+2, 0, 0)
   end
   
   protected
@@ -88,14 +99,14 @@ class Textures::Font < Textures::TextureGenerator
   end
   
   def do_generation(options)
-    fn = "data/cache/font"; options.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |n,v| fn = "#{fn}_#{n}-#{v}" }; fn = "#{fn}.png"
+    fn = "data/cache/font"
+    options.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |n,v| fn = "#{fn}_#{n}-#{v}" }; fn = "#{fn}.png"
     if File.exists? fn
       blob = load_font(options, fn)
     else
       blob = gen_font(options)
       File.open(fn, "wb") { |file| file.print blob }
     end
-    
     
     #convert binstr to raw data
     #for some reason the load_from_string alias isn't working
@@ -180,17 +191,6 @@ class Textures::Font < Textures::TextureGenerator
       str.sub!(/%/, '%%')
       draw.text(x, y, str)
     end
-    
-=begin
-    draw.stroke '#ff0'
-    draw.fill '#ff0'
-    0.upto 15 do |x|
-      0.upto 15 do |y|
-        draw.line 0, y*(@max_glyph_size.height+1), (@image_size.width+1), y*(@max_glyph_size.height+1)
-      end
-      draw.line x*(@max_glyph_size.width+1)-1, 0, x*(@max_glyph_size.width+1)-1, (@image_size.height+1)
-    end
-=end
 
     #commit the above operations
     draw.draw(canvas)

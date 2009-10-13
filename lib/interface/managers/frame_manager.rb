@@ -83,12 +83,14 @@ class Interface::Managers::FrameManager
         #After Frame became a component, the translating was done twice, once here
         #and once in Component. Obviously, this is a Bad Thing. Hence the comments.
         b = frame.screen_bounds
-        Gl.glPushAttrib(GL_COLOR_BUFFER_BIT | GL_LIST_BIT | GL_TRANSFORM_BIT | GL_SCISSOR_BIT)
-        Gl.glScissor(b.x, @viewport.height - b.y - b.height - 1, b.width, b.height)
-        #glTranslated( frame.bounds.x,  frame.bounds.y, 0)
-        frame.render
-        #glTranslated(-frame.bounds.x, -frame.bounds.y, 0)
-        Gl.glPopAttrib()
+        #frame.scissor do
+        push_matrix do
+          frame.scissor do
+          #scissor b.x, @viewport.height - b.y - b.height - 1, b.width, b.height do
+            glTranslated( frame.bounds.x,  frame.bounds.y, 0)
+            frame.render
+          end
+        end
       end
     end
   end
