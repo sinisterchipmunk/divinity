@@ -37,9 +37,9 @@ module Interface
       end
       
       def validate
-        @layout.layout_container(self) if @layout
-        @children.each { |child| child.validate }
         super
+        @layout.layout_container(self) if @layout
+        @children.each { |child| child.validate } if @children
       end
 
       def invalidate
@@ -48,7 +48,10 @@ module Interface
       end
       
       def paint
-        @children.each { |child| child.render }
+        push_matrix do
+          glTranslate(-insets.x, -insets.y, 0)
+          @children.each { |child| child.render }
+        end
       end
       
       def add(comp, constraints="")

@@ -2,7 +2,7 @@ class World::Actor < Resources::Content
   SEXES = [ :male, :female ]
   ATTRIBUTES = [ :strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma ]
 
-  random_access_attr :sex, :race
+  random_access_attr :sex, :race, :portrait
   random_access_attr *ATTRIBUTES
 
   def revert_to_defaults!

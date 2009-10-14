@@ -3,7 +3,6 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
   include Listeners::KeyListener
   include Listeners::MouseListener
   theme_selection :text
-  attr_reader :padding
   attr_accessor :caret_offset
   attr_reader :read_only, :scroll
 
@@ -31,7 +30,6 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
   def initialize(object, method, options = {}, &block)
     super(object, method, options, &block)
     @caret_offset = 0
-    @padding = 2
     @read_only = true
     @text_to_render = value_changed
     @scroll = 0
@@ -40,7 +38,6 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
   end
 
   def paint
-    paint_background
     glTranslatef(printable_area.x, self.scroll + printable_area.y, 0)
     paint_text
     paint_caret
@@ -48,15 +45,12 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
 
   def paint_text
     # @text_to_render is already formatted for render, so just need to feed it into Font.put
-    scissor printable_area do
-      font.put 0, 0, @text_to_render
-    end
+    font.put 0, 0, @text_to_render
   end
 
   def paint_caret
     return if read_only
     x, y = caret_position
-    glColor4fv(foreground_color)
     glDisable(GL_TEXTURE_2D)
     glBegin(GL_LINES)
       glVertex2i(x, y)
@@ -132,11 +126,9 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
 
   def validate
     super
-    edge = (border_size + padding) * 2
     scroll_width = 0 # TODO: Scrollbars? Or should parent container take care of this?
-    w = width - (edge + scroll_width)
-    h = height - edge
-    @printable_area = Rectangle.new border_size, border_size, w, h
+    @printable_area = insets.dup
+    @printable_area.width -= scroll_width
   end
 
   def printable_area

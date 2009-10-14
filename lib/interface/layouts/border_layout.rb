@@ -48,8 +48,8 @@ module Interface
     
       def layout_container(cont)
         #bool ltr = true  #TODO: Make this do stuff.
-        border_size = cont.border_size
-        buf = Rectangle.new(border_size, border_size, cont.bounds.width-border_size, cont.bounds.height-border_size)
+        buf = cont.insets.dup
+        #buf = Rectangle.new(border_size, border_size, cont.bounds.width-border_size, cont.bounds.height-border_size)
 
         if @north
           b = @north.preferred_size
@@ -76,7 +76,7 @@ module Interface
         end
 
         [@north, @south, @east, @west, @center].each do |comp|
-          raise "No room to lay out component #{comp.inspect} in container #{parent.inspect}" if comp and
+          raise "No room to lay out component #{comp} in container #{cont} (insets #{cont.insets.inspect})" if comp and
                   (comp.width == 0 or comp.height == 0)
         end
       end
@@ -100,8 +100,8 @@ module Interface
         [@north, @south].each do |comp|
           if not comp.nil?
             d = yield(comp)
-            dim.width = max(d.width, dim.width) + (cont.bordersize*2)
-            dim.height += d.height + @vgap + (cont.bordersize*2)
+            dim.width = max(d.width, dim.width)# + (cont.border_size*2)
+            dim.height += d.height + @vgap# + (cont.border_size*2)
           end
         end
         dim.width = 64 if dim.width == 0

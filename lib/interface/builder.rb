@@ -3,6 +3,8 @@ class Interface::Builder
   include Helpers::AttributeHelper
   include Interface::Layouts
 
+  attr_reader :component, :engine, :action
+
   def initialize(action = nil, &block)
     @action = action
     @block = block
@@ -12,6 +14,19 @@ class Interface::Builder
     p = Interface::Containers::Panel.new
     self.class.new(&block).apply_to(@engine, p) if block_given?
     component.add(p, constraints)
+  end
+
+  def scroll_panel(constraints, &block)
+    p = Interface::Containers::ScrollPanel.new
+    self.class.new(&block).apply_to(@engine, p) if block_given?
+    component.add p, constraints
+  end
+
+  def partial(interface_name, constraints, &block)
+    p = Interface::Containers::Panel.new(Interface::Layouts::BorderLayout.new, &block)
+    builder = @engine.find_interface(interface_name)
+    builder.apply_to(@engine, p)
+    component.add p, constraints
   end
 
   def layout(type, *args)
@@ -36,6 +51,11 @@ class Interface::Builder
   def image(path, options = { }, &block)
     constraints = options.delete(:constraints)
     img = Interface::Components::Image.new(path, options, &block)
+    @component.add img, constraints
+  end
+
+  def image_selector(object, method, images, constraints, options = { }, &block)
+    img = Interface::Components::ImageSelector.new(images, object, method, options, &block)
     @component.add img, constraints
   end
 
@@ -78,10 +98,6 @@ class Interface::Builder
     @component = component
     instance_eval &@block if @block
     self
-  end
-
-  def component
-    @component
   end
 
   def action_performed(event)

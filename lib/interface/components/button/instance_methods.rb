@@ -34,14 +34,11 @@ module Interface::Components::Button::InstanceMethods
   end
 
   def paint(i = nil)
-    paint_background
     offset = @state * 2 # index 1 is "down", so offset the label by 2 pixels.
 
     size = font.sizeof(caption)
-    lx = (self.bounds.width  - size.width)  / 2 + offset
-    ly = (self.bounds.height - size.height) / 2 + offset
-    glColor4fv foreground_color
+    lx = (self.insets.width  - size.width)  / 2 + offset
+    ly = (self.insets.height - size.height) / 2 + offset
     font.put(lx, ly, caption)
-    glColor4f(1,1,1,1)
   end
 end

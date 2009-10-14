@@ -75,6 +75,7 @@ class Interface::Managers::FrameManager
   end
 
   def render
+    glEnable(GL_TEXTURE_2D)
     ortho(@viewport.width, @viewport.height) do
       #Last in array is first to display (it's on bottom)
       @frames.reverse.each do |frame|
@@ -87,7 +88,7 @@ class Interface::Managers::FrameManager
         push_matrix do
           frame.scissor do
           #scissor b.x, @viewport.height - b.y - b.height - 1, b.width, b.height do
-            glTranslated( frame.bounds.x,  frame.bounds.y, 0)
+            #glTranslated( frame.bounds.x,  frame.bounds.y, 0)
             frame.render
           end
         end

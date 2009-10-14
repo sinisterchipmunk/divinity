@@ -1,4 +1,9 @@
-interface :attributes  do
+interface :attributes do
+  panel :west do
+    layout :grid, 1, 3
+    partial :char_info, [0, 0]
+  end
+
   panel :center do
     rows = ((World::Actor::ATTRIBUTES.length+2 < 9) ? 9 : World::Actor::ATTRIBUTES.length+2)
     layout :grid, 3, rows + 3

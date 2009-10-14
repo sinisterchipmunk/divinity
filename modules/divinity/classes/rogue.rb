@@ -1,5 +1,5 @@
 character_class :rogue do
-  description "A Rogue class"
+  description "A Rogue class that still needs a description"
   alignment :any
   hit_die :d6
   class_skills :appraise, :balance, :bluff, :climb, :craft, :decipher_script, :diplomacy, :disable_device,

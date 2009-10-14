@@ -21,9 +21,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
 
   def validate
     super
-    b = border_size + padding
-    @printable_area.x, @printable_area.y = b, b
-    @printable_area.width, @printable_area.height = width - (b * 2), height - (b * 2)
+    @printable_area = insets.dup
   end
 
   def key_pressed(evt)
@@ -81,18 +79,9 @@ class Interface::Components::TextField < Interface::Components::InputComponent
   end
 
   def paint
-    #self.value = self.value.to_s unless self.value.kind_of? String
-    paint_background
-    push_attrib do
-      push_matrix do
-        glColor4fv(foreground_color)
-        scissor printable_area do
-          glTranslated(-@scroll + printable_area.x + 1, printable_area.y, 0)
-          paint_text
-          paint_cursor
-        end
-      end
-    end
+    glTranslated(-@scroll + 1, 0, 0)
+    paint_text
+    paint_cursor
   end
 
   def paint_text

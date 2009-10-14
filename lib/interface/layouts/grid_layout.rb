@@ -1,6 +1,6 @@
 class Interface::Layouts::GridLayout < Interface::Layouts::Layout
   include Geometry
-  attr_accessor :hgap, :vgap, :minx, :miny
+  attr_accessor :hgap, :vgap
 
   # FIXME: Shouldn't this belong somewhere else?
   class Array2D < Array
@@ -15,7 +15,6 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
   end
 
   def initialize(x=0, y=0, options = {})
-    @minx, @miny = 1, 1
     @hgap, @vgap = 2, 2
     @grid = Array2D.new
     x.times { |i| y.times { |j| @grid[i][j] = nil }}
@@ -51,26 +50,25 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
   def remove_all_components; end
   
   def layout_container(parent)
-    width, height = parent.width - hgap, parent.height - vgap
+    insets = parent.insets
+    width, height = insets.width - hgap, insets.height - vgap
     gridx, gridy = @grid.width, @grid.height
-    gridx = @minx if gridx < @minx
-    gridy = @miny if gridy < @miny
     xpix, ypix = width, height
     xpix = width  / gridx unless gridx == 0
     ypix = height / gridy unless gridy == 0
     xpix -= hgap
     ypix -= vgap
-    bs = parent.border_size
+    #bs = parent.border_size
     previous = []
 
     @grid.each_with_index do |arr, x|
       arr.each_with_index do |comp, y|
         if comp
+          b = Geometry::Rectangle.new(x*(xpix+hgap)+hgap+insets.x, y*(ypix+vgap)+vgap+insets.y, xpix, ypix)
           if previous.include? comp
-            b = Geometry::Rectangle.new(x*(xpix+hgap)+hgap+bs, y*(ypix+vgap)+vgap+bs, xpix-bs, ypix-bs)
             comp.bounds = comp.bounds.union! b
           else
-            comp.bounds = Geometry::Rectangle.new(x*(xpix+hgap)+hgap+bs, y*(ypix+vgap)+vgap+bs, xpix-bs, ypix-bs)
+            comp.bounds = b
             previous << comp
           end
         end
@@ -110,8 +108,8 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
     end
     lx += 1
     ly += 1
-    largest.width = largest.width * lx + hgap * (lx-1) + (cont.border_size*2)
-    largest.height = largest.height * ly + vgap * (ly-1) + (cont.border_size*2)
+    largest.width = largest.width * lx + hgap * (lx-1)
+    largest.height = largest.height * ly + vgap * (ly-1)
     largest
   end
 

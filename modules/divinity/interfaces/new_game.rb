@@ -22,17 +22,11 @@ interface :new_game do
     panel [1, 4..7] do  # This means to use grid location X1, Y4-7. Cool.
       layout :border
       label "Character Portrait:", :constraints => :north
-      portrait = (image images[cur_img], :constraints => :center)
+      portrait = image_selector actor(:player), :portrait, images, :center
       panel :south do
         layout :grid, 2, 1
-        button :previous, :constraints => [0, 0], :action => (proc do
-          cur_img -= 1
-          portrait.path = images[cur_img %= -images.length]
-        end)
-        button :next,     :constraints => [1, 0], :action => (proc do
-          cur_img += 1
-          portrait.path = images[cur_img %= images.length]
-        end)
+        button :previous, :constraints => [0, 0], :action => (proc do portrait.previous! end)
+        button :next,     :constraints => [1, 0], :action => (proc do portrait.next! end)
       end
     end
 

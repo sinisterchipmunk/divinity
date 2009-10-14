@@ -22,9 +22,10 @@ module Interface
       def layout_container(cont)
         children = cont.children
         size = children.length
-        maxwidth = cont.bounds.width - (hgap*2)
-        x = 0
-        y = vgap
+        insets = cont.insets
+        maxwidth = insets.width - (hgap*2)
+        x = insets.x
+        y = insets.y + vgap
         rowh = 0
         start = 0
         ltr = true #TODO: Make this based on component orientation
@@ -33,8 +34,8 @@ module Interface
           if child.visible?
             d = child.preferred_size
             child.size = d
-            if x == 0 || (x + d.width) <= maxwidth
-              x += hgap if x > 0
+            if x == insets.x || (x + d.width) <= maxwidth
+              x += hgap if x > insets.x
               x += d.width
               rowh = rowh > d.height ? rowh : d.height
             else
@@ -73,10 +74,10 @@ module Interface
       
       private
       def moveComponents(target, x, y, width, height, rowStart, rowEnd, ltr)
-        x += target.border_size
-        y += target.border_size
-        width -= target.border_size
-        height -= target.border_size
+        #x += target.border_size
+        #y += target.border_size
+        #width -= target.border_size
+        #height -= target.border_size
         case @align
           when Alignment.LEFT then x += ltr ? 0 : width
           when Alignment.CENTER then x += (width / 2)

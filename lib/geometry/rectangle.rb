@@ -13,16 +13,16 @@ class Geometry::Rectangle
   end
 
   def union!(r)
-    tx2 = width
-    ty2 = height
+    tx2 = width.to_i
+    ty2 = height.to_i
     return r if ((tx2 | ty2) < 0)
-    rx2 = r.width
-    ry2 = r.height
+    rx2 = r.width.to_i
+    ry2 = r.height.to_i
     return self if ((rx2 | ry2) < 0)
-    tx1, ty1 = x, y
+    tx1, ty1 = x.to_i, y.to_i
     tx2 += tx1
     ty2 += ty1
-    rx1, ry1 = r.x, r.y
+    rx1, ry1 = r.x.to_i, r.y.to_i
     rx2 += rx1
     ry2 += ry1
     tx1 = rx1 if tx1 > rx1

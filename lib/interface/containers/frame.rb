@@ -19,7 +19,6 @@ module Interface
         self.layout = options[:layout] if options.key? :layout
         @title_bar = Interface::Components::TitleBar.new(caption) if options[:title_bar]
         @pinned = options[:pinned]
-        self.border_size = 0
 
         self.mouse_listeners << self
         if @title_bar

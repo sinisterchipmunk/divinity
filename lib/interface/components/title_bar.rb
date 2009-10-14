@@ -11,11 +11,7 @@ module Interface
       def preferred_size(); Dimension.new(0, 25); end
       
       def paint
-        paint_background
-        
-        glColor4f(foreground_color)
-        Font.select.put(12, ((25 - Font.select.height) / 2).to_i, @caption)
-        glColor4f(1,1,1,1)
+        Font.select.put(12, ((insets.height - Font.select.height) / 2).to_i, @caption)
         #TODO: Make title bar display stuff.
       end
     end

@@ -17,12 +17,7 @@ module Interface
 
       private
       def adjusted_layout_size(cont, &blk)
-        b = layout_size(cont, &blk)
-        #b.width -= cont.border_size * 2
-        #b.height -= cont.border_size * 2
-        b.width = cont.border_size*2+1 if b.width < cont.border_size*2+1
-        b.height = cont.border_size*2+1 if b.height < cont.border_size*2+1
-        b
+        layout_size(cont, &blk)
       end
     end
   end

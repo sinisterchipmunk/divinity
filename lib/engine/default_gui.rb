@@ -22,9 +22,13 @@ module Engine::DefaultGUI
   @@interface_builders ||= HashWithIndifferentAccess.new
 
   def assume_interface(name)
-    raise "Interface not found: #{name}" unless @@interface_builders[name]
     frame.remove_all_components
-    @@interface_builders[name].apply_to(self, frame)
+    find_interface(name).apply_to(self, frame)
+  end
+
+  def find_interface(name)
+    raise "Interface not found: #{name}" unless @@interface_builders[name]
+    @@interface_builders[name]
   end
 
   def fire_interface_action(action)

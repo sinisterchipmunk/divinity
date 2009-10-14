@@ -1,32 +1,48 @@
-class Interface::Components::Image < Interface::Components::Component
-  attr_reader :edge
+class Interface::Components::ImageSelector < Interface::Components::InputComponent
+  attr_reader :edge, :image, :images
   attr_accessor :maintain_aspect_ratio
 
-  def initialize(path, options = {}, &block)
-    super()
-    self.edge = true
+  def initialize(images, object, method, options = {}, &block)
+    super(object, method, options)
+    @images = images
+    @index = 0
+
+    @index = @images.index(self.value) if @images.include? self.value
     
-    @path = path
     background_texture.set_option(:fill_opacity, 0)
-    @image = Resources::Image.new(path)
+    self.edge = true
     @maintain_aspect_ratio = true
-    
     options.each { |k,v| self.send("#{k}=", v) }
-    yield if block_given?
+    
+    update_image!
+  end
+
+  def next!
+    @index += 1
+    @index %= @images.length
+    update_image!
+    invalidate
+  end
+
+  def previous!
+    @index -= 1
+    @index %= -@images.length
+    update_image!
+    invalidate
   end
 
   def paint_background
     glColor4fv [1,1,1,1]
     iw = width
     ih = height
-    if @maintain_aspect_ratio
+    if maintain_aspect_ratio
       if iw < ih
         # scale height to match width
-        r = @image.height.to_f / @image.width.to_f
+        r = image.height.to_f / image.width.to_f
         ih = (iw * r).floor
       else
         # scale width to match height
-        r = @image.width.to_f / @image.height.to_f
+        r = image.width.to_f / image.height.to_f
         iw = (ih * r).floor
       end
     end
@@ -55,19 +71,8 @@ class Interface::Components::Image < Interface::Components::Component
     background_texture.set_options(:edge => @edge)
   end
 
-  def path
-    @path
-  end
-
-  def path=(a)
-    @path = a
-    @image = Resources::Image.new(@path)
-    
-    update_background_texture
-  end
-
   def preferred_size
-    Dimension.new(@image.width, @image.height)
+    Dimension.new(image.width, image.height)
   end
 
   def minimum_size
@@ -80,6 +85,12 @@ class Interface::Components::Image < Interface::Components::Component
 
   def update_background_texture
     super
-    background_texture.set_options(:background_image => @image)
+    background_texture.set_options(:background_image => image)
+  end
+
+  private
+  def update_image!
+    self.value = @images[@index]
+    @image = Resources::Image.new(self.value)
   end
 end
