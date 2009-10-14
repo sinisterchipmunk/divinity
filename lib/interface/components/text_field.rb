@@ -73,7 +73,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
   end
 
   def paint
-    self.value = self.value.to_s unless self.value.kind_of? String
+    #self.value = self.value.to_s unless self.value.kind_of? String
     paint_background
     glColor4fv(foreground_color)
     leftmost = border_size + padding
@@ -103,7 +103,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
   end
 
   def size
-    self.value = self.value.to_s unless self.value.kind_of? String
+    #self.value = self.value.to_s unless self.value.kind_of? String
     Font.select(font_options).sizeof(value)
   end
 

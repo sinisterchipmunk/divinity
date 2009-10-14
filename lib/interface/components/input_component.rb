@@ -13,25 +13,20 @@ class Interface::Components::InputComponent < Interface::Components::Component
   def value
     if target and method
       if target.respond_to? method
-        r = target.send(method)
+        target.send(method)
       else
-        r = eval "target.#{method}", binding, __FILE__, __LINE__
+        eval "target.#{method}", binding, __FILE__, __LINE__
       end
-      r
     else
-      @value
+      nil
     end
   end
 
   def value=(a)
-    if target and method
-      if target.respond_to? "#{method}="
-        target.send("#{method}=", a)
-      else
-        eval "target.#{method} = a", binding, __FILE__, __LINE__
-      end
+    if target.respond_to? "#{method}="
+      target.send("#{method}=", a)
     else
-      @value = a
+      eval "target.#{method} = a", binding, __FILE__, __LINE__
     end
   end
 

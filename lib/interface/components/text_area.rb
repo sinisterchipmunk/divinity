@@ -36,6 +36,7 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
     @text_to_render = value_changed
     @scroll = 0
     key_listeners << self
+    mouse_listeners << self
   end
 
   def paint

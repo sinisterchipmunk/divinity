@@ -15,7 +15,11 @@ class OpenGL::DisplayList
 
     glPushAttrib(GL_LIST_BIT)
       glListBase @list_base
-      glCallLists *lists
+      if method(:glCallLists).arity == 1
+        glCallLists *lists
+      else
+        glCallLists GL_BYTE, *lists
+      end
     glPopAttrib
   end
 

@@ -48,6 +48,12 @@ module Listeners::Mouse::ButtonMouseListener
     update_state
   end
   
-  def mouse_moved(evt);    end
-  def mouse_dragged(evt);  end
+  def mouse_moved(evt)
+    @mouse_state |= MOUSE_OVER
+  end
+
+  def mouse_dragged(evt)
+    @mouse_state |= MOUSE_OVER
+    @mouse_state |= MOUSE_DOWN
+  end
 end

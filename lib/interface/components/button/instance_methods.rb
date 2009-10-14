@@ -7,7 +7,7 @@ module Interface::Components::Button::InstanceMethods
 
   def init_variables(caption)
     @action_listeners = []
-    self.mouse_listeners <<= self
+    self.mouse_listeners << self
     @caption = caption
     @state = @mouse_state = 0
   end

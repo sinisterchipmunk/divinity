@@ -12,18 +12,12 @@ class Interface::Components::RadioButton < Interface::Components::InputComponent
     super(object, method, options)
     caption = options[:caption] || value.to_s.titleize
     init_variables(caption)
+    self.action_listeners << self
+    
     yield if block_given?
   end
 
-  def button_value=(a)
-    self.value = a if self.value == @button_value
-    @button_value = a
-    invalidate  # FIXME: Not sure why I'm doing this, but it feels right. Need to see if it's really necessary.
-    a
-  end
-
   def action_performed(evt)
-    puts 'performed'
     self.value = button_value
   end
 
@@ -32,7 +26,6 @@ class Interface::Components::RadioButton < Interface::Components::InputComponent
       background_texture.set_option :brightness, DOWN_SHADE
       @state = BUTTON_DOWN
     else
-      update_state
       option = NORM_SHADE
       option = OVER_SHADE if @mouse_state & MOUSE_OVER > 0
       if @mouse_state & MOUSE_DOWN > 0
