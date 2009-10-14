@@ -23,6 +23,7 @@ module Engine::DefaultGUI
 
   def assume_interface(name)
     frame.remove_all_components
+    frame.layout = Interface::Layouts::BorderLayout.new
     find_interface(name).apply_to(self, frame)
   end
 
@@ -45,6 +46,6 @@ module Engine::DefaultGUI
 
   Dir.glob("modules/*/interfaces/*.rb").each do |fi|
     next if File.directory? fi or fi =~ /\.svn/
-    eval File.read(fi), binding, __FILE__, __LINE__
+    eval File.read(fi), binding, fi, 1
   end
 end

@@ -78,7 +78,6 @@ module Interface
       frame ? frame.frame_manager : nil
     end
     
-    protected
     def parent=(p)
       @parent = p
       @frame = p.frame if p

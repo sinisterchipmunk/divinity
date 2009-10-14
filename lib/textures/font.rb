@@ -6,6 +6,13 @@ class Textures::Font < Textures::TextureGenerator
     options ||= { }
     @@instantiated_fonts[options.to_s] ||= self.new(options)
   end
+
+  # Causes all fonts to be invalid, forcing them to be recreated the next time they are used.
+  def self.invalidate!
+    @@instantiated_fonts.each do |options, font|
+      font.invalidate!
+    end
+  end
   
   def initialize(opt = { })
     super
@@ -33,6 +40,12 @@ class Textures::Font < Textures::TextureGenerator
     end
     size.width = maxw if maxw > size.width
     size
+  end
+
+  # causes this font to be invalid, forcing it to be recreated the next time it is used.
+  def invalidate!
+    free_resources
+    @display_list.rebuild!
   end
 
   def width(str)

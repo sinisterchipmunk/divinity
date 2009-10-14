@@ -86,6 +86,12 @@ class Interface::Builder
     @component.add b, constraints
   end
 
+  def toggle_button(object, method, caption = nil, constraints = nil, options = {}, &block)
+    options.merge! :caption => (caption || method.to_s.titleize)
+    b = Interface::Components::ToggleButton.new(object, method, options)
+    @component.add b, constraints
+  end
+
   def build_input_component(object, method, options, klass, &block)
     options = { :constraints => options } unless options.kind_of? Hash
     constraints = options.delete :constraints

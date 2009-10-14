@@ -15,8 +15,8 @@ class OpenGL::DisplayList
 
     glPushAttrib(GL_LIST_BIT)
       glListBase @list_base
+      lists << [0] if lists.length == 0
       if method(:glCallLists).arity == 1
-        lists << [0] if lists.length == 0
         glCallLists *lists
       else # this changed with ruby-opengl 0.6
         glCallLists GL_BYTE, *lists

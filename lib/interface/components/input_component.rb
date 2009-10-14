@@ -1,11 +1,12 @@
 class Interface::Components::InputComponent < Interface::Components::Component
   attr_accessor :target
-  attr_accessor :method
+  attr_accessor :method, :delimeter 
 
   def initialize(target, method, options = {})
     super()
     @target, @method = target, method
     @last_value = nil
+    @delimeter = options[:delimeter] || "."
     @value = options[:value]
     @value ||= self.value #target.send("#{method}") if target and method
   end
@@ -15,7 +16,7 @@ class Interface::Components::InputComponent < Interface::Components::Component
       if target.respond_to? method
         target.send(method)
       else
-        eval "target.#{method}", binding, __FILE__, __LINE__
+        eval "target#{delimeter}#{method}", binding, __FILE__, __LINE__
       end
     else
       nil
@@ -26,7 +27,7 @@ class Interface::Components::InputComponent < Interface::Components::Component
     if target.respond_to? "#{method}="
       target.send("#{method}=", a)
     else
-      eval "target.#{method} = a", binding, __FILE__, __LINE__
+      eval "target#{delimeter}#{method} = a", binding, __FILE__, __LINE__
     end
   end
 

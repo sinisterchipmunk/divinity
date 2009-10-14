@@ -7,7 +7,7 @@ class Interface::Managers::FrameManager
   def initialize
     @frames = [ ]
     @shortcuts = [ ]
-    @location_manager = FrameLocationManager.new
+    @location_manager = Interface::Managers::FrameLocationManager.new
     @viewport = Screen::Viewport.new
     @location_manager.viewport = @viewport
     @last_mouse_event_target = nil
@@ -23,7 +23,7 @@ class Interface::Managers::FrameManager
 
   def theme=(a)
     @theme = a
-    @frames.each { |f| f.apply_theme! }
+    #@frames.each { |f| f.apply_theme! }
   end
 
   def should_update_viewport=(a)
@@ -75,7 +75,6 @@ class Interface::Managers::FrameManager
   end
 
   def render
-    glEnable(GL_TEXTURE_2D)
     ortho(@viewport.width, @viewport.height) do
       #Last in array is first to display (it's on bottom)
       @frames.reverse.each do |frame|

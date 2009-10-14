@@ -9,30 +9,42 @@ class DivinityEngine
   include Engine::Content
   include Engine::DefaultGUI
 
-  attr_reader :frame_manager, :state, :ticks, :interval
-  attr_accessor :clear_on_render, :width, :height, :color_depth, :fullscreen
+  attr_reader :frame_manager, :state, :ticks, :interval, :options
 
   def initialize(*args, &blk)
     @blocks = {}
     @state = :waiting
-    @frame_manager = Interface::Managers::FrameManager.new
-    @frame_manager.register_keyboard_shortcut(:keys   => [ SDL::Key::LALT, SDL::Key::F4 ], :target => self, :method => 'stop!',
-                                              :args   => [ ])
-    @frame_manager.should_update_viewport = false
 
-    options = args.extract_options!.reverse_merge(default_options)
-    options.each { |key,value| self.send("#{key}=", value) }
-    
+    during_init do
+      @frame_manager = Interface::Managers::FrameManager.new
+      @frame_manager.register_keyboard_shortcut(:keys   => [ SDL::Key::LALT, SDL::Key::F4 ],
+                                                :target => self,
+                                                :method => 'stop!',
+                                                :args   => [ ])
+      @frame_manager.should_update_viewport = false
+    end
+
+    @options = HashWithIndifferentAccess.new(args.extract_options!.reverse_merge(default_options))
+
     add_default_render_block
     add_default_update_block
 
     during_render &blk if block_given?
   end
 
+  [ :width, :height, :color_depth, :fullscreen, :clear_on_render ].each do |i|
+    eval "def #{i}; options[#{i.inspect}]; end", binding, __FILE__, __LINE__
+  end
+
+  def options=(o)
+    @options.merge! o
+#    init
+  end
+
   def go!
     init if @state == :waiting
     @state = :starting
-    main_loop
+    main_loop unless @main_loop_running
   end
 
   def pause!
@@ -56,6 +68,7 @@ class DivinityEngine
     class EngineStopped; end
 
     def main_loop
+      @main_loop_running = true
       while @state != :stopping
         @state = :running unless @state == :paused
         update # TODO: Multithread this.
@@ -64,6 +77,8 @@ class DivinityEngine
         SDL.GLSwapBuffers()
         #sleep 0.01 # to avoid consuming all CPU power
       end
+      @main_loop_running = false
+      shutdown
     rescue EngineStopped
     ensure
       @state = :waiting
@@ -81,6 +96,24 @@ class DivinityEngine
 
       call_blocks :before_update, :during_update, :after_update, :args => [ @interval, self ] unless @state == :paused
     end
+
+    def init_video_mode
+      Textures::Font.invalidate!
+      err("set video mode") unless (@sdl_screen = SDL.setVideoMode(options[:width], options[:height], options[:color_depth],
+                                                                   sdl_video_mode_flags))
+#      glViewport(0, 0, options[:width], options[:height])
+#      glMatrixMode(GL_PROJECTION)
+#      glLoadIdentity
+#      gluPerspective(90, width.to_f/height.to_f, 0.01, 150)
+#      glMatrixMode GL_MODELVIEW
+#      glLoadIdentity
+      glEnable(GL_TEXTURE_2D)
+      glEnable(GL_BLEND)
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+      call_blocks :during_init
+      init_default_gui
+      call_blocks :after_init
+    end
   
     def init
       @state = :initializing
@@ -88,24 +121,24 @@ class DivinityEngine
       call_blocks :before_init
       SDL.init(SDL::INIT_VIDEO) and err("initialize SDL")
       SDL.setGLAttr(SDL::GL_DOUBLEBUFFER,1) and err("enable double-buffering")
+      SDL.setGLAttr(SDL::GL_DEPTH_SIZE, 16) and err("set depth buffer size")
+      SDL.setGLAttr(SDL::GL_RED_SIZE, 8) and err("set red bit depth")
+      SDL.setGLAttr(SDL::GL_GREEN_SIZE, 8) and err("set green bit depth")
+      SDL.setGLAttr(SDL::GL_BLUE_SIZE, 8) and err("set blue bit depth")
+      SDL.setGLAttr(SDL::GL_ALPHA_SIZE, 8) and err("set alpha bit depth")
       SDL::Event.enable_unicode
-      err("set video mode") unless (@sdl_screen = SDL.setVideoMode(width,height,color_depth,sdl_video_mode_flags))
-      glEnable(GL_BLEND)
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-      init_default_gui
-      
-      call_blocks :during_init, :after_init
+      init_video_mode
     end
 
     def shutdown
       call_blocks :before_shutdown
-      attempt "shut down SDL" do SDL.quit end
+      err "shut down SDL" if SDL.quit
       call_blocks :during_shutdown, :after_shutdown
     end
 
     def sdl_video_mode_flags
       flags = SDL::OPENGL
-      flags |= SDL::FULLSCREEN if fullscreen
+      flags |= SDL::FULLSCREEN if options[:fullscreen]
 
       flags
     end
@@ -118,6 +151,8 @@ class DivinityEngine
             if options[:args].kind_of? Array then blk.call(*(options[:args][0...(blk.arity)]))
             else blk.call(options[:args])
             end
+          elsif blk.arity > 0
+            blk.call(self)
           else
             blk.call
           end
