@@ -40,14 +40,27 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
     else ys.concat [y.first, y.last]
     end
 
+    r = nil
     xs.each do |x|
       ys.each do |y|
+        r = @grid[x][y]
+        r.parent = nil if r
         @grid[x][y] = comp
       end
     end
+    r
   end
 
-  def remove_all_components; end
+  def remove_all_components
+    @grid.each_with_index do |arr, x|
+      arr.each_with_index do |comp, y|
+        if comp
+          comp.parent = nil
+          arr[y] = nil
+        end
+      end
+    end
+  end
   
   def layout_container(parent)
     insets = parent.insets
@@ -59,12 +72,26 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
     xpix -= hgap
     ypix -= vgap
     #bs = parent.border_size
-    previous = []
 
+    do_layout(xpix, ypix, parent)
+  end
+
+  def do_layout(xpix, ypix, parent)
+    insets = parent.insets
+    previous = []
     @grid.each_with_index do |arr, x|
       arr.each_with_index do |comp, y|
         if comp
-          b = Geometry::Rectangle.new(x*(xpix+hgap)+hgap+insets.x, y*(ypix+vgap)+vgap+insets.y, xpix, ypix)
+          min = comp.minimum_size
+          if xpix < min.width || ypix < min.height
+            # accommodate minimum size of component, and adjust other components to match
+            xpix = min.width if xpix < min.width
+            ypix = min.height if ypix < min.height
+            do_layout(xpix, ypix, parent)
+            return
+          end
+          
+          b = Geometry::Rectangle.new(x*(xpix+hgap)+hgap, y*(ypix+vgap)+vgap, xpix, ypix)
           if previous.include? comp
             comp.bounds = comp.bounds.union! b
           else
@@ -77,7 +104,7 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
 
     previous.each do |comp|
       raise "No room to lay out component #{comp.class} in container #{parent.class}" if comp and
-              (comp.width == 0 or comp.height == 0)
+              (comp.bounds.width == 0 or comp.bounds.height == 0)
     end
   end
 

@@ -17,8 +17,8 @@ class Interface::Components::Image < Interface::Components::Component
 
   def paint_background
     glColor4fv [1,1,1,1]
-    iw = width
-    ih = height
+    iw = insets.width
+    ih = insets.height
     if @maintain_aspect_ratio
       if iw < ih
         # scale height to match width
@@ -32,8 +32,8 @@ class Interface::Components::Image < Interface::Components::Component
     end
 
     # center image
-    ix = (width - iw) / 2
-    iy = (height - ih) / 2
+    ix = (insets.width - iw) / 2
+    iy = (insets.height - ih) / 2
 
     # show it
     background_texture.bind do

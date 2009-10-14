@@ -16,7 +16,22 @@ module Interface
     def GUI.focus(); @@focused; end
     def GUI.focus=(f); @@focused = f; end
     
-    def screen_bounds; b = self.bounds; if parent then p = parent.screen_bounds; b.x += p.x; b.y += p.y; end; b; end
+    def screen_bounds
+      b = self.bounds
+      if parent
+        p = parent.screen_insets
+        b.x += p.x
+        b.y += p.y
+      end
+      b
+    end
+
+    def screen_insets
+      b = self.screen_bounds
+      p = self.insets
+      Geometry::Rectangle.new(b.x+p.x, b.y+p.y, p.width, p.height)
+    end
+
     def visible?() visible; end
     def enabled?() enabled; end
     def background=(b); @background = b; self.invalidate; end
@@ -66,7 +81,7 @@ module Interface
     protected
     def parent=(p)
       @parent = p
-      @frame = p.frame
+      @frame = p.frame if p
       invalidate
     end
   end

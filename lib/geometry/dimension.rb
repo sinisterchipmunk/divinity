@@ -5,4 +5,8 @@ class Geometry::Dimension
     @width = w
     @height = h
   end
+
+  def to_a
+    [width, height]
+  end
 end

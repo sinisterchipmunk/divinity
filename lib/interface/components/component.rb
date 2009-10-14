@@ -1,17 +1,6 @@
-# NOTE that it is up to the individual Component implementation to take care of its own display lists!
-# Component#paint doesn't do anything, so having Component maintain its own lists, while preferable, would
-# lead to errors because Component can't decide whether or not *this* render pass is going to be the same
-# as all the others, or if some condition has changed to affect what is going to be rendered (for instance,
-# self.background_visible?)
-#
-# On the flip side, Component can (and does) take care of the display lists for #paint_background, because
-# this is something it can rely on without outside interference.
-#
-# If that was hard to follow, another reason Component can't manage all of its display lists is Container,
-# which is a Component that in turn holds other Components. If all of these were maintaining display lists
-# of each others', then there'd be big problems, including rendering nested children exponentially greater
-# number of times. Since Component has no concept of "children," it would be foolish (not to mention anti-OO)
-# to try to write special cases for all of them.
+# NOTE now that Component maintains its own background and border, it WILL maintain corresponding display
+# lists, but WILL NOT maintain a display list for foreground, which individual components must handle
+# on their own!
 #
 module Interface
   module Components
@@ -24,13 +13,17 @@ module Interface
 
       attr_reader :valid, :background_texture, :foreground_color, :insets
       attr_accessor :background_visible
-      delegate :width, :height, :to => :bounds
+
+      # Can't say with reliable accuracy any more whether width and height refer to bounds or insets.
+      # So, delegation removed, reference it directly.
+      #delegate :width, :height, :to => :bounds
       
       def initialize(options = {})
         super()
         @bounds = Geometry::Rectangle.new
         @valid = false
         @background_texture = Textures::RoundRectGenerator.new
+        @background_texture.update_listeners << self
         @background_visible = true
         @foreground_color = [ 0, 0, 0, 1 ]
         update_background_texture
@@ -55,13 +48,26 @@ module Interface
         end
       end
       
-      def invalidate(); @valid = false; end
+      def invalidate()
+        @valid = false
+        unless parent
+          ### this is not providing any noticeable benefit, and is significantly lowering framerate.
+          #@list.teardown! if @list
+          #@background_texture.free_resources if @background_texture
+        end
+      end
       
       def validate()
         @valid = true
-        @insets = Rectangle.new(3, 3, width - 3, height - 3)
+        @insets = Rectangle.new(3, 3, bounds.width - 6, bounds.height - 6)
         update_background_texture
-        #@background_list.rebuild! if @background_list
+
+        # update display list
+        if parent
+          if @list then @list.rebuild!
+          else @list = OpenGL::DisplayList.new { self.render_background }
+          end
+        end
       end
 
       def theme_selection
@@ -107,17 +113,17 @@ module Interface
       def preferred_size(); Dimension.new(64, 64) end
       def maximum_size(); Dimension.new(1024, 1024) end
       def view; @view; end
-
+      def valid?; @valid; end
+      def invalid?; not @valid; end
       def background_visible?; background_visible; end
 
       def scissor(*args, &block)
-        sb = screen_bounds
-        x, y, w, h, = (if args.length == 0 then [ sb.x, sb.y, sb.width, sb.height ]
+        x, y, w, h, = (if args.length == 0 then screen_bounds.to_a
         elsif args.length == 1
           b = args[0]
-          if b.kind_of? Rectangle then [ b.x + sb.x, b.y + sb.y, b.width, b.height ]
-          elsif b.kind_of? Array then [ b[0] + sb.x, b[1] + sb.y, b[2], b[3] ]
-          else [ b+sb.x, b+sb.y, b, b ]
+          if b.kind_of? Rectangle then b.to_a
+          elsif b.kind_of? Array then b
+          else [ b, b, b, b ]
           end
         else
           args

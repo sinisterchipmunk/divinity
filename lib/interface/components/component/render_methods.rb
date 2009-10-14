@@ -2,23 +2,34 @@ module Interface::Components::Component::RenderMethods
   def render
     b = bounds
     return unless visible? and b.height > 0 and b.width > 0
+
+    validate if not valid?
     push_matrix do
       push_attrib do
-        glColor4fv [1,1,1,1]
-        glTranslated( b.x,  b.y, 0)
-        scissor do
-          if background_visible?
-            paint_background
-            paint_border
-          end
+        if @list then @list.call
+        else render_background # this is not supposed to happen, render without lists and maybe it'll go away
         end
-        glTranslated(insets.x, insets.y, 0)
-        scissor insets do
+
+        scissor screen_insets do
           glColor4fv foreground_color
           paint
         end
       end
     end
+  end
+
+  def render_background
+    b = bounds
+    glColor4fv [1,1,1,1]
+    glTranslated( b.x,  b.y, 0)
+    scissor screen_bounds do
+      if background_visible?
+        paint_background
+        paint_border
+      end
+    end
+    # get in position for rendering foreground
+    glTranslated(insets.x, insets.y, 0)
   end
 
   def paint_border
@@ -47,6 +58,10 @@ module Interface::Components::Component::RenderMethods
   end
 
   def paint(); end
+
+  def texture_options_updated(tex)
+    invalidate
+  end
 
   def update_background_texture
     @foreground_color = theme[:foreground_color] if theme[:foreground_color]

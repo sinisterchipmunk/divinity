@@ -5,4 +5,8 @@ class Geometry::Point
     @x = x
     @y = y
   end
+
+  def to_a
+    [x,y]
+  end
 end

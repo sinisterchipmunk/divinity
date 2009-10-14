@@ -50,13 +50,16 @@ class Textures::Texture
   def bound?
     @bound != false
   end
-  
-  protected
+
+  # I had to make this public because I don't know whether Ruby deletes textures when garbage collecting.
+  # Better safe than sorry. 
   def free_resources
     glDeleteTextures(@id) if @id != -1
     @id = -1
     @bound = false
   end
+
+  protected
 
 #  #The size of the image, in the form of a Dimension.
 #  def size;  raise "Texture::size must be overridden.";  end

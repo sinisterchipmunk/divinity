@@ -13,7 +13,7 @@ class Interface::Components::Label < Interface::Components::InputComponent
   def paint
     l = (@label.blank? ? value : @label).to_s
     
-    Font.select.put((width - size.width) / 2, (height / 2) - (size.height / 2), l)
+    Font.select.put((insets.width - size.width) / 2, (insets.height / 2) - (size.height / 2), l)
   end
 
   def size

@@ -15,9 +15,18 @@ module Interface
       end
     
       def remove_layout_component(comp)
+        if cont.children.include? comp
+          comp.parent = nil
+          cont.children.delete comp
+        end
       end
 
-      def remove_all_components; end
+      def remove_all_components
+        cont.children.each do |child|
+          child.parent = nil
+        end
+        cont.children.clear
+      end
     
       def layout_container(cont)
         children = cont.children

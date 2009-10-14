@@ -69,7 +69,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
       check_caret_scroll
     end
 
-    if Font.select.sizeof(@value[0...@caret_position]).width - @scroll > width - ((border_size + padding) * 2)
+    if Font.select.sizeof(@value[0...@caret_position]).width - @scroll > insets.width
       @scroll += Font.select.max_glyph_size.width
       if @scroll > Font.select.sizeof(@value[0...@caret_position]).width
         @scroll = Font.select.sizeof(@value[0...@caret_position]).width

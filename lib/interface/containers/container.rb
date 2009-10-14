@@ -48,16 +48,14 @@ module Interface
       end
       
       def paint
-        push_matrix do
-          glTranslate(-insets.x, -insets.y, 0)
-          @children.each { |child| child.render }
-        end
+        @children.each { |child| child.render } if @children
       end
       
       def add(comp, constraints="")
         comp.parent = self
         comp.invalidate
-        @layout.add_layout_component(comp, constraints) if @layout
+        replacing = @layout.add_layout_component(comp, constraints) if @layout
+        replacing.parent = nil if replacing
         @children <<= comp
         self.invalidate
         comp

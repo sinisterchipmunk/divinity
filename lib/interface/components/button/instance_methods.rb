@@ -37,8 +37,8 @@ module Interface::Components::Button::InstanceMethods
     offset = @state * 2 # index 1 is "down", so offset the label by 2 pixels.
 
     size = font.sizeof(caption)
-    lx = (self.insets.width  - size.width)  / 2 + offset
-    ly = (self.insets.height - size.height) / 2 + offset
+    lx = (self.bounds.width  - size.width)  / 2 + offset
+    ly = (self.bounds.height - size.height) / 2 + offset
     font.put(lx, ly, caption)
   end
 end

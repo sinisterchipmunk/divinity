@@ -8,6 +8,10 @@ class Geometry::Rectangle
     @height = h
   end
 
+  def to_a
+    [x,y,width,height]
+  end
+
   def union(rect)
     Rectangle.new(@x, @y, @width, @height).union! rect
   end

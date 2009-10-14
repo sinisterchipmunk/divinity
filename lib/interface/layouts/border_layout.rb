@@ -25,15 +25,24 @@ module Interface
     
       def add_layout_component(comp, name="")
         name = name.to_s if name.kind_of? Symbol
-        @center = comp if name.downcase == "center"
-        @north  = comp if name.downcase == "north"
-        @south  = comp if name.downcase == "south"
-        @east   = comp if name.downcase == "east"
-        @west   = comp if name.downcase == "west"
+        name.downcase!
+        valid_constraints = [ "center", "north", "south", "east", "west" ]
+        case name
+          when *valid_constraints
+            ret = self.instance_variable_get("@#{name}")
+            self.instance_variable_set("@#{name}", comp)
+            ret.parent = nil if ret
+            ret
+          else
+            raise "Invalid constraints: #{name.inspect}; expected one of #{valid_constraints.inspect}"
+        end
       end
 
       def remove_all_components
-        @center = @north = @south = @east = @west = nil
+        [ :center, :north, :south, :east, :west ].each do |a|
+          r = add_layout_component(nil, a)
+          r.parent = nil if r.respond_to? "parent="
+        end
       end
     
       def remove_layout_component(comp)
@@ -77,7 +86,7 @@ module Interface
 
         [@north, @south, @east, @west, @center].each do |comp|
           raise "No room to lay out component #{comp} in container #{cont} (insets #{cont.insets.inspect})" if comp and
-                  (comp.width == 0 or comp.height == 0)
+                  (comp.bounds.width == 0 or comp.bounds.height == 0)
         end
       end
     

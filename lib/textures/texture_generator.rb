@@ -1,9 +1,12 @@
 class Textures::TextureGenerator < Textures::Texture
+  attr_reader :update_listeners
+
   @@generated_textures = HashWithIndifferentAccess.new
   def initialize(opt = HashWithIndifferentAccess.new)
     super()
     @surface = nil
     @options = opt
+    @update_listeners = []
   end
   
   def options=(opt)
@@ -14,6 +17,9 @@ class Textures::TextureGenerator < Textures::Texture
     if @options[s] != t
       @options[s] = t
       free_resources
+      @update_listeners.each do |ul|
+        ul.send :texture_options_updated, self if ul.respond_to? :texture_options_updated
+      end
     end
   end
 
@@ -80,17 +86,17 @@ class Textures::TextureGenerator < Textures::Texture
     super
   end
   
+  def free_resources
+    super
+    #SDL::FreeSurface(@surface)
+    @surface = nil
+  end
+
   protected
   def define_defaults(options); end
 
   def do_generation(options)
     raise "TextureGenerator::do_generation must be overridden. Should return an SDL_Surface."
-  end
-  
-  def free_resources
-    super
-    #SDL::FreeSurface(@surface)
-    @surface = nil
   end
   
   #def data
