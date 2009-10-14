@@ -26,6 +26,7 @@ class Interface::Components::RadioButton < Interface::Components::InputComponent
       background_texture.set_option :brightness, DOWN_SHADE
       @state = BUTTON_DOWN
     else
+      @state = BUTTON_UP
       option = NORM_SHADE
       option = OVER_SHADE if @mouse_state & MOUSE_OVER > 0
       if @mouse_state & MOUSE_DOWN > 0

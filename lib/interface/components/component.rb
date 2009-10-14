@@ -38,12 +38,13 @@ module Interface
       end
 
       def scissor(*args, &block)
-        x, y, w, h, = (if args.length == 0 then [ bounds.x, bounds.y, bounds.width, bounds.height ]
+        sb = screen_bounds
+        x, y, w, h, = (if args.length == 0 then [ sb.x, sb.y, sb.width, sb.height ]
         elsif args.length == 1
           b = args[0]
-          if b.kind_of? Rectangle then [ b.x + bounds.x, b.y + bounds.y, b.width, b.height ]
-          elsif b.kind_of? Array then [ b[0] + bounds.x, b[1] + bounds.y, b[2], b[3] ]
-          else [ b+bounds.x, b+bounds.y, b, b ] 
+          if b.kind_of? Rectangle then [ b.x + sb.x, b.y + sb.y, b.width, b.height ]
+          elsif b.kind_of? Array then [ b[0] + sb.x, b[1] + sb.y, b[2], b[3] ]
+          else [ b+sb.x, b+sb.y, b, b ]
           end
         else
           args
@@ -52,6 +53,7 @@ module Interface
         # Invert y for GUIness
         # After it's inverted, it'll be at the top-left instead of the bottom-left; height still goes upward
         # so we need to translate it down by adding height.
+        # TODO: Should this math be turned into a convenient helper method somewhere?
         y = frame_manager.height - (y + h)
         frame_manager.scissor x, y, w, h, &block
       end

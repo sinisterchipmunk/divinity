@@ -1,6 +1,6 @@
 class Interface::Components::TextField < Interface::Components::InputComponent
   theme_selection :text
-  attr_reader :font_options, :padding
+  attr_reader :font_options, :padding, :printable_area
   attr_accessor :color
   attr_accessor :caret_position
 
@@ -15,7 +15,15 @@ class Interface::Components::TextField < Interface::Components::InputComponent
 
     key_listeners << self
 
+    @printable_area = Rectangle.new
     yield if block_given?
+  end
+
+  def validate
+    super
+    b = border_size + padding
+    @printable_area.x, @printable_area.y = b, b
+    @printable_area.width, @printable_area.height = width - (b * 2), height - (b * 2)
   end
 
   def key_pressed(evt)
@@ -75,31 +83,33 @@ class Interface::Components::TextField < Interface::Components::InputComponent
   def paint
     #self.value = self.value.to_s unless self.value.kind_of? String
     paint_background
-    glColor4fv(foreground_color)
-    leftmost = border_size + padding
-    rightmost = width - ((border_size + padding) * 2)
-    b = screen_bounds
-
-    scissor b.x+leftmost, frame_manager.height - b.y - b.height + border_size + padding, rightmost,
-            b.height+1-border_size-padding do
-
-      glTranslated(-@scroll, 0, 0)
-      Font.select.put(leftmost, (height / 2) - (size.height / 2), value)
-
-      if Interface::GUI.focus == self
-        x = Font.select(font_options).sizeof(value[0...caret_position]).width + leftmost
+    push_attrib do
+      push_matrix do
         glColor4fv(foreground_color)
-        glDisable(GL_TEXTURE_2D)
-        glBegin(GL_LINES)
-          glVertex2i(x, border_size + padding)
-          glVertex2i(x, height - border_size - padding)
-        glEnd
-        glEnable(GL_TEXTURE_2D)
+        scissor printable_area do
+          glTranslated(-@scroll + printable_area.x + 1, printable_area.y, 0)
+          paint_text
+          paint_cursor
+        end
       end
-      glTranslated(@scroll, 0, 0)
-
-      glColor4f(1,1,1,1)
     end
+  end
+
+  def paint_text
+    Font.select.put(0, (printable_area.height / 2) - (size.height / 2), value)
+  end
+
+  def paint_cursor
+    return unless Interface::GUI.focus == self
+    s = Font.select(font_options).sizeof(value[0...caret_position])
+    x = s.width
+    glColor4fv(foreground_color)
+    glDisable(GL_TEXTURE_2D)
+    glBegin(GL_LINES)
+      glVertex2i(x, (printable_area.height / 2) - (font.height / 2))
+      glVertex2i(x, (printable_area.height / 2) - (font.height / 2) + font.height)
+    glEnd
+    glEnable(GL_TEXTURE_2D)
   end
 
   def size
