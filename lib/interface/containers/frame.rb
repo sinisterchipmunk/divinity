@@ -5,7 +5,8 @@ module Interface
       attr_accessor :pinned
       attr_accessor :frame_manager#, :always_on_top, :always_on_bottom
       attr_reader :root_panel, :title_bar
-      delegate :background_visible, :remove_all_components, :to => :root_panel
+      delegate :remove_all_components, :to => :root_panel
+      theme_selection :primary
       
       alias _add add
 
@@ -15,7 +16,7 @@ module Interface
         caption = args[0] || "Untitled Frame"
         super(Interface::Layouts::BorderLayout.new(0,0))
 
-        self.background_visible = false
+        self.background_visible = true
         self.layout = options[:layout] if options.key? :layout
         @title_bar = Interface::Components::TitleBar.new(caption) if options[:title_bar]
         @pinned = options[:pinned]
@@ -46,6 +47,7 @@ module Interface
       def layout=(l)
         unless @root_panel
           @root_panel = Interface::Containers::Panel.new(l)
+          #@root_panel.background_visible = true
           _add(root_panel, "Center")
         else
           root_panel.layout = l

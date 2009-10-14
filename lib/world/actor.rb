@@ -29,6 +29,14 @@ class World::Actor < Resources::Content
     # would probably fire something here to check for level-up / level-down
   end
 
+  def attribute_string
+    ATTRIBUTES.collect { |a| "#{abbreviated_attribute a}: #{self.send a} / #{ability_bonus(a)}" }.join("\n")
+  end
+
+  def abbreviated_attribute(name)
+    name.to_s[0...3]
+  end
+
   def attributes
     ATTRIBUTES.collect { |a| self.send(a) }
   end

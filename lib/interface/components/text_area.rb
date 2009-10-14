@@ -137,7 +137,7 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
   end
 
   def preferred_size
-    font.sizeof(@text_to_render)
+    font.sizeof(self.value.to_s)
   end
 
   def maximum_size

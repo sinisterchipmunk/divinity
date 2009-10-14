@@ -56,10 +56,29 @@ module Interface
           #@background_texture.free_resources if @background_texture
         end
       end
+
+      def size_with_insets(dimension)
+        # Insets are hard coded to 3 pixels right now.
+        # TODO: Make this customizable.
+        dimension.width  += inset_amount(:left) + inset_amount(:right)
+        dimension.height += inset_amount(:top)  + inset_amount(:bottom)
+        dimension
+      end
+
+      def inset_amount(direction)
+        return 0 unless background_visible?
+        case direction
+          when :left, :right, :top, :bottom then 3
+          when :north, :south, :east, :west then 3
+          else raise "Invalid direction: #{direction}"
+        end
+      end
       
       def validate()
         @valid = true
-        @insets = Rectangle.new(3, 3, bounds.width - 6, bounds.height - 6)
+        @insets = Rectangle.new(inset_amount(:left), inset_amount(:top),
+                                bounds.width  - (inset_amount(:left)+inset_amount(:right)),
+                                bounds.height - (inset_amount(:top)+inset_amount(:bottom)))
         update_background_texture
 
         # update display list

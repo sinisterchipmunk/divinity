@@ -1,7 +1,6 @@
 interface :attributes do
   panel :west do
-    layout :grid, 1, 3
-    partial :char_info, [0, 0]
+    partial :char_info_sm, :center
   end
 
   panel :center do

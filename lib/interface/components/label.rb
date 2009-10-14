@@ -20,7 +20,7 @@ class Interface::Components::Label < Interface::Components::InputComponent
     font.sizeof((@label.blank? ? value : @label).to_s)
   end
 
-  def minimum_size; size end
-  def maximum_size; size end
-  def preferred_size; size end
+  def minimum_size; size_with_insets(size) end
+  def maximum_size; size_with_insets(size) end
+  def preferred_size; size_with_insets(size) end
 end

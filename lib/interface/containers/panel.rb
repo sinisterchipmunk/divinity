@@ -5,6 +5,7 @@ module Interface
 
       def initialize(layout=Interface::Layouts::FlowLayout.new, &blk)
         super(layout, &blk)
+        self.background_visible = false
       end
     end
   end

@@ -2,10 +2,12 @@ module Interface
   module Layouts
     class FlowLayout < Layout
       include Geometry
-      attr_accessor :align, :hgap, :vgap
+      attr_accessor :align, :hgap, :vgap, :flow
       
-      def initialize(align=Alignment.CENTER, hgap=5, vgap=5)
+      def initialize(flow=:normal, align=:center, hgap=5, vgap=5)
         super()
+        raise "Expected flow type :vertical, :horizontal or :normal" unless [:vertical,:horizontal,:normal].include? flow
+        @flow = flow
         @align = align
         @hgap = hgap
         @vgap = vgap
@@ -37,13 +39,14 @@ module Interface
         y = insets.y + vgap
         rowh = 0
         start = 0
+
         ltr = true #TODO: Make this based on component orientation
         0.upto(size-1) do |i|
           child = children[i]
           if child.visible?
             d = child.preferred_size
             child.size = d
-            if x == insets.x || (x + d.width) <= maxwidth
+            if (x == insets.x || (x + d.width) <= maxwidth || flow == :horizontal) and flow != :vertical
               x += hgap if x > insets.x
               x += d.width
               rowh = rowh > d.height ? rowh : d.height
@@ -88,11 +91,11 @@ module Interface
         #width -= target.border_size
         #height -= target.border_size
         case @align
-          when Alignment.LEFT then x += ltr ? 0 : width
-          when Alignment.CENTER then x += (width / 2)
-          when Alignment.RIGHT then x += ltr ? width : 0
-          when Alignment.LEADING then ;
-          when Alignment.TRAILING then x += width
+          when :left then x += ltr ? 0 : width
+          when :center then x += (width / 2)
+          when :right then x += ltr ? width : 0
+          when :leading then ;
+          when :trailing then x += width
         end
         
         size = target.children.length

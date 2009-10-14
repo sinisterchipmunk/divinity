@@ -10,19 +10,19 @@ class Interface::Builder
     @block = block
   end
 
-  def panel(constraints, &block)
+  def panel(constraints = nil, &block)
     p = Interface::Containers::Panel.new
     self.class.new(&block).apply_to(@engine, p) if block_given?
     component.add(p, constraints)
   end
 
-  def scroll_panel(constraints, &block)
+  def scroll_panel(constraints = nil, &block)
     p = Interface::Containers::ScrollPanel.new
     self.class.new(&block).apply_to(@engine, p) if block_given?
     component.add p, constraints
   end
 
-  def partial(interface_name, constraints, &block)
+  def partial(interface_name, constraints = nil, &block)
     p = Interface::Containers::Panel.new(Interface::Layouts::BorderLayout.new, &block)
     builder = @engine.find_interface(interface_name)
     builder.apply_to(@engine, p)
@@ -54,7 +54,7 @@ class Interface::Builder
     @component.add img, constraints
   end
 
-  def image_selector(object, method, images, constraints, options = { }, &block)
+  def image_selector(object, method, images, constraints = nil, options = { }, &block)
     img = Interface::Components::ImageSelector.new(images, object, method, options, &block)
     @component.add img, constraints
   end

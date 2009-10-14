@@ -30,15 +30,15 @@ module Interface::Components::Button::InstanceMethods
   end
 
   def preferred_size
-    Geometry::Dimension.new(font.width(caption) + 10, font.height + 10)
+    size_with_insets Geometry::Dimension.new(font.width(caption) + 10, font.height + 10)
   end
 
   def paint(i = nil)
     offset = @state * 2 # index 1 is "down", so offset the label by 2 pixels.
 
     size = font.sizeof(caption)
-    lx = (self.bounds.width  - size.width)  / 2 + offset
-    ly = (self.bounds.height - size.height) / 2 + offset
+    lx = (self.insets.width  - size.width)  / 2 + offset
+    ly = (self.insets.height - size.height) / 2 + offset
     font.put(lx, ly, caption)
   end
 end
