@@ -24,7 +24,7 @@ interface :attributes do
 
     panel [1, rows+1] do
       layout :grid, 2, 1
-      button :back, :constraints => [0, 0], :action => :new_game
+      button :back, :constraints => [0, 0], :action => :char_info
       button :continue, :constraints => [1, 0], :action => :race
     end
   end

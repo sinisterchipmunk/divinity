@@ -11,27 +11,34 @@ interface :race do
   end
 
   panel :center do
-    layout :grid, 3, 12
-    label nil, :target => actor(:player), :method => "race.name", :constraints => [1,2]
-    text_area actor(:player), "race.description", :constraints => [ 1, 3..4 ]
+    layout :grid, 12, 12
+    panel [2..9,2..9] do
+      layout :border
+      label nil, :target => actor(:player), :method => "race.name", :constraints => :north
 
-    img = nil
-    if File.exist? "data/races/#{actor(:player).sex}_#{actor(:player).race.name}.jpg"
-      img = (image "data/races/#{actor(:player).sex}_#{actor(:player).race.name}.jpg", :constraints => [1, 5..7])
+      panel :center do
+        layout :grid, 2, 1
+        x = 0..1
+
+        img = nil
+        file = "data/races/#{actor(:player).race.name}_#{actor(:player).sex}.jpg"
+        if File.exist? file
+          x = 0
+          img = (image file, :constraints => [1, 0])
+         end
+        text_area actor(:player), "race.description", :constraints => [ x, 0 ]
+      end
+
+      panel :south do
+        layout :grid, 2, 2
+        button :previous_class, :constraints => [0,0], :action =>
+                (proc { actor(:player).race = races.values[(current_race_index -= 1) % -races.values.length] })
+        button :next_class,     :constraints => [1,0], :action =>
+                (proc { actor(:player).race = races.values[(current_race_index += 1) %  races.values.length] })
+
+        button :back, :constraints => [0,1], :action => :attributes
+        button :continue,     :constraints => [1,1], :action => :character_class
+      end
     end
-
-    panel [1, 8] do
-      layout :grid, 2, 1
-      button :previous_class, :constraints => [0,0], :action =>
-              (proc { actor(:player).race = races.values[(current_race_index -= 1) % -races.values.length] })
-      button :next_class,     :constraints => [1,0], :action =>
-              (proc { actor(:player).race = races.values[(current_race_index += 1) %  races.values.length] })
-    end
-
-    panel [1, 9] do
-      layout :grid, 2, 1
-      button :back, :constraints => [0,0], :action => :attributes
-      button :continue,     :constraints => [1,0], :action => :character_class
-    end  
   end
 end

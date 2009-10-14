@@ -30,7 +30,11 @@ class World::Actor < Resources::Content
   end
 
   def attribute_string
-    ATTRIBUTES.collect { |a| "#{abbreviated_attribute a}: #{self.send a} / #{ability_bonus(a)}" }.join("\n")
+    ATTRIBUTES.collect do |a|
+      b = ability_bonus(a)
+      b = "+#{b}" if b >= 0
+      "#{abbreviated_attribute a}: #{self.send a} (#{b})"
+    end.join("\n")
   end
 
   def abbreviated_attribute(name)
