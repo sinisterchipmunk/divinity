@@ -11,8 +11,11 @@ module Interface
         process_block &blk if block_given?
       end
 
-      def render(x = false)
-        super(true)
+      def render_foreground
+        # since containers have no foreground except for children, there's no reason to scissor them (children
+        # will be scissored again). Same with pushing matrices and attributes.
+        paint
+        glTranslated(-(insets.x+bounds.x), -(insets.y+bounds.y), 0)
       end
 
       def parent=(a)

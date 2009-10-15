@@ -31,6 +31,10 @@ module Interface
         options.each { |k,v| self.send("#{k}=", v) }
       end
 
+      def display_list
+        @list
+      end
+
       def update(time)
         return unless enabled?
         cur = size
