@@ -32,7 +32,7 @@ module Interface
       
       def mouse_dragged(evt)
         unless pinned
-          bounds = self.bounds
+          bounds = self.bounds.dup
           bounds.x += evt.xrel
           bounds.y += evt.yrel
           self.bounds = bounds

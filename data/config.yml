@@ -1,5 +1,5 @@
 --- !map:HashWithIndifferentAccess 
-fullscreen: false
+fullscreen: true
 height: 600
 color_depth: 32
 clear_on_render: 16640

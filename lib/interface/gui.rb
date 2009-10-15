@@ -2,7 +2,7 @@ module Interface
   module GUI
     @@focused = nil
     attr_accessor :visible, :enabled, :mouse_listeners, :key_listeners
-    attr_reader :background, :parent
+    attr_reader :background, :parent, :valid
       
     def initialize
       @visible = true
@@ -12,24 +12,44 @@ module Interface
       @mouse_listeners = [ ]
       @key_listeners = [ ]
     end
-    
+
+    def validate
+      @valid = true
+      @screen_bounds = nil# we buffer this so that we're not duping self.bounds every frame
+      @screen_insets = nil 
+    end
+
+    def invalidate
+      @valid = false
+    end
+
+    def valid?
+      @valid
+    end
+
     def GUI.focus(); @@focused; end
     def GUI.focus=(f); @@focused = f; end
     
     def screen_bounds
-      b = self.bounds
-      if parent
-        p = parent.screen_insets
-        b.x += p.x
-        b.y += p.y
+      if @screen_bounds.nil?
+        @screen_bounds = self.bounds.dup
+        if parent
+          p = parent.screen_insets
+          @screen_bounds.x += p.x
+          @screen_bounds.y += p.y
+        end
       end
-      b
+      @screen_bounds
     end
 
     def screen_insets
-      b = self.screen_bounds
-      p = self.insets
-      Geometry::Rectangle.new(b.x+p.x, b.y+p.y, p.width, p.height)
+      if @screen_insets.nil?
+        @screen_insets = self.screen_bounds
+        p = self.insets
+        @screen_insets.x, @screen_insets.y, @screen_insets.width, @screen_insets.height =
+                @screen_insets.x+p.x, @screen_insets.y+p.y, p.width, p.height
+      end
+      @screen_insets
     end
 
     def visible?() visible; end

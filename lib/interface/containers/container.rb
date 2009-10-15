@@ -11,6 +11,10 @@ module Interface
         process_block &blk if block_given?
       end
 
+      def render(x = false)
+        super(true)
+      end
+
       def parent=(a)
         super
         @children.each do |ch|

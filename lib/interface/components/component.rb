@@ -35,7 +35,6 @@ module Interface
         return unless enabled?
         cur = size
         min = minimum_size
-        invalidate if cur.width < min.width or cur.height < min.height
         validate if not valid
       end
 
@@ -60,6 +59,7 @@ module Interface
       def size_with_insets(dimension)
         # Insets are hard coded to 3 pixels right now.
         # TODO: Make this customizable.
+        dimension = dimension.dup
         dimension.width  += inset_amount(:left) + inset_amount(:right)
         dimension.height += inset_amount(:top)  + inset_amount(:bottom)
         dimension
@@ -75,6 +75,7 @@ module Interface
       end
       
       def validate()
+        super
         @valid = true
         @insets = Rectangle.new(inset_amount(:left), inset_amount(:top),
                                 bounds.width  - (inset_amount(:left)+inset_amount(:right)),
@@ -82,10 +83,8 @@ module Interface
         update_background_texture
 
         # update display list
-        if parent
-          if @list then @list.rebuild!
-          else @list = OpenGL::DisplayList.new { self.render_background }
-          end
+        if @list then @list.rebuild!
+        else @list = OpenGL::DisplayList.new { self.render_background }
         end
       end
 
@@ -98,25 +97,34 @@ module Interface
       end
 
       def size=(s)
+        w, h = @bounds.width, @bounds.height
         if s.kind_of? Array then @bounds.width, @bounds.height = s
         elsif s.kind_of? Dimension then @bounds.width, @bounds.height = s.width, s.height
         else raise "Expected an Array or a Dimension"
         end
-        self.invalidate
+        self.invalidate if @bounds.width != w or @bounds.height != h
       end
 
       def location=(l)
+        x, y = @bounds.x, @bounds.y
         if l.kind_of? Array then @bounds.x, @bounds.y = l
         elsif l.kind_of? Point then @bounds.x, @bounds.y = l.x, l.y
         else raise "Expected an Array or a Point"  
         end
-        self.invalidate
+        self.invalidate if @bounds.x != x || @bounds.y != y
       end
 
       def size(); Dimension.new(@bounds.width, @bounds.height); end
       def location(); Point.new(@bounds.x, @bounds.y); end
-      def bounds=(b); @bounds.x = b.x; @bounds.y = b.y; @bounds.width = b.width; @bounds.height = b.height; self.invalidate; end
-      def bounds(); @bounds.clone; end
+      def bounds=(b)
+        if @bounds.to_a != b.to_a
+          @bounds.x, @bounds.y, @bounds.width, @bounds.height = b.x, b.y, b.width, b.height
+          self.invalidate
+        end
+      end
+      def bounds()
+        @bounds
+      end
 
       def contains?(point)
         visible? and

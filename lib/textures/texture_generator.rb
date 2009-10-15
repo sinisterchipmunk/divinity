@@ -40,7 +40,7 @@ class Textures::TextureGenerator < Textures::Texture
       else
         v = v.inspect
       end
-      "#{k}=#{v}"
+      "#{v}-"
     end
     "#{self.class.name.underscore}-#{key.join(".")}".gsub(/[^a-zA-Z0-9\.\-_\[\]\=\+\^\\\/]/, '')
   end
@@ -48,6 +48,7 @@ class Textures::TextureGenerator < Textures::Texture
   def generate
     define_defaults(@options)
     if not @surface.nil?
+      # should consider not doing this, if we want to keep the cached copy in GL memory
       free_resources
     end
     if @@generated_textures[cache_key]

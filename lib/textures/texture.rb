@@ -3,15 +3,25 @@ class Textures::Texture
   include Magick
   include ::Geometry
   
-  attr_reader :id
+  def id
+    @id
+    #@ids[surface] || -1
+  end
+
+  def id=(a)
+    @id = a
+    #@ids[surface] = a
+    #@ids.delete surface if a == -1 or a.nil?
+  end
   
   def initialize
     @id = -1
+    #@ids = {}
     @bound = false
   end
   
   def bind
-    if @id == -1 or @id.nil?
+    if id.nil? or id == -1
       bpp = surface.format.bpp / 8
       case bpp
         when 3
@@ -21,17 +31,17 @@ class Textures::Texture
         else
           raise "Texture is not true color"
       end
-      @id = glGenTextures(1)[0]
+      self.id = glGenTextures(1)[0]
       glEnable(GL_TEXTURE_2D)
-      glBindTexture(GL_TEXTURE_2D, @id)
+      glBindTexture(GL_TEXTURE_2D, id)
       glTexImage2D(GL_TEXTURE_2D, 0, bpp, surface.w, surface.h, 0, @format, GL_UNSIGNED_BYTE, surface.pixels)
       gluBuild2DMipmaps(GL_TEXTURE_2D, bpp, surface.w, surface.h, @format, GL_UNSIGNED_BYTE, surface.pixels)
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
       glEnable(GL_TEXTURE_2D)
     end
-    @bound = @id
-    glBindTexture(GL_TEXTURE_2D, @id)
+    @bound = id
+    glBindTexture(GL_TEXTURE_2D, id)
     if block_given?
       yield
       unbind
@@ -54,8 +64,8 @@ class Textures::Texture
   # I had to make this public because I don't know whether Ruby deletes textures when garbage collecting.
   # Better safe than sorry. 
   def free_resources
-    glDeleteTextures(@id) if @id != -1
-    @id = -1
+    glDeleteTextures(id) if id and id != -1
+    self.id = -1
     @bound = false
   end
 

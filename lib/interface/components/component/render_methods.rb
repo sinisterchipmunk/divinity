@@ -1,20 +1,22 @@
 module Interface::Components::Component::RenderMethods
-  def render
+  def render(push = true)
     b = bounds
     return unless visible? and b.height > 0 and b.width > 0
+    validate unless valid?
 
-    validate if not valid?
-    push_matrix do
-      push_attrib do
-        if @list then @list.call
-        else render_background # this is not supposed to happen, render without lists and maybe it'll go away
-        end
-
-        scissor screen_insets do
-          glColor4fv foreground_color
-          paint
-        end
+    block = proc do
+      if @list then @list.call
+      else render_background # this is not supposed to happen, render without lists and maybe it'll go away
       end
+
+      scissor screen_insets do
+        glColor4fv foreground_color
+        paint
+      end
+    end
+
+    if push then push_matrix { push_attrib &block }
+    else block.call
     end
   end
 
@@ -27,9 +29,9 @@ module Interface::Components::Component::RenderMethods
         paint_background
         paint_border
       end
+      # get in position for rendering foreground
+      glTranslated(insets.x, insets.y, 0)
     end
-    # get in position for rendering foreground
-    glTranslated(insets.x, insets.y, 0)
   end
 
   def paint_border

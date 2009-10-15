@@ -93,7 +93,7 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
           
           b = Geometry::Rectangle.new(x*(xpix+hgap)+hgap, y*(ypix+vgap)+vgap, xpix, ypix)
           if previous.include? comp
-            comp.bounds = comp.bounds.union! b
+            comp.bounds.union! b
           else
             comp.bounds = b
             previous << comp
