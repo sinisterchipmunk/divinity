@@ -16,6 +16,12 @@ class Interface::Builder
     component.add(p, constraints)
   end
 
+  def flip_panel(constraints = nil, &block)
+    p = Interface::Containers::FlipPanel.new
+    self.class.new(&block).apply_to(@engine, p) if block_given?
+    component.add p, constraints
+  end
+
   def scroll_panel(constraints = nil, &block)
     p = Interface::Containers::ScrollPanel.new
     self.class.new(&block).apply_to(@engine, p) if block_given?
@@ -82,7 +88,7 @@ class Interface::Builder
     constraints = options.delete :constraints
     builder = self.class.new(action).apply_to(@engine, b)
     options.each { |k,v| builder.send("#{k}=", v)}
-    b.action_listeners << builder
+    b.on :action_performed do @engine.fire_interface_action(builder.action) end
     @component.add b, constraints
   end
 
@@ -104,10 +110,6 @@ class Interface::Builder
     @component = component
     instance_eval &@block if @block
     self
-  end
-
-  def action_performed(event)
-    @engine.fire_interface_action(@action)
   end
 
   def respond_to?(*args, &block)

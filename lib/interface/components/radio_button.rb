@@ -12,13 +12,9 @@ class Interface::Components::RadioButton < Interface::Components::InputComponent
     super(object, method, options)
     caption = options[:caption] || value.to_s.titleize
     init_variables(caption)
-    self.action_listeners << self
+    on :action_performed do self.value = button_value end
     
     yield if block_given?
-  end
-
-  def action_performed(evt)
-    self.value = button_value
   end
 
   def update(delta)

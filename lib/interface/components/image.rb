@@ -17,23 +17,25 @@ class Interface::Components::Image < Interface::Components::Component
 
   def paint_background
     glColor4fv [1,1,1,1]
-    iw = insets.width
-    ih = insets.height
+    rect = bounds.dup
+    rect.x = rect.y = 0
+
+    iw = rect.width
+    ih = rect.height
     if @maintain_aspect_ratio
-      if iw < ih
-        # scale height to match width
-        r = @image.height.to_f / @image.width.to_f
-        ih = (iw * r).floor
+      maxr = rect.width.to_f / rect.height.to_f
+      imgr = @image.width.to_f / @image.height.to_f
+      if (imgr > maxr)
+        ih = @image.height.to_f / (@image.width.to_f / rect.width.to_f)
       else
-        # scale width to match height
-        r = @image.width.to_f / @image.height.to_f
-        iw = (ih * r).floor
+        iw = @image.width.to_f / (@image.height.to_f / rect.height.to_f)
       end
+      ih, iw = ih.floor, iw.floor
     end
 
     # center image
-    ix = (insets.width - iw) / 2
-    iy = (insets.height - ih) / 2
+    ix = (rect.width  - iw) / 2
+    iy = (rect.height - ih) / 2
 
     # show it
     background_texture.bind do

@@ -31,7 +31,7 @@ interface :race do
       end
 
       panel :south do
-        layout :grid, 2, 2
+        layout :grid, 2, 1
         button :previous_class, :constraints => [0,0], :action => (proc do
           actor(:player).race = races.values[(current_race_index -= 1) % -races.values.length]
 
@@ -45,10 +45,13 @@ interface :race do
           file = "data/races/#{actor(:player).race.name}_#{actor(:player).sex}.jpg"
           img.path = file if File.exist? file and img
         end)
-
-        button :back, :constraints => [0,1], :action => :attributes
-        button :continue,     :constraints => [1,1], :action => :character_class
       end
     end
+  end
+
+  panel :south do
+    layout :grid, 2, 1
+    button :back, :constraints => [0,0], :action => :attributes
+    button :continue,     :constraints => [1,0], :action => :character_class
   end
 end

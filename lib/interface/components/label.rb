@@ -5,6 +5,7 @@ class Interface::Components::Label < Interface::Components::InputComponent
   def initialize(label, options = {}, &block)
     super(options.delete(:target), options.delete(:method), options)
     @label = (label.blank? ? value : label).to_s
+    on :value_changed do value_changed end
     size
 
     yield if block_given?

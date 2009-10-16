@@ -35,7 +35,7 @@ class Interface::Components::InputComponent < Interface::Components::Component
     super
     if self.value != @last_value # value has changed, update the target
       @last_value = self.value
-      self.value_changed if self.respond_to? :value_changed
+      fire_event :value_changed
     end
   end
 end

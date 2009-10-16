@@ -58,27 +58,36 @@ module Interface
       def layout_container(cont)
         #bool ltr = true  #TODO: Make this do stuff.
         buf = cont.insets.dup
+        buf.x, buf.y = 0, 0
+        nx = (@west ? 1 : 0) + (@center ? 1 : 0) + (@east ? 1 : 0)
+        ny = (@north ? 1 : 0) + (@center ? 1 : 0) + (@south ? 1 : 0)
+        mx = (buf.width  - (@hgap * (nx-1))) / nx
+        my = (buf.height - (@vgap * (ny-1))) / ny
         #buf = Rectangle.new(border_size, border_size, cont.bounds.width-border_size, cont.bounds.height-border_size)
 
         if @north
           b = @north.preferred_size
-          @north.bounds = Rectangle.new(buf.x, buf.y, buf.width - buf.x, b.height)
-          buf.y += b.height + @vgap
+          h = min(b.height, my)
+          @north.bounds = Rectangle.new(buf.x, buf.y, buf.width - buf.x, h)
+          buf.y += h + @vgap
         end
         if @south
           b = @south.preferred_size
-          @south.bounds = Rectangle.new(buf.x, buf.height - b.height, buf.width - buf.x, b.height)
-          buf.height -= b.height + @vgap
+          h = min(b.height, my)
+          @south.bounds = Rectangle.new(buf.x, buf.height - h, buf.width - buf.x, h)
+          buf.height -= h + @vgap
         end
         if @east
           b = @east.preferred_size
-          @east.bounds = Rectangle.new(buf.width - b.width, buf.y, b.width, buf.height - buf.y)
-          buf.width -= b.width + @hgap
+          w = min(b.width, mx)
+          @east.bounds = Rectangle.new(buf.width - w, buf.y, w, buf.height - buf.y)
+          buf.width -= w + @hgap
         end
         if @west
           b = @west.preferred_size
-          @west.bounds = Rectangle.new(buf.x, buf.y, b.width, buf.height - buf.y)
-          buf.x += b.width + @hgap
+          w = min(b.width, mx)
+          @west.bounds = Rectangle.new(buf.x, buf.y, w, buf.height - buf.y)
+          buf.x += w + @hgap
         end
         if @center
           @center.bounds = Rectangle.new(buf.x, buf.y, buf.width - buf.x, buf.height - buf.y)
@@ -93,6 +102,7 @@ module Interface
       protected
       def layout_size(cont, &blk)
         dim = Dimension.new
+
         #bool ltr = true #TODO: Make this work.
         [@east, @west].each do |comp|
           if not comp.nil?
@@ -120,6 +130,7 @@ module Interface
       
       private
       def max(a, b); a > b ? a : b; end
+      def min(a, b); a > b ? b : a; end
     end
   end
 end

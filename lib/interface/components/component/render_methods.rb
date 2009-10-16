@@ -12,23 +12,25 @@ module Interface::Components::Component::RenderMethods
   end
 
   def render_foreground
-    scissor screen_insets do
-      paint
+    push_matrix do
+      scissor screen_insets do
+        paint
+      end
     end
     glTranslated(-(insets.x+bounds.x), -(insets.y+bounds.y), 0)
-    glColor4fv [1,1,1,1]
+    #glColor4fv [1,1,1,1]
   end
 
   def render_background
     b = bounds
     glColor4fv [1,1,1,1]
     glTranslated( b.x,  b.y, 0)
-    #scissor screen_bounds do
+    scissor screen_bounds do
       if background_visible?
         paint_background
         paint_border
       end
-    #end
+    end
     # get in position for rendering foreground
     glTranslated(insets.x, insets.y, 0)
     glColor4fv foreground_color

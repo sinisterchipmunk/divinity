@@ -16,4 +16,12 @@ class Resources::Content
 
   def revert_to_defaults!
   end
+
+  def respond_to?(*args, &block)
+    super or engine.respond_to? *args, &block
+  end
+
+  def method_missing(*args, &block)
+    engine.send(*args, &block)
+  end
 end

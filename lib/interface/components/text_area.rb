@@ -1,7 +1,5 @@
 # Note: This TextArea is not editable yet.
 class Interface::Components::TextArea < Interface::Components::InputComponent
-  include Listeners::KeyListener
-  include Listeners::MouseListener
   theme_selection :text
   attr_accessor :caret_offset
   attr_reader :read_only, :scroll
@@ -33,8 +31,9 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
     @read_only = true
     @text_to_render = value_changed
     @scroll = 0
-    key_listeners << self
-    mouse_listeners << self
+    on :key_pressed do |e| key_pressed(e) end
+    on :mouse_pressed do |e| mouse_pressed(e) end
+    on :value_changed do value_changed end
   end
 
   def paint

@@ -1,5 +1,5 @@
 class World::Character::CharacterClass < Resources::Content
-  random_access_attr :hit_die, :class_skills, :skill_points, :base_attack_type
+  random_access_attr :hit_die, :skill_points, :base_attack_type, :base_attack_bonus
 
   def revert_to_defaults!
     name id.to_s.titleize
@@ -9,14 +9,46 @@ class World::Character::CharacterClass < Resources::Content
     @primary_saving_throws = []
     @proficient_with = []
     @level_blocks = []
+    @languages = []
+    @bonus_languages = []
+  end
+
+  # Returns a String containing a human-readable summary of this class's attributes
+  def summary
+    <<-end_summary
+Base attack type: #{base_attack_type}
+Hit die: #{hit_die}
+Skill points: #{skill_points}
+Proficiencies:\n\s\s#{proficient_with.collect { |p| p.to_s.titleize }.join("\n\s\s")}
+Bonus languages: #{bonus_languages.empty? ? "None" : bonus_languages.join("; ")}
+    end_summary
+  end
+
+  def class_skills(*args)
+    #TODO: Support options.
+    @class_skills ||= []
+    args.each { |i| @class_skills << i unless @class_skills.include? i }
+    @class_skills
   end
 
   def levels(&block)
     @level_blocks << block if block_given?
   end
 
+  def languages(*languages)
+    @languages.concat languages
+  end
+
+  def bonus_languages(*l)
+    @bonus_languages.concat l
+  end
+
   def proficient_with(*items)
     @proficient_with.concat items
+  end
+
+  def not_proficient_with(*items)
+    @proficient_with.concat items.collect { |i| "not_#{i}" }
   end
 
   def alignment(which, options = {})

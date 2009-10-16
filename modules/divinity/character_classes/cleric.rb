@@ -1,5 +1,12 @@
 character_class :cleric do
-  description "A cleric description!"
+  description "The handiwork of the gods is everywhere -- in places of natural beauty, in might crusades, "+
+              "in soaring temples, and in the hearts of worshipers. Like people, gods run the gamut from "+
+              "benevolent to malicious, reserved to intrusive, simple to inscrutable. The gods, however, "+
+              "work mostly through intermediaries -- their clerics. Good clerics heal, protect, and aveng. "+
+              "Evil clerics pillage, destroy, and sabotage. A cleric uses the power of his god to make the "+
+              "god's will manifest. And if a cleric uses his god's power to improve his own lot, that's to "+
+              "be expected, too."
+  
   alignment :deity, :distance => :one_step
   hit_die :d8
   class_skills :concentration, :craft, :diplomacy, :heal, :knowledge, :profession, :spellcraft

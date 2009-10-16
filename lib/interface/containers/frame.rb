@@ -1,7 +1,6 @@
 module Interface
   module Containers
     class Frame < Container
-      include Interface::Listeners::MouseListener
       attr_accessor :pinned
       attr_accessor :frame_manager#, :always_on_top, :always_on_bottom
       attr_reader :root_panel, :title_bar

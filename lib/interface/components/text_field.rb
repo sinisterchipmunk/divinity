@@ -4,16 +4,13 @@ class Interface::Components::TextField < Interface::Components::InputComponent
   attr_accessor :color
   attr_accessor :caret_position
 
-  include Listeners::KeyListener
-
   def initialize(object, method, options = {}, &block)
     @font_options = {}
     @caret_position = 0
     @padding = 4
     @scroll = 0
     super(object, method, options)
-
-    key_listeners << self
+    on :key_pressed do |evt| key_pressed(evt) end
 
     @printable_area = Rectangle.new
     yield if block_given?
@@ -31,6 +28,12 @@ class Interface::Components::TextField < Interface::Components::InputComponent
       when SDL::Key::LEFT  then move_caret -1
       when SDL::Key::RIGHT then move_caret 1
       when SDL::Key::ESCAPE
+      when SDL::Key::DELETE then
+        unless self.value.blank?
+          left = (@caret_position > 0) ? self.value[0...(@caret_position)] : ""
+          right = self.value[(@caret_position+1)..-1]
+          self.value = left + right
+        end
       when SDL::Key::BACKSPACE
         unless self.value.blank?
           left = (@caret_position > 0) ? self.value[0...(@caret_position-1)] : ""

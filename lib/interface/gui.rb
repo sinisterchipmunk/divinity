@@ -62,29 +62,6 @@ module Interface
     def update(time); raise "GUI::update must be overridden"; end
     def render(); raise "GUI::render must be overridden"; end
     
-    #For each of the listener methods below, pass the evt object to the respective method for each
-    #registered mouse listener.
-    [ :released, :entered, :exited, :dragged, :moved, :pressed ].each do |method|
-      define_method(
-        "fire_mouse_#{method.to_s}", lambda do |evt|
-          @mouse_listeners.each do |listener|
-            listener.send("mouse_#{method.to_s}", evt)
-          end
-        end
-                   )
-    end
-    
-    #Ditto for keyboard.
-    [ :pressed, :released, :typed ].each do |method|
-      define_method(
-        "fire_key_#{method.to_s}", lambda do |evt|
-          @key_listeners.each do |listener|
-            listener.send("key_#{method.to_s}", evt)
-          end
-        end
-                   )
-    end
-    
     def shortcut_activated
       ;
     end

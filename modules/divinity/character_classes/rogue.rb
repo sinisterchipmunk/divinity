@@ -1,5 +1,9 @@
 character_class :rogue do
-  description "A Rogue class that still needs a description"
+  description "Rogues have little in common with one another. Some are stealthy thieves. Others are silver-tongued "+
+              "tricksters. Still others are scouts, infiltrators, spies, diplomats, or thugs. What they do share "+
+              "is versatility, adaptability, and resourcefulness. In general, rogues are skilled at getting what "+
+              "others don't want them to get: entrance into a locked treasure vault, safe passage past a deadly "+
+              "trap, secret battle plans, a guard's trust, or some random person's pocket money."
   alignment :any
   hit_die :d6
   class_skills :appraise, :balance, :bluff, :climb, :craft, :decipher_script, :diplomacy, :disable_device,
@@ -9,7 +13,7 @@ character_class :rogue do
   skill_points 8 + actor(:player).ability_bonus(:intelligence)
   proficient_with :simple_weapons, :hand_crossbow, :rapier, :sap, :shortbow, :short_sword
   proficient_with :light_armor
-  base_attack_type :secondary
+  base_attack_bonus :secondary
   primary_saving_throw :reflex
   
   # The difference between Feats and Special Abilities, in terms of mechanics:

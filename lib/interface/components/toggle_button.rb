@@ -6,13 +6,9 @@ class Interface::Components::ToggleButton < Interface::Components::InputComponen
     caption = options.delete(:caption) || method.to_s.titleize
     super(object, method, options)
     init_variables(caption)
-    self.action_listeners << self
+    on :action_performed do self.value = !self.value end
 
     yield if block_given?
-  end
-
-  def action_performed(evt)
-    self.value = !self.value
   end
 
   def update(delta)

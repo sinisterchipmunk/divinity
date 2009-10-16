@@ -26,7 +26,7 @@ module Listeners::Mouse::ButtonMouseListener
   def mouse_released(evt)
     if @mouse_state & MOUSE_OVER > 0
       background_texture.set_option :brightness, OVER_SHADE
-      action_listeners.each { |al| al.action_performed(evt) } # button clicked: fire events where necessary
+      fire_event :action_performed, evt
     else background_texture.set_option :brightness, NORM_SHADE
     end
     @mouse_state ^= MOUSE_DOWN

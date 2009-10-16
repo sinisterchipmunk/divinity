@@ -31,6 +31,18 @@ module Interface
         options.each { |k,v| self.send("#{k}=", v) }
       end
 
+      def on(condition, &block)
+        @event_listeners ||= HashWithIndifferentAccess.new
+        raise "Block expected" unless block_given?
+        @event_listeners[condition] ||= []
+        @event_listeners[condition] << block
+      end
+
+      def fire_event(condition, *args)
+        @event_listeners ||= HashWithIndifferentAccess.new
+        @event_listeners[condition].each { |block| block.call(*args) } if @event_listeners[condition]
+      end
+
       def display_list
         @list
       end
