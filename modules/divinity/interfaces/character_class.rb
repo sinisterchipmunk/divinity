@@ -11,9 +11,9 @@ interface :character_class do
       partial :race_sm, :center
     end
 
-    flip_panel [1..2, 0] do
+    flip_panel [1..2, 0] do# actor(:player), :character_class, [1..2, 0] do
       character_classes.each do |id, cclass|
-        panel do
+        panel do#id do
           layout :border
           label cclass.name, :north
           panel :center do

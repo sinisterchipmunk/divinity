@@ -6,7 +6,7 @@ class Interface::Containers::FlipPanel < Interface::Containers::Panel
   alias _add add
   alias _remove remove
   
-  def initialize(&block)
+  def initialize(&block)#object, method, &block)
     super(Interface::Layouts::BorderLayout.new)
 
     @previous_button = Interface::Components::ImageButton.new("data/ui/arrow_left.png")
@@ -31,18 +31,23 @@ class Interface::Containers::FlipPanel < Interface::Containers::Panel
   end
 
   def selected_component
-    components[selected_index]
+    if components[selected_index]
+     # @object.components[selected_index][1]
+      components[selected_index]#[0]
+    else
+      nil
+    end
   end
 
-  def add(comp, *ignored)
-    @components << comp
+  def add(comp, value)
+    @components << comp #[ comp, value ]
     # verifies that whatever the selected index is, it is actually added (because it might not have existed
     # a moment ago)
     self.selected_component = selected_index
   end
 
-  def remove(comp, *ignored)
-    @components.delete comp
+  def remove(comp)
+    @components.delete comp#@components.select { |i| i.comp == comp }.first
     _remove comp
     self.selected_index = self.selected_index
   end
