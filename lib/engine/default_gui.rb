@@ -22,7 +22,11 @@ module Engine::DefaultGUI
   
   def assume_interface(name)
     frame.remove_all_components
+    frame.background_visible = true
+    frame.location = [0, 0]
+    frame.size = [width, height]
     frame.layout = Interface::Layouts::BorderLayout.new
+    pause!
     find_interface(name).apply_to(self, frame)
   end
 

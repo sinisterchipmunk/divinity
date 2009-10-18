@@ -2,20 +2,20 @@ module World
   class Scene
     attr_reader :gravitational_field
     attr_accessor :objects
+
+    delegate :gravity_at, :to => :gravitational_field
     
     def initialize
       @gravitational_field = Physics::Gravity::GravitationalField.new
       @objects = [ ]
       @last_time = Time.now
     end
-    
-    def update
-      tc = (Time.now - @last_time).to_f
-      @last_time = Time.now
+
+    # delta is the change in time, in milliseconds, since the last call to #update
+    def update(delta)
+      delta_in_seconds = delta / 1000.0
       objects.each do |o|
-        g = @gravitational_field.gravity_at(o.position)
-        o.acceleration = (g * tc * o.mass)
-        o.update(self)
+        o.update(delta, self)
       end
     end
     

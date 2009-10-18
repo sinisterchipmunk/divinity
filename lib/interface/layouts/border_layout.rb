@@ -62,8 +62,10 @@ module Interface
         buf.x, buf.y = 0, 0
         nx = (@west ? 1 : 0) + (@center ? 1 : 0) + (@east ? 1 : 0)
         ny = (@north ? 1 : 0) + (@center ? 1 : 0) + (@south ? 1 : 0)
-        mx = (buf.width  - (@hgap * (nx-1))) / nx
-        my = (buf.height - (@vgap * (ny-1))) / ny
+        mx = (buf.width  - (@hgap * (nx-1)))
+        my = (buf.height - (@vgap * (ny-1)))
+        mx /= nx if nx > 0
+        my /= ny if ny > 0
         #buf = Rectangle.new(border_size, border_size, cont.bounds.width-border_size, cont.bounds.height-border_size)
 
         if @north

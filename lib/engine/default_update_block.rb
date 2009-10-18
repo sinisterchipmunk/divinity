@@ -1,6 +1,6 @@
 module Engine::DefaultUpdateBlock
   def add_default_update_block
-    during_update do |ticks, engine|
+    before_update do |ticks, engine|
       while event = SDL::Event2.poll
         case event
           when SDL::Event::Quit then stop!
@@ -10,7 +10,7 @@ module Engine::DefaultUpdateBlock
         end
       end
 
-      engine.frame_manager.update(ticks)
+      frame_manager.update(ticks)
     end
   end
 end

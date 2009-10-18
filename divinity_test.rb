@@ -8,20 +8,39 @@ options = YAML::load(File.read("data/config.yml")) rescue {
 }
 
 afps = 0.0
-last_update = 0.0
 frames = 0
+ch = 0.0
+t = 0
+last_tick = 0
+
 
 divinity = DivinityEngine.new(options) do
+  glColor4f 1, 1, 1, 1
   divinity.write(:right, :bottom, "AVG FPS: #{afps.to_i}")
+
+
+  # this logic usually goes in the during_update block, but during_update only fires if the game is unpaused --
+  # since the game is paused at the menu screens, it would never fire on them.
+  # convert delta to seconds (it's in milliseconds atm)
+  delta = ((divinity.ticks - last_tick) / 1000.0)
+  last_tick = divinity.ticks
+  if delta > 0 # to prevent divide-by-zero
+    frames += 1.0 / delta
+    t += delta
+    ch += 1
+    if t >= 0.5 # update every half-second
+      afps = frames / ch # average of frames-per-delta over the past ch updates
+      ch = 0
+      t = 0
+      frames = 0
+    end
+  end
 end
 
+# IMPORTANT: When multithreading is implemented, #during_update will NO LONGER be a reliable
+# way to count frames! This logic will need to be moved to #during_render to verify that it is
+# running on the same thread as the frames themselves are.
 divinity.during_update do |delta|
-  frames += 1000.0
-  if divinity.ticks - last_update > 1000
-    afps = frames / (divinity.ticks - last_update)
-    last_update = divinity.ticks
-    frames = 0
-  end
 end
 
 divinity.after_shutdown do |divinity|

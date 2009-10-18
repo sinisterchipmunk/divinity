@@ -52,13 +52,19 @@ class Interface::Builder
     @next_interface = action
     options = { :caption => options } if options.kind_of? String
     options[:caption] ||= action.to_s.titleize
+    klass = options.delete(:class) || Interface::Components::Button
     action = options.delete(:action) if options.key? :action
 
-    b = Interface::Components::Button.new(options.delete(:caption) || action.to_s.titleize)
+    b = klass.new(options.delete(:caption) || action.to_s.titleize)
     builder = self.class.new(action).apply_to(engine, b)
     options.each { |k,v| builder.send("#{k}=", v)}
     b.on :action_performed do engine.fire_interface_action(builder.action) end
     component.add b, constraints
+  end
+
+  def image_button(constraints = nil, action = nil, options = { }, &block)
+    options.reverse_merge! :class => Interface::Components::ImageButton
+    button(constraints, action, options, &block)
   end
 
 =begin

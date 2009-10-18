@@ -6,7 +6,7 @@ module Physics
       end
       
       def mass
-        raise 'A GravitySource must define mass as a Float'
+        raise 'A GravitySource must define mass'
       end
     end
   end

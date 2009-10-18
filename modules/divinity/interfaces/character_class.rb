@@ -33,6 +33,6 @@ interface :character_class do
   panel :south do
     layout :grid, 2, 1
     button [0,0], :back, :action => :race
-    button [1,0], :next, :action => :something_after_class
+    button [1,0], :next, :action => :gameplay
   end
 end

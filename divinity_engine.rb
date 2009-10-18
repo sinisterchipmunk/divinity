@@ -42,10 +42,16 @@ class DivinityEngine
   end
 
   def go!
-    init if @state == :waiting
-    @state = :starting
+    if @state == :waiting
+      init
+    else
+      @state = :starting
+    end
     main_loop unless @main_loop_running
   end
+
+  alias unpause! go!
+  alias resume!  go!
 
   def pause!
     @state = :paused
@@ -69,14 +75,25 @@ class DivinityEngine
 
     def main_loop
       @main_loop_running = true
+      # FIXME: Hitting a lot of issues with deadlock right now. I'm currently blaming ActiveSupport, but it could be
+      # a synchronization issue within the engine. In the ideal world, we'd have the #update method firing on one
+      # thread, and #render firing on the other. In a *perfect* world, we'd have different during_update blocks firing
+      # on their own threads, with #render firing on a single thread.
+#      Thread.new do
+#        while @state != :stopping
+#          ## Remove the following lines from the render thread when threads work again
+#          @state = :running unless @state == :paused
+#          update   
+#        end
+#      end
+
       while @state != :stopping
         @state = :running unless @state == :paused
-        update # TODO: Multithread this.
+        update
         render
-
         SDL.GLSwapBuffers()
-        #sleep 0.01 # to avoid consuming all CPU power
       end
+
       @main_loop_running = false
       shutdown
     rescue EngineStopped
@@ -94,7 +111,8 @@ class DivinityEngine
       @interval = @ticks - @last_ticks
       @last_ticks = @ticks
 
-      call_blocks :before_update, :during_update, :after_update, :args => [ @interval, self ] unless @state == :paused
+      call_blocks :before_update, :args => [ @interval, self ]
+      call_blocks :during_update, :after_update, :args => [ @interval, self ] unless @state == :paused
     end
 
     def init_video_mode
