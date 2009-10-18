@@ -3,8 +3,8 @@ interface :force_restart do
   panel [1,1] do
     layout :border
 
-    label "You must restart the game in order to continue.", :constraints => :center
-    button :exit, :constraints => :south, :action => (proc do
+    text_area :center, "You must restart the game in order to continue."
+    button :south, :exit, :action => (proc do
       engine.after_shutdown do exec "ruby divinity_test.rb" end
       engine.stop!
     end)

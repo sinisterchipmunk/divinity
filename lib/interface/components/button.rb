@@ -1,7 +1,7 @@
 class Interface::Components::Button < Interface::Components::Component
   include Interface::Components::Button::InstanceMethods  
 
-  def initialize(caption="Btn")
+  def initialize(caption="Btn", *unused)
     super()
     init_variables(caption)
   end

@@ -1,7 +1,7 @@
 module Interface
   module GUI
     @@focused = nil
-    attr_accessor :visible, :enabled, :mouse_listeners, :key_listeners
+    attr_accessor :visible, :enabled
     attr_reader :background, :parent, :valid
       
     def initialize
@@ -9,8 +9,6 @@ module Interface
       @enabled = true
       @background = nil
       @parent = nil
-      @mouse_listeners = [ ]
-      @key_listeners = [ ]
     end
 
     def validate

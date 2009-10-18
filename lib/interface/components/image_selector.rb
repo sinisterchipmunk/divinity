@@ -1,34 +1,28 @@
 class Interface::Components::ImageSelector < Interface::Components::InputComponent
-  attr_reader :edge, :image, :images
-  attr_accessor :maintain_aspect_ratio
+  attr_reader :edge, :image
+  attr_accessor :images, :maintain_aspect_ratio
 
-  def initialize(images, object, method, options = {}, &block)
-    super(object, method, options)
-    @images = images
-    @index = 0
-
-    @index = @images.index(self.value) if @images.include? self.value
-    
-    background_texture.set_option(:fill_opacity, 0)
+  def after_initialize(options)
+    background_texture.set_option :fill_opacity, 0
     self.edge = true
-    @maintain_aspect_ratio = true
-    options.each { |k,v| self.send("#{k}=", v) }
-    
+    self.maintain_aspect_ratio = true
+
+    set_options! options
+    @index = (images.include? value) ? images.index(value) : 0
+
     update_image!
   end
 
   def next!
     @index += 1
-    @index %= @images.length
+    @index %= images.length
     update_image!
-    invalidate
   end
 
   def previous!
     @index -= 1
-    @index %= -@images.length
+    @index %= -images.length
     update_image!
-    invalidate
   end
 
   def paint_background
@@ -75,14 +69,6 @@ class Interface::Components::ImageSelector < Interface::Components::InputCompone
     Dimension.new(image.width, image.height)
   end
 
-  def minimum_size
-    Dimension.new(2, 2)
-  end
-
-  def maximum_size
-    Dimension.new(1024, 1024)
-  end
-
   def update_background_texture
     super
     background_texture.set_options(:background_image => image)
@@ -90,7 +76,8 @@ class Interface::Components::ImageSelector < Interface::Components::InputCompone
 
   private
   def update_image!
-    self.value = @images[@index]
+    self.value = images[@index]
     @image = Resources::Image.new(self.value)
+    update_background_texture
   end
 end

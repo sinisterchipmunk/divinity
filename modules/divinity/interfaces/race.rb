@@ -4,9 +4,8 @@ interface :race do
     layout :flow
     panel do
       layout :grid, 2, 2
-      partial :char_info_sm, [0,0]
-      text_area actor(:player), :attribute_string, [1,0]
-      #partial :race_sm, [0..1, 1]
+      partial [0,0], :char_info_sm
+      text_area [1,0], actor(:player), :attribute_string
     end
   end
 
@@ -14,7 +13,7 @@ interface :race do
     layout :grid, 12, 12
     panel [2..9,2..9] do
       layout :border
-      label nil, :target => actor(:player), :method => "race.name", :constraints => :north
+      label :north, actor(:player), "race.name"
 
       img = nil
       panel :center do
@@ -24,22 +23,22 @@ interface :race do
         # NOTE: If this file exists, all others are assumed to follow suit!
         file = "data/races/#{actor(:player).race.name}_#{actor(:player).sex}.jpg"
         if File.exist? file
-          img = image file, :constraints => [1, 0]
+          img = image [1,0], file
           x = 0
         end
-        text_area actor(:player), "race.description", :constraints => [ x, 0 ]
+        text_area [ x, 0 ], actor(:player), "race.description"
       end
 
       panel :south do
         layout :grid, 2, 1
-        button :previous_class, :constraints => [0,0], :action => (proc do
+        button [0,0], :previous_class, :action => (proc do
           actor(:player).race = races.values[(current_race_index -= 1) % -races.values.length]
 
           file = "data/races/#{actor(:player).race.name}_#{actor(:player).sex}.jpg"
           img.path = file if File.exist? file and img
         end)
 
-        button :next_class,     :constraints => [1,0], :action => (proc do
+        button [1,0], :next_class,     :action => (proc do
           actor(:player).race = races.values[(current_race_index += 1) %  races.values.length]
 
           file = "data/races/#{actor(:player).race.name}_#{actor(:player).sex}.jpg"
@@ -51,7 +50,7 @@ interface :race do
 
   panel :south do
     layout :grid, 2, 1
-    button :back, :constraints => [0,0], :action => :attributes
-    button :continue,     :constraints => [1,0], :action => :character_class
+    button [0,0], :back,     :action => :attributes
+    button [1,0], :continue, :action => :character_class
   end
 end

@@ -29,7 +29,7 @@ module Helpers::AttributeHelper
               @#{name}
             end
           end_code
-          eval code, binding, __FILE__, line
+          class_eval code
         end
       end
     end

@@ -19,8 +19,7 @@ module Engine::DefaultGUI
     frame_manager.add frame
     assume_interface :main_menu
   end
-  @@interface_builders ||= HashWithIndifferentAccess.new
-
+  
   def assume_interface(name)
     frame.remove_all_components
     frame.layout = Interface::Layouts::BorderLayout.new

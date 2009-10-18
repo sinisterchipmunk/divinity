@@ -5,24 +5,24 @@ interface :character_class do
       layout :border
       panel :north do
         layout :grid, 2, 1
-        partial :char_info_sm, [0,0]
-        text_area actor(:player), :attribute_string, [1,0]
+        partial [0,0], :char_info_sm
+        text_area [1,0], actor(:player), :attribute_string
       end
-      partial :race_sm, :center
+      partial :center, :race_sm
     end
 
-    flip_panel [1..2, 0] do# actor(:player), :character_class, [1..2, 0] do
+    flip_panel [1..2, 0], actor(:player), :character_class do
       character_classes.each do |id, cclass|
-        panel do#id do
+        panel id do
           layout :border
-          label cclass.name, :north
+          label :north, cclass.name
           panel :center do
             layout :border
-            text_area cclass, :description, :constraints => :west
+            text_area :west, cclass, :description
             panel :east do
               layout :grid, 1, 2
-              image "data/character_classes/#{id}.jpg", :constraints => [0, 0]
-              text_area cclass, :summary, :constraints => [0, 1]
+              image [0, 0], "data/character_classes/#{id}.jpg"
+              text_area [0, 1], cclass, :summary
             end
           end
         end
@@ -32,7 +32,7 @@ interface :character_class do
   
   panel :south do
     layout :grid, 2, 1
-    button :back, :constraints => [0,0], :action => :race
-    button :next, :constraints => [1,0], :action => :something_after_class
+    button [0,0], :back, :action => :race
+    button [1,0], :next, :action => :something_after_class
   end
 end

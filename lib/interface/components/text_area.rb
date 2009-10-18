@@ -4,6 +4,17 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
   attr_accessor :caret_offset
   attr_reader :read_only, :scroll
 
+  def after_initialize(options)
+    @caret_offset = 0
+    @read_only = true
+    @text_to_render = value_changed
+    @scroll = 0
+    on :key_pressed do |e| key_pressed(e) end
+    on :mouse_pressed do |e| mouse_pressed(e) end
+    on :value_changed do value_changed end
+    set_options! options
+  end
+
   def scroll=(a)
     @scroll = a
     validate_scroll!
@@ -23,17 +34,6 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
     min = printable_area.height - font.sizeof(@text_to_render).height
     @scroll = min if @scroll < min
     @scroll = 0 if @scroll > 0
-  end
-
-  def initialize(object, method, options = {}, &block)
-    super(object, method, options, &block)
-    @caret_offset = 0
-    @read_only = true
-    @text_to_render = value_changed
-    @scroll = 0
-    on :key_pressed do |e| key_pressed(e) end
-    on :mouse_pressed do |e| mouse_pressed(e) end
-    on :value_changed do value_changed end
   end
 
   def paint

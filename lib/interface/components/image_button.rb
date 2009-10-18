@@ -1,7 +1,7 @@
 class Interface::Components::ImageButton < Interface::Components::Button
   attr_reader :edge
 
-  def initialize(image_or_path)
+  def initialize(image_or_path, *unused)
     super("")
     background_texture.set_option(:fill_opacity, 0)
     self.edge = true

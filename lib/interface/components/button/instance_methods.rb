@@ -9,7 +9,7 @@ module Interface::Components::Button::InstanceMethods
     [:mouse_pressed, :mouse_released, :mouse_entered, :mouse_exited, :mouse_dragged, :mouse_moved].each do |i|
       on i do |evt| self.send(i, evt) end
     end
-    @caption = caption
+    @caption = caption.to_s.titleize
     @state = @mouse_state = 0
   end
 

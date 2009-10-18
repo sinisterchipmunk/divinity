@@ -2,13 +2,11 @@ class Interface::Components::ToggleButton < Interface::Components::InputComponen
   include Interface::Components::Button::InstanceMethods
   attr_reader :button_value
 
-  def initialize(object, method, options = {}, &block)
-    caption = options.delete(:caption) || method.to_s.titleize
-    super(object, method, options)
+  def after_initialize(options)
+    caption = (options.delete(:caption) || self.send(:method) || self.value).to_s.titleize
     init_variables(caption)
     on :action_performed do self.value = !self.value end
-
-    yield if block_given?
+    set_options! options
   end
 
   def update(delta)

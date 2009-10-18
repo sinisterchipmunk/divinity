@@ -2,19 +2,11 @@ class Interface::Components::RadioButton < Interface::Components::InputComponent
   include Interface::Components::Button::InstanceMethods
   attr_reader :button_value
 
-  def initialize(object, method, value, options = {}, &block)
-    if value.kind_of? Hash
-      options.merge! value
-      value = options.delete :value
-    end
-    @button_value = value
-    
-    super(object, method, options)
-    caption = options[:caption] || value.to_s.titleize
-    init_variables(caption)
+  def after_initialize(options)
+    @button_value = options.delete(:value) || self.value
+    init_variables((options.delete(:caption) || self.value).to_s.titleize)
     on :action_performed do self.value = button_value end
-    
-    yield if block_given?
+    set_options! options
   end
 
   def update(delta)

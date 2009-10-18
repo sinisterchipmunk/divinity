@@ -1,19 +1,16 @@
 class Interface::Components::TextField < Interface::Components::InputComponent
   theme_selection :text
-  attr_reader :font_options, :padding, :printable_area
+  attr_reader :padding, :printable_area
   attr_accessor :color
   attr_accessor :caret_position
 
-  def initialize(object, method, options = {}, &block)
-    @font_options = {}
+  def after_initialize(options)
     @caret_position = 0
     @padding = 4
     @scroll = 0
-    super(object, method, options)
-    on :key_pressed do |evt| key_pressed(evt) end
-
     @printable_area = Rectangle.new
-    yield if block_given?
+    on :key_pressed do |e| key_pressed(e) end
+    set_options! options
   end
 
   def validate
@@ -30,14 +27,14 @@ class Interface::Components::TextField < Interface::Components::InputComponent
       when SDL::Key::ESCAPE
       when SDL::Key::DELETE then
         unless self.value.blank?
-          left = (@caret_position > 0) ? self.value[0...(@caret_position)] : ""
-          right = self.value[(@caret_position+1)..-1]
+          left = (@caret_position > 0) ? self.value[0...(@caret_position)].to_s : ""
+          right = self.value[(@caret_position+1)..-1].to_s
           self.value = left + right
         end
       when SDL::Key::BACKSPACE
         unless self.value.blank?
-          left = (@caret_position > 0) ? self.value[0...(@caret_position-1)] : ""
-          right = self.value[@caret_position..-1]
+          left = (@caret_position > 0) ? self.value[0...(@caret_position-1)].to_s : ""
+          right = self.value[@caret_position..-1].to_s
           self.value = left + right
           move_caret -1
         end
@@ -66,16 +63,16 @@ class Interface::Components::TextField < Interface::Components::InputComponent
   end
 
   def check_caret_scroll
-    if Font.select.sizeof(@value[0...@caret_position]).width - @scroll < 0
+    if Font.select.sizeof(value[0...@caret_position]).width - @scroll < 0
       @scroll -= Font.select.max_glyph_size.width
       @scroll = 0 if @scroll < 0
       check_caret_scroll
     end
 
-    if Font.select.sizeof(@value[0...@caret_position]).width - @scroll > insets.width
+    if Font.select.sizeof(value[0...@caret_position]).width - @scroll > insets.width
       @scroll += Font.select.max_glyph_size.width
-      if @scroll > Font.select.sizeof(@value[0...@caret_position]).width
-        @scroll = Font.select.sizeof(@value[0...@caret_position]).width
+      if @scroll > Font.select.sizeof(value[0...@caret_position]).width
+        @scroll = Font.select.sizeof(value[0...@caret_position]).width
       end
       check_caret_scroll
     end
@@ -93,7 +90,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
 
   def paint_cursor
     return unless Interface::GUI.focus == self
-    s = Font.select(font_options).sizeof(value[0...caret_position])
+    s = Font.select.sizeof(value[0...caret_position])
     x = s.width
     glColor4fv(foreground_color)
     glDisable(GL_TEXTURE_2D)
@@ -106,7 +103,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
 
   def size
     #self.value = self.value.to_s unless self.value.kind_of? String
-    Font.select(font_options).sizeof(value)
+    Font.select.sizeof(value)
   end
 
   def minimum_size; size end

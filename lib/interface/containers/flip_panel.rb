@@ -1,14 +1,17 @@
-class Interface::Containers::FlipPanel < Interface::Containers::Panel
+class Interface::Containers::FlipPanel < Interface::Components::InputComponent #Panel
+  include Interface::Containers::Container
+  include Interface::Layouts
   include Helpers::AttributeHelper
 
   attr_reader :components, :selected_index
 
   alias _add add
   alias _remove remove
-  
-  def initialize(&block)#object, method, &block)
-    super(Interface::Layouts::BorderLayout.new)
 
+  def after_initialize(options)
+    self.background_visible = false
+    #@panel = Interface::Containers::Panel.new
+    self.layout = BorderLayout.new
     @previous_button = Interface::Components::ImageButton.new("data/ui/arrow_left.png")
     @next_button     = Interface::Components::ImageButton.new("data/ui/arrow_right.png")
 
@@ -27,7 +30,7 @@ class Interface::Containers::FlipPanel < Interface::Containers::Panel
 
     _add @button_pane, :south
 
-    yield_with_or_without_scope &block if block_given?
+    set_options! options
   end
 
   def selected_component

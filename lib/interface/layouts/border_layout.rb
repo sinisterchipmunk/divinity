@@ -58,6 +58,7 @@ module Interface
       def layout_container(cont)
         #bool ltr = true  #TODO: Make this do stuff.
         buf = cont.insets.dup
+
         buf.x, buf.y = 0, 0
         nx = (@west ? 1 : 0) + (@center ? 1 : 0) + (@east ? 1 : 0)
         ny = (@north ? 1 : 0) + (@center ? 1 : 0) + (@south ? 1 : 0)

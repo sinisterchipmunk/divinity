@@ -2,33 +2,19 @@
 class Interface::Builder
   include Helpers::AttributeHelper
   include Interface::Layouts
+  extend Interface::Builder::ClassMethods
 
   attr_reader :component, :engine, :action
+  generic_container :panel
+  model_container :flip_panel
+  model_component :label, :image, :image_selector, :text_field, :text_area, :radio_button, :toggle_button
 
   def initialize(action = nil, &block)
     @action = action
     @block = block
   end
 
-  def panel(constraints = nil, &block)
-    p = Interface::Containers::Panel.new
-    self.class.new(&block).apply_to(@engine, p) if block_given?
-    component.add(p, constraints)
-  end
-
-  def flip_panel(constraints = nil, &block)
-    p = Interface::Containers::FlipPanel.new
-    self.class.new(&block).apply_to(@engine, p) if block_given?
-    component.add p, constraints
-  end
-
-  def scroll_panel(constraints = nil, &block)
-    p = Interface::Containers::ScrollPanel.new
-    self.class.new(&block).apply_to(@engine, p) if block_given?
-    component.add p, constraints
-  end
-
-  def partial(interface_name, constraints = nil, &block)
+  def partial(constraints, interface_name, &block)
     p = Interface::Containers::Panel.new(Interface::Layouts::BorderLayout.new, &block)
     builder = @engine.find_interface(interface_name)
     builder.apply_to(@engine, p)
@@ -44,7 +30,38 @@ class Interface::Builder
       else raise "Layout type should be one of [:grid, :flow, :border]"
     end
   end
+  
+  def apply_to(engine, component)
+    @engine = engine
+    @component = component
+    instance_eval &@block if @block
+    self
+  end
 
+  def respond_to?(*args, &block)
+    super or @component.respond_to?(*args, &block) or @engine.respond_to?(*args, &block)
+  end
+
+  def method_missing(name, *args, &block)
+    return @component.send(name, *args, &block) if @component.respond_to? name
+    return @engine.send(name, *args, &block) if @engine.respond_to? name
+    super
+  end
+
+  def button(constraints = nil, action = nil, options = { }, &block)
+    @next_interface = action
+    options = { :caption => options } if options.kind_of? String
+    options[:caption] ||= action.to_s.titleize
+    action = options.delete(:action) if options.key? :action
+
+    b = Interface::Components::Button.new(options.delete(:caption) || action.to_s.titleize)
+    builder = self.class.new(action).apply_to(engine, b)
+    options.each { |k,v| builder.send("#{k}=", v)}
+    b.on :action_performed do engine.fire_interface_action(builder.action) end
+    component.add b, constraints
+  end
+
+=begin
   def label(text, options = { }, &block)
     options = { :constraints => options } unless options.kind_of? Hash
 
@@ -104,21 +121,5 @@ class Interface::Builder
     field = klass.new(object, method, options, &block)
     @component.add field, constraints
   end
-
-  def apply_to(engine, component)
-    @engine = engine
-    @component = component
-    instance_eval &@block if @block
-    self
-  end
-
-  def respond_to?(*args, &block)
-    super or @component.respond_to?(*args, &block) or @engine.respond_to?(*args, &block)
-  end
-
-  def method_missing(name, *args, &block)
-    return @component.send(name, *args, &block) if @component.respond_to? name
-    return @engine.send(name, *args, &block) if @engine.respond_to? name
-    super
-  end
+=end
 end

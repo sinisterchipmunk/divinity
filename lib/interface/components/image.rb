@@ -1,19 +1,24 @@
-class Interface::Components::Image < Interface::Components::Component
-  attr_reader :edge
+class Interface::Components::Image < Interface::Components::InputComponent
+  attr_reader :edge, :image
   attr_accessor :maintain_aspect_ratio
 
-  def initialize(path, options = {}, &block)
-    super()
+  def after_initialize(options)
     self.edge = true
+    self.maintain_aspect_ratio = true
     
-    @path = path
     background_texture.set_option(:fill_opacity, 0)
-    @image = Resources::Image.new(path)
-    @maintain_aspect_ratio = true
-    
-    options.each { |k,v| self.send("#{k}=", v) }
-    yield if block_given?
+    update_image!
+
+    set_options! options
   end
+
+  def update_image!
+    @image = Resources::Image.new(self.value)
+    update_background_texture
+  end
+
+  def path; self.value; end
+  def path=(a); self.value = a; update_image!; end
 
   def paint_background
     glColor4fv [1,1,1,1]
@@ -22,13 +27,13 @@ class Interface::Components::Image < Interface::Components::Component
 
     iw = rect.width
     ih = rect.height
-    if @maintain_aspect_ratio
+    if maintain_aspect_ratio
       maxr = rect.width.to_f / rect.height.to_f
-      imgr = @image.width.to_f / @image.height.to_f
+      imgr = image.width.to_f / image.height.to_f
       if (imgr > maxr)
-        ih = @image.height.to_f / (@image.width.to_f / rect.width.to_f)
+        ih = image.height.to_f / (image.width.to_f / rect.width.to_f)
       else
-        iw = @image.width.to_f / (@image.height.to_f / rect.height.to_f)
+        iw = image.width.to_f / (image.height.to_f / rect.height.to_f)
       end
       ih, iw = ih.floor, iw.floor
     end
@@ -57,31 +62,12 @@ class Interface::Components::Image < Interface::Components::Component
     background_texture.set_options(:edge => @edge)
   end
 
-  def path
-    @path
-  end
-
-  def path=(a)
-    @path = a
-    @image = Resources::Image.new(@path)
-    
-    update_background_texture
-  end
-
   def preferred_size
-    Dimension.new(@image.width, @image.height)
-  end
-
-  def minimum_size
-    Dimension.new(2, 2)
-  end
-
-  def maximum_size
-    Dimension.new(1024, 1024)
+    Dimension.new(image.width, image.height)
   end
 
   def update_background_texture
     super
-    background_texture.set_options(:background_image => @image)
+    background_texture.set_options(:background_image => image)
   end
 end

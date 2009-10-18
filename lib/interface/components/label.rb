@@ -2,13 +2,11 @@ class Interface::Components::Label < Interface::Components::InputComponent
   theme_selection :text
   attr_accessor :color, :label
 
-  def initialize(label, options = {}, &block)
-    super(options.delete(:target), options.delete(:method), options)
-    @label = (label.blank? ? value : label).to_s
+  def after_initialize(options)
+    self.label = self.value
     on :value_changed do value_changed end
-    size
-
-    yield if block_given?
+    set_options! options
+    size # init size object
   end
 
   def value_changed
