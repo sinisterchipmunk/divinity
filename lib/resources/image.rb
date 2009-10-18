@@ -2,11 +2,11 @@ class Resources::Image < Textures::Texture
   include ::Geometry
   include Magick
 
-  attr_reader :image_list, :path
+  attr_reader :image_list, :path, :size
 
-  def width; @size.width; end
-  def height; @size.height; end
-
+  delegate :width, :height, :to => :size
+  delegate :depth, :to => :image_list
+  
   @@image_lists = {}
 
   def initialize(path)

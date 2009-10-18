@@ -12,11 +12,12 @@ frames = 0
 ch = 0.0
 t = 0
 last_tick = 0
-
+scene = World::Scenes::HeightMap.new("data/portraits/NJAHEIRM.bmp")
 
 divinity = DivinityEngine.new(options) do
   glColor4f 1, 1, 1, 1
   divinity.write(:right, :bottom, "AVG FPS: #{afps.to_i}")
+  scene.render
 
 
   # this logic usually goes in the during_update block, but during_update only fires if the game is unpaused --
@@ -41,6 +42,7 @@ end
 # way to count frames! This logic will need to be moved to #during_render to verify that it is
 # running on the same thread as the frames themselves are.
 divinity.during_update do |delta|
+  scene.update delta
 end
 
 divinity.after_shutdown do |divinity|

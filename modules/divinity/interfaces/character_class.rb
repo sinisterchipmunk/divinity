@@ -21,7 +21,9 @@ interface :character_class do
             text_area :west, cclass, :description
             panel :east do
               layout :grid, 1, 2
-              image [0, 0], "data/character_classes/#{id}.jpg"
+              if File.exist? "data/character_classes/#{id}.jpg"
+                image [0, 0], "data/character_classes/#{id}.jpg"
+              end
               text_area [0, 1], cclass, :summary
             end
           end

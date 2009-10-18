@@ -2,6 +2,8 @@ class Textures::Texture
   include Helpers::RenderHelper
   include Magick
   include ::Geometry
+
+  delegate :pixels, :to => :surface
   
   def id
     @id
