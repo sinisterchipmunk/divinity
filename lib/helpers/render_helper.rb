@@ -21,6 +21,12 @@ module Helpers::RenderHelper
     end
   end
 
+  def wireframe
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+    yield
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+  end
+  
   def ortho(width, height)
     glDisable(GL_DEPTH_TEST)
     glMatrixMode(GL_PROJECTION)
@@ -37,6 +43,7 @@ module Helpers::RenderHelper
         yield
         glMatrixMode(GL_PROJECTION)
       end
+      glDisable GL_SCISSOR_TEST
       glMatrixMode(GL_MODELVIEW)
     end
     glEnable(GL_DEPTH_TEST)

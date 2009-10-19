@@ -33,30 +33,30 @@ class World::Scenes::HeightMap < World::Scene
   def render_without_display_list
     push_matrix do
       glLoadIdentity
-      glDisable GL_TEXTURE_2D
-      @image.bind do
-        (width-1).times do |x|
-          glBegin GL_QUADS
-            (height-1).times do |y|
-              depth = depth_at(x, y)
-              glTexCoord2f(x / width.to_f, y / height.to_f)
-              glVertex3f(x, depth, y)
+      glTranslatef(-(width/3)*2,-magnitude,-(height/2))
+#      wireframe do
+        glDisable GL_TEXTURE_2D
+        #@image.bind do
+          (width-1).times do |x|
+            glBegin GL_TRIANGLE_STRIP
+              (height).times do |y|
+                depth = depth_at(x, y)
+                color = (depth + (magnitude / 2.0)) / (magnitude * 1.5)
+                glColor4f color, color, color, 1
+                glTexCoord2f(x / width.to_f, y / height.to_f)
+                glVertex3f(x, depth, y)
 
-              depth = depth_at(x+1, y)
-              glTexCoord2f((x+1) / width.to_f, y / height.to_f)
-              glVertex3f(x+1, depth, y)
-
-              depth = depth_at(x+1, y+1)
-              glTexCoord2f(x / width.to_f, y / height.to_f)
-              glVertex3f(x+1, depth, y+1)
-
-              depth = depth_at(x, y+1)
-              glTexCoord2f((x+1) / width.to_f, y / height.to_f)
-              glVertex3f(x, depth, y+1)
-            end
-          glEnd
-        end
-      end
+                depth = depth_at(x+1, y)
+                color = (depth + (magnitude / 2.0)) / (magnitude * 1.5)
+                glColor4f color, color, color, 1
+                glTexCoord2f((x+1) / width.to_f, y / height.to_f)
+                glVertex3f(x+1, depth, y)
+              end
+            glEnd
+          end
+        glEnable GL_TEXTURE_2D
+#      end  
+      #end
     end
   end
 

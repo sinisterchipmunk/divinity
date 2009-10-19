@@ -102,7 +102,9 @@ class DivinityEngine
     end
 
     def render
-      call_blocks :before_render, :during_render, :after_render
+      call_blocks :before_render, :during_render
+      frame_manager.render
+      call_blocks :after_render
     end
 
     def update
@@ -119,12 +121,12 @@ class DivinityEngine
       Textures::Font.invalidate!
       err("set video mode") unless (@sdl_screen = SDL.setVideoMode(options[:width], options[:height], options[:color_depth],
                                                                    sdl_video_mode_flags))
-#      glViewport(0, 0, options[:width], options[:height])
-#      glMatrixMode(GL_PROJECTION)
-#      glLoadIdentity
-#      gluPerspective(90, width.to_f/height.to_f, 0.01, 150)
-#      glMatrixMode GL_MODELVIEW
-#      glLoadIdentity
+      glViewport(0, 0, options[:width], options[:height])
+      glMatrixMode(GL_PROJECTION)
+      glLoadIdentity
+      gluPerspective(90, width.to_f/height.to_f, 0.01, 150)
+      glMatrixMode GL_MODELVIEW
+      glLoadIdentity
       glEnable(GL_TEXTURE_2D)
       glEnable(GL_BLEND)
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)

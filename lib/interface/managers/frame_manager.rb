@@ -79,18 +79,11 @@ class Interface::Managers::FrameManager
       #Last in array is first to display (it's on bottom)
       @frames.reverse.each do |frame|
         next unless frame.visible?
-        #Frame used to be a non-component (derived directly from GUI).
-        #After Frame became a component, the translating was done twice, once here
-        #and once in Component. Obviously, this is a Bad Thing. Hence the comments.
-        b = frame.screen_bounds
-        #frame.scissor do
-        push_matrix do
-          frame.scissor do
-          #scissor b.x, @viewport.height - b.y - b.height - 1, b.width, b.height do
-            #glTranslated( frame.bounds.x,  frame.bounds.y, 0)
+        #push_matrix do
+        #  frame.scissor do
             frame.render
-          end
-        end
+        #  end
+        #end
       end
     end
   end

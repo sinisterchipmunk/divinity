@@ -12,12 +12,18 @@ frames = 0
 ch = 0.0
 t = 0
 last_tick = 0
-scene = World::Scenes::HeightMap.new("data/portraits/NJAHEIRM.bmp")
+scene = World::Scenes::HeightMap.new("data/height_maps/test.bmp")
 
 divinity = DivinityEngine.new(options) do
+
+end
+
+divinity.after_render do
   glColor4f 1, 1, 1, 1
-  divinity.write(:right, :bottom, "AVG FPS: #{afps.to_i}")
+  # this belongs in during_render, but for testing purposes I'm leaving it here. FIXME: Move it before release.
   scene.render
+
+  divinity.write(:right, :bottom, "AVG FPS: #{afps.to_i}")
 
 
   # this logic usually goes in the during_update block, but during_update only fires if the game is unpaused --

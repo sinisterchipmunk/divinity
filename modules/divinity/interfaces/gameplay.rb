@@ -7,6 +7,6 @@ interface :gameplay do
   # preferred width based on current height, or vice versa.
   panel :east do
     layout :grid, 1, 6
-    image_button [0,0], actor(:player).portrait
+    #image_button [0,0], actor(:player).portrait
   end
 end

@@ -135,9 +135,13 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
     end
     lx += 1
     ly += 1
-    largest.width = largest.width * lx + hgap * (lx-1)
-    largest.height = largest.height * ly + vgap * (ly-1)
-    largest
+    if largest
+      largest.width = largest.width * lx + hgap * (lx-1)
+      largest.height = largest.height * ly + vgap * (ly-1)
+      largest
+    else
+      Dimension.new(64, 64)
+    end
   end
 
   def constraint_valid?(i)

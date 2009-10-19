@@ -20,7 +20,7 @@ module World
     end
     
     def render
-      objects.each { |o| o.render }
+      objects.each { |o| o.render if o.respond_to? :render }
     end
   end
 end
