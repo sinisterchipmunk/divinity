@@ -5,7 +5,8 @@ class World::Scenes::HeightMap < World::Scene
   attr_reader :image
   attr_accessor :magnitude
 
-  delegate :width, :height, :to => :image
+  delegate :width, :to => :image
+  def length; image.height; end
 
   def initialize(path, magnitude = 10)
     super()
@@ -16,56 +17,58 @@ class World::Scenes::HeightMap < World::Scene
     @display_list = OpenGL::DisplayList.new { render_without_display_list }
   end
 
-  def depth_at(*a)
+  def height_at(*a)
     x, y = x_and_y(*a)
+    if x < 0 or y < 0 or x >= image.width or y >= image.height
+      raise "Position [#{x},#{y}] is beyond the bounds of this height map [#{image.width},#{image.height}]"
+    end
     offset = (image.width * y) + x
     if offset < 0 || offset >= @map.length
-      raise "Index at [#{x},#{y}] translates to offset #{offset} and is outside of range 0..#{@map.length}! (Image is #{image.width}x#{image.height})"
+      raise "Index at [#{x},#{y}] translates to offset #{offset} and is outside of range 0..#{@map.length}!"
     end
     @map[offset] / @depth * magnitude
   end
 
-  def render
-    #render_without_display_list
-    @display_list.call
-  end
+  ## TODO: After initial construction, pieces of height map should be fed into an octree for culling.
+  def render; @display_list.call; end
 
   def render_without_display_list
     push_matrix do
       glLoadIdentity
-      glTranslatef(-(width/3)*2,-magnitude,-(height/2))
-#      wireframe do
-        glDisable GL_TEXTURE_2D
-        #@image.bind do
-          (width-1).times do |x|
-            glBegin GL_TRIANGLE_STRIP
-              (height).times do |y|
-                depth = depth_at(x, y)
-                color = (depth + (magnitude / 2.0)) / (magnitude * 1.5)
-                glColor4f color, color, color, 1
-                glTexCoord2f(x / width.to_f, y / height.to_f)
-                glVertex3f(x, depth, y)
-
-                depth = depth_at(x+1, y)
-                color = (depth + (magnitude / 2.0)) / (magnitude * 1.5)
-                glColor4f color, color, color, 1
-                glTexCoord2f((x+1) / width.to_f, y / height.to_f)
-                glVertex3f(x+1, depth, y)
-              end
-            glEnd
+      glTranslatef(-(width/3)*2, -magnitude, -(length/2))
+      glDisable GL_TEXTURE_2D
+        glBegin GL_TRIANGLE_STRIP
+          (0...(width-2)).step(2) do |x|
+            # Quick explanation. What we're doing here is tristrip up, then tristrip back down to 0, incrementing
+            # x when we do it. This essentially connects the first tristrip with the second and leaves us in position
+            # for the third, saving us those calls to glBegin and glEnd. For a height map that's 300 strips wide,
+            # we save 600 method calls -- 300 saved on glBegin calls, and 300 saved on glEnd calls. It's the little
+            # things in life...
+            length.times { |z| vertex [x, z], [x+1, z] }
+            (0...length).to_a.reverse.each { |z| vertex [x+1, z], [x+2, z] }
           end
-        glEnable GL_TEXTURE_2D
-#      end
-      #end
+        glEnd
+      glEnable GL_TEXTURE_2D
     end
   end
 
   private
+  def vertex(*points)
+    points.each do |arr|
+      x, z = x_and_y(*arr)
+      y = height_at(x, z)
+      color = (y + (magnitude / 2.0)) / (magnitude * 1.5)
+      glColor4f color, color, color, 1
+      glTexCoord2f(x / width.to_f, z / length.to_f)
+      glVertex3f(x, y, z)
+    end
+  end
+
   def x_and_y(*a)
     if a.length == 1 then
       if a[0].kind_of? Array then a[0]
       elsif a[0].kind_of? Fixnum then # just one numeric argument supplied, assume it's an array offset
-        [a[0] % image.height, a[0] / image.height]
+        [a[0] % image.height, (a[0] / image.height).floor]
       else [a[0].x, a[0].y]
       end
     else a
