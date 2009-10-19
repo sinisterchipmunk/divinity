@@ -15,17 +15,13 @@ last_tick = 0
 scene = World::Scenes::HeightMap.new("data/height_maps/test.bmp")
 
 divinity = DivinityEngine.new(options) do
-
+  glColor4f 1, 1, 1, 1
+  scene.render
 end
 
 divinity.after_render do
   glColor4f 1, 1, 1, 1
-  # this belongs in during_render, but for testing purposes I'm leaving it here. FIXME: Move it before release.
-  scene.render
-
   divinity.write(:right, :bottom, "AVG FPS: #{afps.to_i}")
-
-
   # this logic usually goes in the during_update block, but during_update only fires if the game is unpaused --
   # since the game is paused at the menu screens, it would never fire on them.
   # convert delta to seconds (it's in milliseconds atm)

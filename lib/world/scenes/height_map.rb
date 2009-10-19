@@ -55,7 +55,7 @@ class World::Scenes::HeightMap < World::Scene
             glEnd
           end
         glEnable GL_TEXTURE_2D
-#      end  
+#      end
       #end
     end
   end
