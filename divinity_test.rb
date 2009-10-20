@@ -17,7 +17,7 @@ scene = World::Scenes::HeightMap.new(divinity, "data/height_maps/test.bmp")
 
 divinity.on :mouse_moved do |evt|
   x_extent, y_extent = evt.xrel, evt.yrel
-  divinity.rotate_view! y_extent, x_extent, 0
+  divinity.rotate_view! 0, x_extent, y_extent
 end
 
 divinity.during_render do
