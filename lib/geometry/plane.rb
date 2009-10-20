@@ -10,7 +10,7 @@ class Geometry::Plane
   end
 
   def magnitude
-    sqrt(self.a ** 2 + self.b ** 2 + self.c ** 2)
+    Math.sqrt(self.a ** 2 + self.b ** 2 + self.c ** 2)
   end
 
   def normalize!

@@ -5,11 +5,12 @@
 module Interface
   module Components
     class Component
-      include GUI
+      include Gui
       include Gl
-      include Geometry
+      include ::Geometry
       include Textures
       include Interface::Components::Component::RenderMethods
+      include Helpers::EventListeningHelper
 
       attr_reader :valid, :background_texture, :foreground_color, :insets
       attr_accessor :background_visible
@@ -27,20 +28,8 @@ module Interface
         @background_visible = true
         @foreground_color = [ 0, 0, 0, 1 ]
         update_background_texture
-        @insets = Rectangle.new
+        @insets = Geometry::Rectangle.new
         options.each { |k,v| self.send("#{k}=", v) }
-      end
-
-      def on(condition, &block)
-        @event_listeners ||= HashWithIndifferentAccess.new
-        raise "Block expected" unless block_given?
-        @event_listeners[condition] ||= []
-        @event_listeners[condition] << block
-      end
-
-      def fire_event(condition, *args)
-        @event_listeners ||= HashWithIndifferentAccess.new
-        @event_listeners[condition].each { |block| block.call(*args) } if @event_listeners[condition]
       end
 
       def display_list
@@ -93,14 +82,14 @@ module Interface
       def validate()
         super
         @valid = true
-        @insets = Rectangle.new(inset_amount(:left), inset_amount(:top),
+        @insets = Geometry::Rectangle.new(inset_amount(:left), inset_amount(:top),
                                 bounds.width  - (inset_amount(:left)+inset_amount(:right)),
                                 bounds.height - (inset_amount(:top)+inset_amount(:bottom)))
         update_background_texture
 
         # update display list
         if @list then @list.rebuild!
-        else @list = OpenGL::DisplayList.new { self.render_background }
+        else @list = OpenGl::DisplayList.new { self.render_background }
         end
       end
 
@@ -164,7 +153,7 @@ module Interface
         x, y, w, h, = (if args.length == 0 then screen_bounds.to_a
         elsif args.length == 1
           b = args[0]
-          if b.kind_of? Rectangle then b.to_a
+          if b.kind_of? Geometry::Rectangle then b.to_a
           elsif b.kind_of? Array then b
           else [ b, b, b, b ]
           end

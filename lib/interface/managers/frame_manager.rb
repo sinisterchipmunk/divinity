@@ -127,9 +127,9 @@ class Interface::Managers::FrameManager
       end
       return if done
     end
-    if Interface::GUI.focus
-      Interface::GUI.focus.fire_event(:key_pressed, evt)  if evt.kind_of? SDL::Event::KeyDown and Interface::GUI.focus.enabled?
-      Interface::GUI.focus.fire_event(:key_released, evt) if evt.kind_of? SDL::Event::KeyUp   and Interface::GUI.focus.enabled?
+    if Interface::Gui.focus
+      Interface::Gui.focus.fire_event(:key_pressed, evt)  if evt.kind_of? SDL::Event::KeyDown and Interface::Gui.focus.enabled?
+      Interface::Gui.focus.fire_event(:key_released, evt) if evt.kind_of? SDL::Event::KeyUp   and Interface::Gui.focus.enabled?
     end
     @last_key_event = evt
   end
@@ -143,12 +143,12 @@ class Interface::Managers::FrameManager
         @last_mouse_event_target.fire_event(:mouse_exited, evt) if @last_mouse_event_target and @last_mouse_event_target.enabled?
         target.fire_event(:mouse_entered, evt) if target and target.enabled?
       end
-      if Interface::GUI.focus
+      if Interface::Gui.focus
         if @mouse_button_down
           btn = @last_mouse_click_event.button
           #give the listener an idea of which button is being dragged
           def evt.button; btn; end
-          Interface::GUI.focus.fire_event(:mouse_dragged, evt) if Interface::GUI.focus.enabled?
+          Interface::Gui.focus.fire_event(:mouse_dragged, evt) if Interface::Gui.focus.enabled?
         end
       end
 
@@ -157,7 +157,7 @@ class Interface::Managers::FrameManager
     elsif evt.kind_of? SDL::Event::MouseButtonDown
       pos = Geometry::Point.new(evt.x, evt.y)
       target = getGUIAt(pos)
-      Interface::GUI.focus = target
+      Interface::Gui.focus = target
       if target and target.enabled?
         target.fire_event(:mouse_pressed, evt)
         bring_to_front(target)
@@ -166,7 +166,7 @@ class Interface::Managers::FrameManager
       @last_mouse_click_event = evt
       @mouse_button_down = true
     elsif evt.kind_of? SDL::Event::MouseButtonUp
-      Interface::GUI.focus.fire_event(:mouse_released, evt) if Interface::GUI.focus and Interface::GUI.focus.enabled?
+      Interface::Gui.focus.fire_event(:mouse_released, evt) if Interface::Gui.focus and Interface::Gui.focus.enabled?
       @mouse_button_down = false
       @last_mouse_click_event = evt
     end

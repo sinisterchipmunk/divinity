@@ -1,0 +1,184 @@
+class OpenGl::Camera
+  include Geometry
+  
+  attr_accessor :position, :view, :up
+  attr_reader :matrix, :frustum
+  delegate :update!, :point_visible?, :cube_visible?, :sphere_visible?, :to => :frustum
+
+  # Takes the position, view and up vectors in that order, in the form of either 3 Vectors / Vertexes (p, v, u) or
+  # 9 Floats (px, py, pz, vx, vy, vz, ux, uy, uz)
+  def initialize(*args)
+    args = [0,1.5,6, 0,1.5,0, 0,1,0] if args.empty?
+    @position = Vertex3d.new
+    @view = Vector3d.new
+    @up = Vector3d.new
+
+    @last_rot_x, @cur_rot_x = 0.0, 0.0
+
+    if args.length == 3 # Vectors / Vertices
+      @position, @view, @up = args
+    elsif args.length == 9 # Floats
+      position.x, position.y, position.z, view.x, view.y, view.z, up.x, up.y, up.z = args
+    else raise "Expected either 3 Vectors (p, v, u) or 9 Floats (px, py, pz, vx, vy, vz, ux, uy, uz) as arguments"
+    end
+
+    @frustum = OpenGl::Frustum.new
+    @matrix = Matrix.identity(4)
+  end
+
+  # Returns whether or not the up vector will be updated whenever the view is rotated. Whether this is useful to
+  # you depends entirely on what kind of camera you need; if you need a "floating" camera such as a flight simulator,
+  # then you probably want this enabled, otherwise you'll hit Gimble lock when the total rotation of the view vector
+  # is greater than 1.0 or less than -1.0. (In practice, this value is maxed out at 1.0 or -1.0 whenever
+  # #maintain_up_vector? is set to false, which prevents the camera from attempting a full rotation.)
+  #
+  # However, if you need more of a first-person type of camera, in which the user can't generally turn their head
+  # upside-down, then you'll want this *disabled*. When rotating, the Camera class will automatically max out the
+  # view vector's rotation at 1.0 (straight up) or -1.0 (straight down) in order to avoid Gimble lock, and this will
+  # keep the player from rotating the camera into unrealistic angles. Defaults to false. See also #maintain_up_vector!
+  def maintain_up_vector?; @maintain_up_vector; end
+
+  # Returns whether or not the up vector will be updated whenever the view is rotated. Whether this is useful to
+  # you depends entirely on what kind of camera you need; if you need a "floating" camera such as a flight simulator,
+  # then you probably want this enabled, otherwise you'll hit Gimble lock when the total rotation of the view vector
+  # is greater than 1.0 or less than -1.0. (In practice, this value is maxed out at 1.0 or -1.0 whenever
+  # #maintain_up_vector? is set to false, which prevents the camera from attempting a full rotation.)
+  #
+  # However, if you need more of a first-person type of camera, in which the user can't generally turn their head
+  # upside-down, then you'll want this *disabled*. When rotating, the Camera class will automatically max out the
+  # view vector's rotation at 1.0 (straight up) or -1.0 (straight down) in order to avoid Gimble lock, and this will
+  # keep the player from rotating the camera into unrealistic angles. Defaults to false. See also #maintain_up_vector!
+  def maintain_up_vector!(a = true); @maintain_up_vector = a; end
+
+  # If true, this will prevent the camera from #move!-ing or #strafe!-ing along the Y axis. Defaults to false.
+  def lock_y_axis?; @lock_y_axis; end
+
+  # If true, this will prevent the camera from #move!-ing or #strafe!-ing along the Y axis. Defaults to false.
+  def lock_y_axis!(a = true); @lock_y_axis = a; end
+
+  # Moves left or right, in relation to the supplied vector or in relation to the camera's current orientation
+  def strafe!(distance, *args)
+    front = nil
+    if args.length == 0 then front = (view - position)
+    else front = Vertex3d.new *args
+    end
+    direction = front.cross!(up).normalize!
+    direction.y = 0 if lock_y_axis?
+    direction *= distance
+    self.position += direction
+    self.view += direction
+    matrix.look_at! position, view, up
+    self
+  end
+
+  # Moves forward or back, in relation to the supplied vector or in relation to the camera's current orientation
+  def move!(distance, *args)
+    direction = nil
+    if args.length == 0 then direction = (view - position)
+    else direction = Vertex3d.new *args
+    end
+    direction.normalize!
+    direction.y = 0 if lock_y_axis?
+    direction *= distance
+    self.position += direction
+    self.view += direction
+    matrix.look_at! position, view, up
+    self
+  end
+
+  # Translates the camera's current coordinates to the specified position -- either 3 numbers (x, y, z) or a Vertex
+  def move_to!(*args)
+    point = args[0]
+    point = Vertex3d.new(*args) if args.length == 3
+    self.view = view - position + point
+    self.position = point
+    matrix.look_at! position, view, up
+    self
+  end
+
+  alias translate_to! move_to!
+
+  # Translates the camera's current coordinates by the supplied amount -- either 3 numbers (x, y, z) or a Vector
+  def translate!(*args)
+    amount = args[0]
+    amount = Vector3d.new(*args) if args.length == 3
+    self.view += amount
+    self.position += amount
+    matrix.look_at! position, view, up
+    self
+  end
+
+  # Rotates the view vector of this Camera, effecting a "look" in a rotated direction. This is very useful
+  # when linked with mouse coordinates, or joystick axes, for instance.
+  # Examples:
+  #
+  #   on :mouse_moved do |evt|
+  #     # get this is the change in mouse coordinates between the last update and this one
+  #     extent_x, extent_y = evt.xrel, evt.yrel
+  #     # moving the mouse vertically will rotate along the X axis, while moving it horizontally will rotate along
+  #     # the Y axis. This simulates a first-person shooter camera. The camera is not rotated along the Z axis.
+  #     camera.rotate_view! extent_y, extent_x, 0
+  #   end
+  #
+  #   # this is also valid:
+  #   camera.rotate_view! Vector.new(extent_x, extent_y, extent_z)
+  #
+  def rotate_view!(*args)
+    x, y, z = args
+    x, y, z = args[0].x, args[0].y, args[0].z if args.length == 1
+    angle_x, angle_y, angle_z = -x / 100.0, y / 100.0, z / 100.0
+    @last_rot_x, @cur_rot_x = @cur_rot_x, @cur_rot_x + angle_z
+
+    # Note - Order of Operation *DOES* matter! We rely on the changing values of up and viewO in order to
+    #        proceed with the next set of calculations!
+    view_o = (view - position)
+    right = view_o.cross(up).normalize
+
+    unless maintain_up_vector?
+      if @cur_rot_x > 1.0
+        @cur_rot_x = 1.0
+        view_o.rotate! 1.0 - @last_rot_x, right if @last_rot_x != 1.0
+      elsif @cur_rot_x < -1.0
+        @cur_rot_x = -1.0
+        view_o.rotate! -1.0 - @last_rot_x, right if @last_rot_x != -1.0
+      else
+        view_o.rotate! angle_z, right
+      end
+    else
+      view_o.rotate! angle_z, right
+      self.up = right.cross(view_o).normalize
+    end
+
+    view_o.rotate! angle_y, up
+    self.up.rotate! angle_y, up if maintain_up_vector?
+
+    # Apply z-axis rotation (angle_x)
+    if maintain_up_vector?
+      right = view_o.cross(up).normalize
+      view_n = view_o.normalize
+      self.view.rotate! angle_x, view_n
+      self.view += position
+      self.up.rotate! angle_x, view_n
+    else
+      self.view = view_o + position
+    end
+
+    # update matrix to represent changes
+    self.matrix.look_at! position, view, up
+    self
+  end
+
+  # Merges all of the vectors that make up the supplied camera with this one, and then updates the matrix.
+  def merge!(camera)
+    self.position, self.view, self.up = camera.position, camera.view, camera.up
+    self.matrix.look_at!(position, view, up)
+    self
+  end
+
+  # Applies the matrix that belongs to this Camera to OpenGL, and then updates its Frustum.
+  def look!
+    glLoadMatrixf(matrix)
+    frustum.update!
+    self
+  end
+end

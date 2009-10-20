@@ -132,7 +132,7 @@ class Interface::Components::TextArea < Interface::Components::InputComponent
 
   def printable_area
     # just to keep things from breaking - the bounds are really set in #validate
-    @printable_area ||= Rectangle.new
+    @printable_area ||= Geometry::Rectangle.new
   end
 
   def preferred_size

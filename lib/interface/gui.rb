@@ -1,5 +1,5 @@
 module Interface
-  module GUI
+  module Gui
     @@focused = nil
     attr_accessor :visible, :enabled
     attr_reader :background, :parent, :valid
@@ -25,8 +25,8 @@ module Interface
       @valid
     end
 
-    def GUI.focus(); @@focused; end
-    def GUI.focus=(f); @@focused = f; end
+    def Gui.focus(); @@focused; end
+    def Gui.focus=(f); @@focused = f; end
     
     def screen_bounds
       if @screen_bounds.nil?
@@ -55,10 +55,10 @@ module Interface
     def background=(b); @background = b; self.invalidate; end
     def root(); parent.nil? ? self : parent.root; end
     def focused(); @@focused == self; end
-    def contains?(point); raise "GUI::contains? must be overridden"; end
-    def bounds(); raise "GUI::bounds must be overridden"; end
-    def update(time); raise "GUI::update must be overridden"; end
-    def render(); raise "GUI::render must be overridden"; end
+    def contains?(point); raise "Gui::contains? must be overridden"; end
+    def bounds(); raise "Gui::bounds must be overridden"; end
+    def update(time); raise "Gui::update must be overridden"; end
+    def render(); raise "Gui::render must be overridden"; end
     
     def shortcut_activated
       ;

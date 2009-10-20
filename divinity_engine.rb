@@ -7,13 +7,15 @@ class DivinityEngine
   include Engine::DefaultRenderBlock
   include Engine::DefaultUpdateBlock
   include Engine::Content
-  include Engine::DefaultGUI
+  include Engine::DefaultGui
+  include Helpers::EventListeningHelper
 
-  attr_reader :frame_manager, :state, :ticks, :interval, :options
+  attr_reader :frame_manager, :state, :ticks, :interval, :options, :camera
 
   def initialize(*args, &blk)
     @blocks = {}
     @state = :waiting
+    @camera = OpenGl::Camera.new
 
     during_init do
       @frame_manager = Interface::Managers::FrameManager.new
@@ -40,6 +42,12 @@ class DivinityEngine
     @options.merge! o
 #    init
   end
+
+  def waiting?; @state == :waiting; end
+  def running?; @state == :running; end
+  def starting?; @state == :starting; end
+  def paused?; @state == :paused; end
+  def stopping?; @state == :stopping; end
 
   def go!
     if @state == :waiting

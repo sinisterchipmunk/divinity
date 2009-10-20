@@ -12,9 +12,15 @@ frames = 0
 ch = 0.0
 t = 0
 last_tick = 0
-scene = World::Scenes::HeightMap.new("data/height_maps/test.bmp")
+divinity = DivinityEngine.new(options)
+scene = World::Scenes::HeightMap.new(divinity, "data/height_maps/test.bmp")
 
-divinity = DivinityEngine.new(options) do
+divinity.on :mouse_moved do |evt|
+  x_extent, y_extent = evt.xrel, evt.yrel
+  divinity.rotate_view! y_extent, x_extent, 0
+end
+
+divinity.during_render do
   glColor4f 1, 1, 1, 1
   scene.render
 end
@@ -42,7 +48,7 @@ end
 # way to count frames! This logic will need to be moved to #during_render to verify that it is
 # running on the same thread as the frames themselves are.
 divinity.during_update do |delta|
-  scene.update delta
+  scene.update delta unless divinity.paused?
 end
 
 divinity.after_shutdown do |divinity|

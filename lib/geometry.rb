@@ -1,6 +1,9 @@
 module Geometry
-  Geometry::Dimension
-  Geometry::Point
-  Geometry::Rectangle
-  self
 end
+
+Geometry::Dimension
+Geometry::Plane
+Geometry::Point
+Geometry::Rectangle
+Geometry::Vertex3d
+Geometry::Vector3d

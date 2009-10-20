@@ -20,7 +20,7 @@ class Textures::Font < Textures::TextureGenerator
     @max_glyph_size = Dimension.new
     @image_size = Dimension.new
     bind { } # generate the font
-    @display_list = OpenGL::DisplayList.new(256) { |i| build_list(i) }
+    @display_list = OpenGl::DisplayList.new(256) { |i| build_list(i) }
   end
   
   def sizeof(str)

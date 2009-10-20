@@ -1,4 +1,4 @@
-module Helpers::XYZHelper
+module Helpers::XyzHelper
   def xyz(*a)
     if a.length == 1 then
       if a[0].kind_of? Array then a[0]

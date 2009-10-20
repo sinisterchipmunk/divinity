@@ -1,4 +1,4 @@
-module Engine::DefaultGUI
+module Engine::DefaultGui
   attr_reader :frame
   @@interface_builders = HashWithIndifferentAccess.new
 

@@ -1,4 +1,4 @@
-class OpenGL::DisplayList
+class OpenGl::DisplayList
   include Helpers::RenderHelper
 
   # If deferred == true, list generation will be deferred until the

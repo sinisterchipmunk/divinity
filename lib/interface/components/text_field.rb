@@ -8,7 +8,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
     @caret_position = 0
     @padding = 4
     @scroll = 0
-    @printable_area = Rectangle.new
+    @printable_area = Geometry::Rectangle.new
     on :key_pressed do |e| key_pressed(e) end
     set_options! options
   end
@@ -89,7 +89,7 @@ class Interface::Components::TextField < Interface::Components::InputComponent
   end
 
   def paint_cursor
-    return unless Interface::GUI.focus == self
+    return unless Interface::Gui.focus == self
     s = Font.select.sizeof(value[0...caret_position])
     x = s.width
     glColor4fv(foreground_color)

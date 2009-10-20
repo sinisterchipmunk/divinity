@@ -16,5 +16,5 @@ class Screen::Viewport
   def height(); update if @viewport[2] == 0 and @viewport[3] == 0; @viewport[3]; end
 
   def size(); Dimension.new(width(), height()); end
-  def bounds(); Rectangle.new(x, y, width, height); end
+  def bounds(); Geometry::Rectangle.new(x, y, width, height); end
 end

@@ -66,34 +66,34 @@ module Interface
         my = (buf.height - (@vgap * (ny-1)))
         mx /= nx if nx > 0
         my /= ny if ny > 0
-        #buf = Rectangle.new(border_size, border_size, cont.bounds.width-border_size, cont.bounds.height-border_size)
+        #buf = Geometry::Rectangle.new(border_size, border_size, cont.bounds.width-border_size, cont.bounds.height-border_size)
 
         if @north
           b = @north.preferred_size
           h = min(b.height, my)
-          @north.bounds = Rectangle.new(buf.x, buf.y, buf.width - buf.x, h)
+          @north.bounds = Geometry::Rectangle.new(buf.x, buf.y, buf.width - buf.x, h)
           buf.y += h + @vgap
         end
         if @south
           b = @south.preferred_size
           h = min(b.height, my)
-          @south.bounds = Rectangle.new(buf.x, buf.height - h, buf.width - buf.x, h)
+          @south.bounds = Geometry::Rectangle.new(buf.x, buf.height - h, buf.width - buf.x, h)
           buf.height -= h + @vgap
         end
         if @east
           b = @east.preferred_size
           w = min(b.width, mx)
-          @east.bounds = Rectangle.new(buf.width - w, buf.y, w, buf.height - buf.y)
+          @east.bounds = Geometry::Rectangle.new(buf.width - w, buf.y, w, buf.height - buf.y)
           buf.width -= w + @hgap
         end
         if @west
           b = @west.preferred_size
           w = min(b.width, mx)
-          @west.bounds = Rectangle.new(buf.x, buf.y, w, buf.height - buf.y)
+          @west.bounds = Geometry::Rectangle.new(buf.x, buf.y, w, buf.height - buf.y)
           buf.x += w + @hgap
         end
         if @center
-          @center.bounds = Rectangle.new(buf.x, buf.y, buf.width - buf.x, buf.height - buf.y)
+          @center.bounds = Geometry::Rectangle.new(buf.x, buf.y, buf.width - buf.x, buf.height - buf.y)
         end
 
         [@north, @south, @east, @west, @center].each do |comp|
