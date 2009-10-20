@@ -28,14 +28,12 @@ divinity.after_render do
   delta = ((divinity.ticks - last_tick) / 1000.0)
   last_tick = divinity.ticks
   if delta > 0 # to prevent divide-by-zero
-    frames += 1.0 / delta
-    t += delta
-    ch += 1
-    if t >= 0.5 # update every half-second
-      afps = frames / ch # average of frames-per-delta over the past ch updates
-      ch = 0
-      t = 0
-      frames = 0
+    frames += 1.0 / delta # one frame per delta = 1/delta
+    ch += 1               # one pass
+    t += delta            # total change in time over ch passes
+    if t >= 0.5           # update avg framerate every half-second
+      afps = frames / ch  # average of frames-per-delta over the last ch passes
+      ch, t, frames = 0, 0, 0
     end
   end
 end

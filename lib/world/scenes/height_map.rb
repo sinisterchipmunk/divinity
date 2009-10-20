@@ -44,8 +44,9 @@ class World::Scenes::HeightMap < World::Scene
             # for the third, saving us those calls to glBegin and glEnd. For a height map that's 300 strips wide,
             # we save 600 method calls -- 300 saved on glBegin calls, and 300 saved on glEnd calls. It's the little
             # things in life...
-            length.times { |z| vertex [x, z], [x+1, z] }
-            (0...length).to_a.reverse.each { |z| vertex [x+1, z], [x+2, z] }
+            x_plus_one, x_plus_two = x+1, x+2
+            length.times { |z| vertex [x, z], [x_plus_one, z] }
+            (0...length).to_a.reverse.each { |z| vertex [x_plus_one, z], [x_plus_two, z] }
           end
         glEnd
       glEnable GL_TEXTURE_2D
