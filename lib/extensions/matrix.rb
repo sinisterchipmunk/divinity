@@ -15,7 +15,6 @@ class Matrix
   def look_at!(position, view, up)
     load_identity!
 
-    forward = view.normalize
     side = forward.cross(up).normalize
     up = side.cross(forward)
 
@@ -27,9 +26,9 @@ class Matrix
     self[1,1] = up.y
     self[2,1] = up.z
 
-    self[0,2] = -forward.x
-    self[1,2] = -forward.y
-    self[2,2] = -forward.z
+    self[0,2] = -view.x
+    self[1,2] = -view.y
+    self[2,2] = -view.z
 
     translate! position
   end
@@ -43,6 +42,7 @@ class Matrix
     self[3,0] = v.x
     self[3,1] = v.y
     self[3,2] = v.z
+    self[3,3] = 1
     self
   end
 end
