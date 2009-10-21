@@ -1,12 +1,12 @@
-# The Camera is an important part of the game, because it is your player's "eyes". It's more important to know
-# how to use it, however, because the mechanics that control your Camera will make the difference between an
+# The Camera is an important part of the game, because it is your end user's "eyes". It's important to know
+# how to use it, because the mechanics that control your Camera will make the difference between an
 # immersive game and a quirky demo.
 #
 # Luckily, all of the hard work has been abstracted out and away from you; you only have to decide what basic
 # rules your Camera has to follow. You can do this through an instance of the DivinityEngine without instantiating
 # the Camera directly; however, there's nothing stopping you from doing so. Be sure to call #look! whenever you
 # are ready to apply the Camera's current transformations to the OpenGL matrix. This will also update the
-# Camera's Frustum.
+# Camera's Frustum object.
 #
 # As mentioned, you need to decide how your Camera is going to respond to input. There are two control methods
 # you can use to this end: #lock_up_vector! and #lock_y_axis! -- you should have a thorough understanding
@@ -168,25 +168,36 @@ class OpenGl::Camera
     self
   end
 
-  # Translates the camera's current coordinates to the specified position -- either 3 numbers (x, y, z) or a Vertex.
+  # Translates the camera's current coordinates to the specified world position, ignoring its local axes.
+  # The right, up and view vectors remain the same, since they are relative to the camera's position.
+  #
+  # Arguments are either 3 numbers (x, y, z) or a Vertex.
   # This method ignores the state of #lock_y_axis?
-  def move_to!(*args)
+  def translate_to!(*args)
     point = args[0]
     point = Vertex3d.new(*args) if args.length == 3
     self.position = point
-    matrix.look_at! position, view, up
+    matrix.translate_to! position
     self
   end
 
-  alias translate_to! move_to!
+  alias move_to! translate_to!
 
-  # Translates the camera's current coordinates by the supplied amount -- either 3 numbers (x, y, z) or a Vector
+  # Translates the camera's current coordinates by the supplied amount, relative to its current orientation.
+  # For instance, if it is translated 0, 1, 0 (one unit on the positive Y axis), that will be converted into
+  # "one unit towards the up vector". Use #translate_to!(camera.position+translation) if you want to translate
+  # relative to worldspace (ignoring the right, up and view vectors).
+  #
+  # The right, view and up vectors are not modified by this method, because they are relative to the camera's
+  # position.
+  #
+  # Arguments are either 3 numbers (x, y, z) or a Vector
   # This method ignores the state of #lock_y_axis?
   def translate!(*args)
     amount = args[0]
     amount = Vector3d.new(*args) if args.length == 3
-    self.position += amount
-    matrix.look_at! position, view, up
+    self.position += (amount.x * right) + (amount.y * up) + (amount.z * view)
+    matrix.translate_to! position
     self
   end
 
@@ -197,11 +208,4 @@ class OpenGl::Camera
     frustum.update!
     self
   end
-
-#  # Merges all of the vectors that make up the supplied camera with this one, and then updates the matrix.
-#  def merge!(camera)
-#    self.position, self.view, self.up = camera.position, camera.view, camera.up
-#    self.matrix.look_at!(position, view, up)
-#    self
-#  end
 end
