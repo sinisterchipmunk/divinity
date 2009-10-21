@@ -1,6 +1,17 @@
 class Geometry::Vector3d < Geometry::Vertex3d
   include Math
 
+  # Rotate this vector around the axis of the specified vector. For instance, to rotate a view vector
+  # upward ("look up"), you'd rotate it along the vector perpendicular to the view and up vectors:
+  #
+  #   view.rotate! angle, view.cross(up)
+  #
+  # This is also known as the "right vector" because it is at a right angle to the forward and up vectors,
+  # and points along the positive local X axis ('right'). Calling up.cross(view) [reversing the arguments]
+  # points the resultant vector along the negative local X axis, or "left".
+  #
+  # Hope that made sense. I'm not very good at explaining this stuff.
+  #
   def rotate!(angle, *args)
     x, y, z = if args.length == 1 then [args[0].x, args[0].y, args[0].z]
     elsif args.length == 3 then [args[0], args[1], args[2]]

@@ -3,9 +3,20 @@ class Matrix
     @rows[i][j] = x
   end
 
+  def load_identity!
+    row_size.times do |r|
+      column_size.times do |c|
+        self[r, c] = (r == c ? 1 : 0)
+      end
+    end
+    self
+  end
+
   def look_at!(position, view, up)
-    forward = (view - position).normalize!
-    side = forward.cross(up).normalize!
+    load_identity!
+
+    forward = view.normalize
+    side = forward.cross(up).normalize
     up = side.cross(forward)
 
     self[0,0] = side.x
@@ -29,9 +40,9 @@ class Matrix
   end
 
   def translate_to!(v)
-    self[0,3] = v.x
-    self[1,3] = v.y
-    self[2,3] = v.z
+    self[3,0] = v.x
+    self[3,1] = v.y
+    self[3,2] = v.z
     self
   end
 end

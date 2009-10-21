@@ -15,9 +15,40 @@ last_tick = 0
 divinity = DivinityEngine.new(options)
 scene = World::Scenes::HeightMap.new(divinity, "data/height_maps/test.bmp")
 
-divinity.on :mouse_moved do |evt|
-  x_extent, y_extent = evt.xrel, evt.yrel
-  divinity.rotate_view! 0, x_extent, y_extent
+#divinity.on :mouse_moved do |evt|
+#  x_extent, y_extent = evt.xrel / 100, evt.yrel / 100
+#  divinity.rotate_view! -y_extent, -x_extent, 0
+#end
+
+move_speed = 0
+strafe_speed = 0
+x_extent = y_extent = 0
+speed = 0.25
+
+divinity.on :key_pressed do |evt|
+  case evt.sym
+    when SDL::Key::W then move_speed += speed
+    when SDL::Key::S then move_speed -= speed
+    when SDL::Key::A then strafe_speed -= speed
+    when SDL::Key::D then strafe_speed += speed
+    when SDL::Key::UP then y_extent += speed
+    when SDL::Key::DOWN then y_extent -= speed
+    when SDL::Key::LEFT then x_extent -= speed
+    when SDL::Key::RIGHT then x_extent += speed
+  end
+end
+
+divinity.on :key_released do |evt|
+  case evt.sym
+    when SDL::Key::W then move_speed -= speed
+    when SDL::Key::S then move_speed += speed
+    when SDL::Key::A then strafe_speed += speed
+    when SDL::Key::D then strafe_speed -= speed
+    when SDL::Key::UP then y_extent -= speed
+    when SDL::Key::DOWN then y_extent += speed
+    when SDL::Key::LEFT then x_extent += speed
+    when SDL::Key::RIGHT then x_extent -= speed
+  end
 end
 
 divinity.during_render do
@@ -48,6 +79,12 @@ end
 # way to count frames! This logic will need to be moved to #during_render to verify that it is
 # running on the same thread as the frames themselves are.
 divinity.during_update do |delta|
+  #divinity.lock_y_axis!
+  #divinity.lock_up_vector!
+  divinity.move! move_speed / 12.0 if move_speed != 0
+  divinity.strafe! strafe_speed / 12.0 if strafe_speed != 0
+  divinity.rotate_view! y_extent / 50.0, -x_extent / 50.0, 0
+  
   scene.update delta unless divinity.paused?
 end
 

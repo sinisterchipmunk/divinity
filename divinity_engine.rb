@@ -1,5 +1,9 @@
 require 'dependencies'
 
+# If the cursor is hidden (SDL.showCursor(0)) and the input is grabbed (SDL::WM.grabInput(SDL_GRAB_ON)),
+# then the mouse will give relative motion events even when the cursor reaches
+# the edge fo the screen.
+# TODO: Provide an API for this in the DivinityEngine without forcing the user to interface directly to SDL.
 class DivinityEngine
   include Gl
   extend Engine::ContentLoader

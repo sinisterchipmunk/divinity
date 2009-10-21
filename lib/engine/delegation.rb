@@ -1,6 +1,8 @@
 module Engine::Delegation
-  delegate :maintain_up_vector?, :maintain_up_vector!, :lock_x_axis?, :lock_x_axis!, :point_visible?, :cube_visible?,
-           :sphere_visible?, :rotate_view!, :to => :camera
+  # Camera methods
+  delegate :strafe!, :move_to!, :translate_to!, :translate!, :look!, :move!,
+           :lock_up_vector?, :lock_up_vector!, :lock_y_axis?, :lock_y_axis!, :rotate_view!,
+           :point_visible?, :cube_visible?, :sphere_visible?, :rotate_view!, :to => :camera
 
   def write(x, y, text)
     w = self.width
