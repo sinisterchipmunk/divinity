@@ -1,6 +1,6 @@
 module World
   class Scene
-    attr_reader :gravitational_field, :engine
+    attr_reader :gravitational_field, :engine, :octree
     attr_accessor :objects
 
     delegate :gravity_at, :to => :gravitational_field
@@ -10,11 +10,11 @@ module World
       @objects = [ ]
       @last_time = Time.now
       @engine = engine
+      #@octree = OpenGl::Octree.new
     end
 
     # delta is the change in time, in milliseconds, since the last call to #update
     def update(delta)
-      delta_in_seconds = delta / 1000.0
       objects.each do |o|
         o.update(delta, self)
       end
