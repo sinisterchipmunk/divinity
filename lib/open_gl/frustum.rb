@@ -126,7 +126,7 @@ class OpenGl::Frustum
     planes.each do |side, plane|
       # ...test each corner of the bounding box, incrementing c if it's in the frustum
       c = 0
-      corners.each { |v| c += 1 if plane.a * v[0] + plane.b * v[1] + plane.c * v[2] + plane.d > 0 }
+      corners.each { |v| c += 1 if plane.a * v.x + plane.b * v.y + plane.c * v.z + plane.d > 0 }
       return false if c == 0
       within += 1 if c == len
     end
@@ -145,14 +145,14 @@ class OpenGl::Frustum
   # supplied width, height and depth.  
   def bounding_box(w, h, d, position, view, up, right)
     corners = []
-    corners << ( view*d +  up*h + -right*w + position).to_a    # front, top,    left
-    corners << ( view*d +  up*h +  right*w + position).to_a    # front, top,    right
-    corners << ( view*d + -up*h + -right*w + position).to_a    # front, bottom, left
-    corners << ( view*d + -up*h +  right*w + position).to_a    # front, bottom, right
-    corners << (-view*d +  up*h + -right*w + position).to_a    # rear,  top,    left
-    corners << (-view*d +  up*h +  right*w + position).to_a    # rear,  top,    right
-    corners << (-view*d + -up*h + -right*w + position).to_a    # rear,  bottom, left
-    corners << (-view*d + -up*h +  right*w + position).to_a    # rear,  bottom, right
+    corners << ( view*d +  up*h + -right*w + position)    # front, top,    left
+    corners << ( view*d +  up*h +  right*w + position)    # front, top,    right
+    corners << ( view*d + -up*h + -right*w + position)    # front, bottom, left
+    corners << ( view*d + -up*h +  right*w + position)    # front, bottom, right
+    corners << (-view*d +  up*h + -right*w + position)    # rear,  top,    left
+    corners << (-view*d +  up*h +  right*w + position)    # rear,  top,    right
+    corners << (-view*d + -up*h + -right*w + position)    # rear,  bottom, left
+    corners << (-view*d + -up*h +  right*w + position)    # rear,  bottom, right
     corners
   end
 
