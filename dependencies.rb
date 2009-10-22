@@ -20,8 +20,8 @@ include Geometry
 
 Dir.glob(File.join($basepath, "**", "*.rb")).each do |fi|
   next if File.directory? fi or fi =~ /\.svn/ or fi =~ /extensions/
-  fi = fi.gsub(/^#{Regexp::escape $basepath}(.*)\.rb$/, '\1')
-  puts "loading: #{fi = fi.camelize}"
+  fi = fi.gsub(/^#{Regexp::escape $basepath}(.*)\.rb$/, '\1').camelize
+  puts "loading: #{fi}" if $DEBUG
   fi.constantize
 end
 
