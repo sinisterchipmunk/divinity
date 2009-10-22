@@ -1,4 +1,4 @@
-require 'dependencies'
+require File.join(File.dirname(__FILE__), 'dependencies')
 
 # If the cursor is hidden (SDL.showCursor(0)) and the input is grabbed (SDL::WM.grabInput(SDL_GRAB_ON)),
 # then the mouse will give relative motion events even when the cursor reaches
@@ -81,6 +81,10 @@ class DivinityEngine
   block_types :before_update,   :during_update, :after_update
   block_types :before_render,   :during_render, :after_render
   block_types :before_shutdown, :during_shutdown, :after_shutdown
+
+  alias before_initialize before_init
+  alias during_initialize during_init
+  alias after_initialize  after_init
 
   private
     class EngineStopped; end

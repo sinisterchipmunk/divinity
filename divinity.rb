@@ -25,6 +25,11 @@ strafe_speed = 0
 x_extent = y_extent = 0
 speed = 0.25
 
+divinity.after_initialize do
+  divinity.pause!
+  divinity.assume_interface :main_menu
+end
+
 divinity.on :key_pressed do |evt|
   case evt.sym
     when SDL::Key::W then move_speed += speed

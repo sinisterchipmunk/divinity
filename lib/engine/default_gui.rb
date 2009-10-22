@@ -17,17 +17,20 @@ module Engine::DefaultGui
 
     frame_manager.theme = theme(:default)
     frame_manager.add frame
-    assume_interface :main_menu
+    assume_interface nil
   end
   
   def assume_interface(name)
     frame.remove_all_components
-    frame.background_visible = true
     frame.location = [0, 0]
     frame.size = [width, height]
     frame.layout = Interface::Layouts::BorderLayout.new
-    pause!
-    find_interface(name).apply_to(self, frame)
+    if name.nil?
+      frame.background_visible = false
+    else
+      frame.background_visible = true
+      find_interface(name).apply_to(self, frame)
+    end
   end
 
   def find_interface(name)
