@@ -1,4 +1,4 @@
-===== About =====
+= About
 
 The Divinity Engine is an ongoing experiment into the world of open game development. The paradigm revolves around you,
 the player. It’s your game, so you can do what you want with it. Want to just try it out and play for awhile? Feel free.
@@ -12,7 +12,7 @@ Official web site: http://www.divinityengine.com
 Source code: http://github.com/sinisterchipmunk/divinity
 
 
-===== Testing =====
+= Testing
 
 To build the documentation, use:
   rake doc
@@ -21,7 +21,7 @@ To run all tests, use:
   rake test:all
 
 
-===== Usage =====
+= Usage
 
 Because this is what you're here for, isn't it? Here's the quickest way to instantiate and start using the engine:
 
@@ -42,7 +42,7 @@ Because this is what you're here for, isn't it? Here's the quickest way to insta
 
 See the web site at http://www.divinityengine.com for more examples, or read through this documentation. You can also
 check out the source file in the DivinityEngine root directory called "template.rb," which demonstrates all of this with
-a small demo application. (It also demonstrates making use of the Camera.)
+a small demo application. (It also demonstrates camera
 
 Note that you can call things like DivinityEngine#during_render and DivinityEngine#during_update multiple times, and
 each block you pass it will be called in the order it was given. Other callbacks include:
