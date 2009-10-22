@@ -54,18 +54,20 @@ class Geometry::Vertex3d
     self.dup.cross! v
   end
 
+  def -@
+    self.class.new(-x, -y, -z)
+  end
+
   ["+", "-", "*", "/", "**"].each do |op|
     line = __LINE__ + 2
     code = <<-end_code
       def #{op}(*args)
-        a, b, c = args
-        if args.length == 1
-          if args[0].kind_of? Array
-            a, b, c = args[0]
-          elsif args[0].kind_of? Vertex3d
-            a, b, c = args[0].to_a
-          else a, b, c = args[0], args[0], args[0]
+        a, b, c = if args.length == 1
+          if args[0].kind_of? Array then args[0]
+          elsif args[0].kind_of? Vertex3d then args[0].to_a
+          else [args[0], args[0], args[0]]
           end
+        else args
         end
         self.class.new(@x #{op} a, @y #{op} b, @z #{op} c)
       end     

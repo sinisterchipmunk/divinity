@@ -15,8 +15,8 @@ class Matrix
   def look_at!(position, view, up)
     load_identity!
 
-    side = forward.cross(up).normalize
-    up = side.cross(forward)
+    side = view.cross(up).normalize
+    up = side.cross(view)
 
     self[0,0] = side.x
     self[1,0] = side.y
@@ -30,19 +30,17 @@ class Matrix
     self[1,2] = -view.y
     self[2,2] = -view.z
 
-    translate! position
+    translate_to! position
   end
 
   def translate!(v)
-    4.times { |i| self[3,i] = self[0,i] * v.x + self[1,i] * v.y + self[2,i] * v.z + self[3,i] }
+    4.times { |i| self[3,i] = self[0,i] * -v.x + self[1,i] * -v.y + self[2,i] * -v.z + self[3,i] }
     self
   end
 
   def translate_to!(v)
-    self[3,0] = v.x
-    self[3,1] = v.y
-    self[3,2] = v.z
-    self[3,3] = 1
+    4.times { |i| self[3,i] = -v.x * self[0,i] + -v.y * self[1,i] + -v.z * self[2,i] }
+    self[3,3] += 1 # for the lower-right identity
     self
   end
 end

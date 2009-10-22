@@ -61,6 +61,8 @@ class OpenGl::Camera
   #
   def rotate_view!(*args)
     amount_x, amount_y, amount_z = if args.length == 0 then args.to_a else args end
+    amount_y = -amount_y # because the user is expecting positive amount to rotate right, not left
+    amount_z = 0 if amount_z.nil? # if the user forgets to supply a Z axis, let's forgive them.
 
     if amount_x != 0 # effectively "looking up/down"
       view.rotate! amount_x, right
@@ -149,7 +151,7 @@ class OpenGl::Camera
     direction = front.cross!(up).normalize!
     direction.y = 0 if lock_y_axis?
     direction *= distance
-    self.position -= direction
+    self.position += direction
     matrix.look_at! position, view, up
     self
   end
@@ -163,7 +165,7 @@ class OpenGl::Camera
     direction.normalize!
     direction.y = 0 if lock_y_axis?
     direction *= distance
-    self.position -= direction
+    self.position += direction
     matrix.look_at! position, view, up
     self
   end
@@ -196,7 +198,7 @@ class OpenGl::Camera
   def translate!(*args)
     amount = args[0]
     amount = Vector3d.new(*args) if args.length == 3
-    self.position += (amount.x * right) + (amount.y * up) + (amount.z * view)
+    self.position += (right*amount.x) + (up*amount.y) + (view*amount.z)
     matrix.translate_to! position
     self
   end
