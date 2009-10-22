@@ -1,4 +1,6 @@
 module Math
+  # This is being phased out in favor of Geometry::Vector3d. I don't think this version
+  # is actually being used by the engine right now. This file will be deleted eventually.
   class Vector
     attr_accessor :x, :y, :z
     

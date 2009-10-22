@@ -1,22 +1,15 @@
+require File.join(File.dirname(__FILE__), 'bytes')
+
+Bignum.send(:include, Bytes)
+
 class Fixnum
-  def squared
-    self ** 2
-  end
-  
+  include Bytes
+
   def xor(b)
     a = self
     a_ = 255 - a
     b_ = 255 - b
     (a & b_) | (a_ & b)
-  end
-  
-  def bytes(a = self)
-    r = [ a % 256 ]
-    while a > 255
-      a = (a / 256).to_i
-      r <<= a % 256
-    end
-    r
   end
   
   def xnor(b)
@@ -31,14 +24,8 @@ class Fixnum
     r
   end
 
-  def max(a)
-    self > a ? self : a
-  end
-
-  def min(a)
-    self < a ? self : a
-  end
-
+  alias hex to_x
+  
   [ 2, 3, 4, 6, 8, 10, 12, 20, 100 ].each do |sides|
     code = <<-end_code
       def d#{sides}; Math::Dice.new self, #{sides}; end

@@ -18,7 +18,7 @@ end
 namespace :test do
   desc 'Run all unit tests'
   Rake::TestTask.new(:unit) do |t|
-    t.libs << "../common"
+    t.libs << "test/common"
     t.libs << "lib"
     t.test_files = "test/unit/**/*.rb"
     t.verbose = true

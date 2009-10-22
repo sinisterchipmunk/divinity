@@ -35,7 +35,7 @@ class Math::Dice
   alias lowest worst
   alias sum to_i
 
-  %W(<= < == > >= * + - /).each do |operator|
+  %W(<= < == > >= * + - / **).each do |operator|
     eval "def #{operator}(a) self.to_i #{operator} a end", binding, __FILE__, __LINE__
   end
 
