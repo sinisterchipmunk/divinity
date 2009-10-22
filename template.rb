@@ -14,9 +14,6 @@ def draw_quad
 end
 
 engine = DivinityEngine.new(:width => 800, :height => 600, :fullscreen => false)
-engine.after_initialize do
-  engine.translate_to! 0, 0, distance
-end
 
 engine.during_render do
   # do some OpenGL rendering
