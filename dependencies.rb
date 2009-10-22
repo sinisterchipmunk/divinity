@@ -26,3 +26,4 @@ Dir.glob(File.join($basepath, "**", "*.rb")).each do |fi|
 end
 
 include Magick
+include Helpers::RenderHelper
