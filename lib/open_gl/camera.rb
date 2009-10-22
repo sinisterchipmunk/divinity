@@ -21,12 +21,33 @@ class OpenGl::Camera
   attr_accessor :position
 
   # the view, up and right vectors for this camera, in relation to the camera itself (#position is the origin)
-  attr_accessor :view, :up, :right
+  attr_reader :view, :up, :right
   attr_reader :matrix, :frustum
   delegate :point_visible?, :cube_visible?, :sphere_visible?, :to => :frustum
 
-  def view=(a); @view = a; @right = @view.cross(@up) end
-  def up=(a); @up = a; @right = @view.cross(@up) end
+  # Sets the view vector and updates the right/up vectors automatically
+  def view=(a)
+    @view = a.normalize
+    @right = @view.cross(@up).normalize!
+    @up = @right.cross(@view).normalize!
+    @view
+  end
+
+  # Sets the up vector and updates the right/view vectors automatically
+  def up=(a)
+    @up = a.normalize
+    @right = @view.cross(@up).normalize!
+    @view = @up.cross(@right).normalize!
+    @up
+  end
+
+  # Sets the right vector and updates the view/up vectors automatically
+  def right=(a)
+    @right = a.normalize
+    @view = @up.cross(@right).normalize!
+    @up = @right.cross(@view).normalize!
+    @right
+  end
 
   def initialize(*args)
     @position = Vertex3d.new(0, 0, 0)
@@ -41,6 +62,29 @@ class OpenGl::Camera
     @matrix = Matrix.identity(4)
 
     matrix.look_at! position, view, up
+  end
+
+  # Sets the view to point at the specified position in world space. Up and right vectors are automatically
+  # recalculated; you should set these explicitly using orient! if you need a specific orientation.
+  def look_at!(*args)
+    x, y, z = if args.length == 1 then args[0].to_a else args end
+
+    new_view = Vector3d.new(x,y,z) - position
+    self.view = new_view
+    matrix.look_at! position, view, up
+    self
+  end
+
+  # Explicitly sets this camera's orientation. This is a dangerous method, because it does NOT do any
+  # calculations. So you must first manually verify that view, up and right are all at right angles to
+  # each other, that they are relative to position, and that they are normalized!
+  def orient!(view, up, right, position = self.position)
+    @view = view
+    @up = up
+    @right = right
+    @position = position
+    matrix.look_at! self.position, self.view, self.up
+    self
   end
 
   # Rotates the view vector of this Camera, effecting a "look" in a rotated direction. This is very useful
@@ -59,10 +103,8 @@ class OpenGl::Camera
   #   # this is also valid:
   #   camera.rotate_view! Vector.new(extent_x, extent_y, extent_z)
   #
-  def rotate_view!(*args)
-    amount_x, amount_y, amount_z = if args.length == 0 then args.to_a else args end
+  def rotate_view!(amount_x, amount_y, amount_z = 0)
     amount_y = -amount_y # because the user is expecting positive amount to rotate right, not left
-    amount_z = 0 if amount_z.nil? # if the user forgets to supply a Z axis, let's forgive them.
 
     if amount_x != 0 # effectively "looking up/down"
       view.rotate! amount_x, right

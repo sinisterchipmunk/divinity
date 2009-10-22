@@ -1,6 +1,6 @@
 module Engine::Delegation
   # Camera methods
-  delegate :strafe!, :move_to!, :translate_to!, :translate!, :look!, :move!,
+  delegate :strafe!, :move_to!, :translate_to!, :translate!, :look!, :move!, :look_at!,
            :lock_up_vector?, :lock_up_vector!, :lock_y_axis?, :lock_y_axis!, :rotate_view!,
            :point_visible?, :cube_visible?, :sphere_visible?, :rotate_view!, :to => :camera
 
