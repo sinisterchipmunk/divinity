@@ -1,3 +1,23 @@
+# Frustum Culling is a subtle but extremely important part of your game. This class is designed to provide
+# you with several methods of detecting whether a set of polygons are visible to the user; if they're not
+# visible, then you can safely skip rendering them. This leads to vast increases in framerate, even if you
+# do no further optimization.
+#
+# Ideally, you'd combine this with an OpenGl::Octree for even more efficient culling.
+#
+# Some of the tests made available to you by the Frustum class may return the symbol :partial instead of
+# true or false. You can safely evaluate :partial to mean "true" -- but this distinction is made for highly
+# optimized pieces of code that rely on whether the object is fully or partially within the Frustum. For instance,
+# OpenGl::Octree uses the :partial response to determine whether to assume that all objects within the Octree
+# are visible. Methods that may return :partial will return true when the object is entirely within the Frustum,
+# and :partial when the object is only partially in the Frustum.
+#
+# You should call #update! whenever you change the OpenGL matrix (unless you don't intend to test against it)
+# so that the Frustum is not out-of-date. Note that this is done automatically by the Camera class when you
+# call Camera#look! -- so if you're checking against a Frustum instantiated and managed by the Camera class,
+# then updating it would be redundant. Frustum#update! is an expensive call, so you want to do it as rarely
+# as you can manage.
+#
 class OpenGl::Frustum
   include Helpers::XyzHelper
   include Geometry
@@ -12,31 +32,139 @@ class OpenGl::Frustum
     SIDES.each { |k| @planes[k] = Plane.new }
   end
 
+  # Returns true if the specified point is in the frustum; false otherwise.
   def point_visible?(*point)
-    sphere_visible? 0, *point
-  end
-
-  def sphere_visible?(radius, *point)
-    r, x, y, z = radius, *xyz(*point)
-    planes.each { |side, plane| return false if plane.a*x + plane.b*y + plane.c*z + plane.d <= -radius }
+    x, y, z = radius, *xyz(*point)
+    x, y, z = x.to_a if x.kind_of? Vertex3d
+    planes.each { |side, plane| return false if plane.a * x + plane.b * y + plane.c * z + plane.d <= 0 }
     true
   end
 
-  def cube_visible?(size, *point)
-    s, x, y, z = radius, *xyz(*point)
+  # Returns true if the specified sphere is completely within the frustum;
+  # returns :partial if the sphere is only partially within the frustum;
+  # returns false if the sphere is completely outside the frustum.
+  def sphere_visible?(radius, *point)
+    r, x, y, z = radius, *xyz(*point)
+    x, y, z = x.to_a if x.kind_of? Vertex3d
+    c = 0
     planes.each do |side, plane|
-      next if (plane.a * (x - size) + plane.b * (y - size) + plane.c * (z - size) + plane.d > 0) ||
-              (plane.a * (x + size) + plane.b * (y - size) + plane.c * (z - size) + plane.d > 0) ||
-              (plane.a * (x - size) + plane.b * (y + size) + plane.c * (z - size) + plane.d > 0) ||
-              (plane.a * (x + size) + plane.b * (y + size) + plane.c * (z - size) + plane.d > 0) ||
-              (plane.a * (x - size) + plane.b * (y - size) + plane.c * (z + size) + plane.d > 0) ||
-              (plane.a * (x + size) + plane.b * (y - size) + plane.c * (z + size) + plane.d > 0) ||
-              (plane.a * (x - size) + plane.b * (y + size) + plane.c * (z + size) + plane.d > 0) ||
-              (plane.a * (x + size) + plane.b * (y + size) + plane.c * (z + size) + plane.d > 0)
-      return false
+      return false if (d = plane.a*x + plane.b*y + plane.c*z + plane.d) <= -radius
+      c += 1 if d > radius
+    end
+    return true if c == 6
+    :partial
+  end
+
+  #
+  # There are many ways to call #cube_visible? and all of them depend on just how much you know about the
+  # cube in question.
+  #
+  # Size can be either a scalar, in which case the cube is treated as a perfect square cube, or a Vector3d,
+  # in which x, y and z represent width, height and depth, respectively. These numbers should be from the
+  # origin (center) of the object, so divide by two if you're working with the entire size.
+  #
+  # *point can be either 3 scalars, which are assumed to be position x, y, z, in which case the view, up and
+  # right vectors are assumed to be (0,0,-1), (0,1,0) and (1,0,0), respectively;
+  #
+  # or *point can be a set of 4 Vector3d's, in which case they are expected to be:
+  #
+  #   origin, view_vector, up_vector, right_vector - in that order.
+  #
+  # The extents of the bounding box will be calculated based on these vectors and the
+  # supplied size(s) by calling #bounding_box.
+  #
+  # Or, you can pass a set of 8 Vector3d's, in which case they are interpreted as the transformed worldspace
+  # coordinates of the bounding box to be tested. This would prevent #bounding_box from being called, which
+  # may be ideal if the object's transformations are not changing very often. The order of vertices in this
+  # list does not matter.
+  #
+  # Examples:
+  #   # a width, height, depth of 5, 5, 5 at world position 0,0,0
+  #   1. frustum.cube_visible? 5, 0, 0, 0
+  #   #
+  #   # a w/h/d of 1,2,3 and world position 4,5,6
+  #   2. frustum.cube_visible? 1, 2, 3, 4, 5, 6
+  #   #
+  #   # Generates a bounding box with the following arguments, see #bounding_box(w, h, d, p, v, u, r)
+  #   # note that for optimization you should really cache this yourself and update it when necessary
+  #   3. frustum.cube_visible? width, height, depth, position, view, up, right
+  #   #
+  #   # check a preset bounding box
+  #   4. frustum.cube_visible? front_top_left, front_top_right, front_bottom_left, front_bottom_right,
+  #                         rear_top_left, rear_top_right, rear_bottom_left, rear_bottom_right
+  #   #
+  #   # check a bounding box generated by the frustum. Same as #3.
+  #   5. frustum.cube_visible? *(frustum.bounding_box(. . .))
+  # 
+  # If the cube is completely within the frustum, returns true.
+  # If the cube is partially within the frustum, returns :partial.
+  # Else, returns false.
+  #
+  def cube_visible?(size, *point)
+    corners = if point.length == 7
+      corners = [size]
+      corners.concat point
+      corners
+    else
+      w, h, d = (size.kind_of? Array) ? size : (size.kind_of? Vertex3d) ? size.to_a : [size, size, size]
+      position, view, up, right = case point.length
+        when 3 then [Vertex3d.new(*point), Vertex3d.new(0,0,-1), Vertex3d.new(0,1,0), Vertex3d.new(1,0,0)]
+        else point
+      end
+      
+      bounding_box(w, h, d, position, view, up, right)
+    end
+
+    within = 0
+    len = corners.length
+    # for each plane in the frustum...
+    planes.each do |side, plane|
+      # ...test each corner of the bounding box, incrementing c if it's in the frustum
+      c = 0
+      corners.each { |v| c += 1 if plane.a * v[0] + plane.b * v[1] + plane.c * v[2] + plane.d > 0 }
+      return false if c == 0
+      within += 1 if c == len
+    end
+    return true if within == planes.length # box is completely inside frustum
+    :partial # box ix partially inside frustum
+  end
+
+  # Returns the eight points that make up a bounding box calculated from the specified
+  # width, height, depth, position, view, up and right vectors (in that order).
+  # This is best used to buffer the bounding box in memory so that it doesn't have to be
+  # calculated every time #cube_visible? is called (which would be the default functionality).
+  #
+  # The view, up, and right vectors must be normalized for the results to be accurate.
+  # The position vector should be in worldspace.
+  # The actual width, height and depth of the bounding box will be equal to 2 times the
+  # supplied width, height and depth.  
+  def bounding_box(w, h, d, position, view, up, right)
+    corners = []
+    corners << ( view*d +  up*h + -right*w + position).to_a    # front, top,    left
+    corners << ( view*d +  up*h +  right*w + position).to_a    # front, top,    right
+    corners << ( view*d + -up*h + -right*w + position).to_a    # front, bottom, left
+    corners << ( view*d + -up*h +  right*w + position).to_a    # front, bottom, right
+    corners << (-view*d +  up*h + -right*w + position).to_a    # rear,  top,    left
+    corners << (-view*d +  up*h +  right*w + position).to_a    # rear,  top,    right
+    corners << (-view*d + -up*h + -right*w + position).to_a    # rear,  bottom, left
+    corners << (-view*d + -up*h +  right*w + position).to_a    # rear,  bottom, right
+    corners
+  end
+
+  # Returns true if the specified polygon is within the frustum, false otherwise.
+  def poly_visible?(*vertices)
+    planes.each do |side, plane|
+      n = 0
+      vertices.each do |vert|
+        x, y, z = if vert.kind_of? Array then vert else [vert.x, vert.y, vert.z] end
+        n += 1 and break if plane.a * x + plane.b * y + plane.c * z + plane.d > 0
+      end
+      return false if n == 0
     end
     true
   end
+
+  alias polygon_visible? poly_visible?
 
   # Updating the Frustum is EXPENSIVE and should only be done when necessary -- but must be done
   # every time the matrix changes! (When the camera is moved, rotated, or whatever.)
