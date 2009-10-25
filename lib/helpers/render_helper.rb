@@ -2,6 +2,45 @@ module Helpers::RenderHelper
   include Gl
   include Glu
 
+  def render_cube(position, width, height, depth)
+    glTranslatef(position.x, position.y, position.z)
+    glDisable GL_TEXTURE_2D
+    glBegin GL_QUADS
+      # LEFT
+      glVertex3f -width, -height, -depth
+      glVertex3f -width, -height,  depth
+      glVertex3f -width,  height,  depth
+      glVertex3f -width,  height, -depth
+      # RIGHT
+      glVertex3f  width, -height, -depth
+      glVertex3f  width, -height,  depth
+      glVertex3f  width,  height,  depth
+      glVertex3f  width,  height, -depth
+      # TOP
+      glVertex3f -width, -height, -depth
+      glVertex3f -width, -height,  depth
+      glVertex3f  width, -height,  depth
+      glVertex3f  width, -height, -depth
+      # BOTTOM
+      glVertex3f -width,  height, -depth
+      glVertex3f -width,  height,  depth
+      glVertex3f  width,  height,  depth
+      glVertex3f  width,  height, -depth
+      # FRONT
+      glVertex3f -width, -height,  depth
+      glVertex3f -width,  height,  depth
+      glVertex3f  width,  height,  depth
+      glVertex3f  width, -height,  depth
+      # BACK
+      glVertex3f -width, -height, -depth
+      glVertex3f -width,  height, -depth
+      glVertex3f  width,  height, -depth
+      glVertex3f  width, -height, -depth
+    glEnd
+    glEnable GL_TEXTURE_2D
+    glTranslatef(-position.x, -position.y, -position.z)
+  end
+
   def push_matrix
     glPushMatrix
     yield

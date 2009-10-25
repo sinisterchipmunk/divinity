@@ -1,4 +1,4 @@
-module Components::Button::ButtonMouseListener
+module Interface::Components::Button::ButtonMouseListener
   # Texture definitions
   DOWN_SHADE = 0.8
   NORM_SHADE = 1

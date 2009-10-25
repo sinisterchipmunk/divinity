@@ -16,7 +16,7 @@ module World
     # delta is the change in time, in milliseconds, since the last call to #update
     def update(delta)
       objects.each do |o|
-        o.update(delta, self)
+        o.update(delta, self) if o.respond_to? :update
       end
     end
 
@@ -30,7 +30,18 @@ module World
         glLoadIdentity
         engine.camera.look!
         yield if block_given?
-        objects.each { |o| o.render if o.respond_to? :render }
+        objects.each do |o|
+          if o.respond_to? :render
+            # NOTE: Manual frustum checking needs to be replaced with octree checking.
+            if o.respond_to? :position
+              #if engine.point_visible? o.position
+                o.render
+              #end
+            else
+              o.render
+            end
+          end
+        end
       end
     end
   end

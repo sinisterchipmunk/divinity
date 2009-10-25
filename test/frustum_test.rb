@@ -1,10 +1,35 @@
-require 'divinity_engine'
+require '../divinity_engine'
 include Helpers::RenderHelper
+
+class TestPoint
+  attr_accessor :position, :size
+  
+  def initialize(position)
+    @position = position
+    @size = 0.1
+  end
+
+  def render
+    puts "rendering point at #{Time.now.to_f}"
+    
+    glTranslatef position.x, position.y, position.z
+    glDisable GL_TEXTURE_2D
+    glBegin GL_QUADS
+      glVertex3f -size, -size, 0
+      glVertex3f -size,  size, 0
+      glVertex3f  size,  size, 0
+      glVertex3f  size, -size, 0
+    glEnd
+    glEnable GL_TEXTURE_2D
+    glTranslatef -position.x, -position.y, -position.z
+  end
+end
+
 
 options = YAML::load(File.read("data/config.yml")) rescue {
         :width => 800,
         :height => 600,
-        :fullscreen => true
+        :fullscreen => false
 }
 
 afps = 0.0
@@ -13,16 +38,17 @@ ch = 0.0
 t = 0
 last_tick = 0
 divinity = DivinityEngine.new(options)
-scene = World::Scenes::HeightMap.new(divinity, "data/height_maps/test.bmp")
 
 move_speed = 0
 strafe_speed = 0
 x_extent = y_extent = 0
 speed = 0.25
+point = TestPoint.new(Vertex3d.new(0,0,-5))
 
 divinity.during_render do
   glColor4f 1, 1, 1, 1
-  scene.render
+  divinity.look!
+  point.render if divinity.point_visible? point.position
 end
 
 divinity.after_render do
@@ -44,17 +70,15 @@ divinity.after_render do
   end
 end
 
+# IMPORTANT: When multithreading is implemented, #during_update will NO LONGER be a reliable
+# way to count frames! This logic will need to be moved to #during_render to verify that it is
+# running on the same thread as the frames themselves are.
 divinity.during_update do |delta|
+  #divinity.lock_y_axis!
+  #divinity.lock_up_vector!
   divinity.move! move_speed / 12.0 if move_speed != 0
   divinity.strafe! strafe_speed / 12.0 if strafe_speed != 0
   divinity.rotate_view! y_extent / 50.0, -x_extent / 50.0, 0
-  
-  scene.update delta unless divinity.paused?
-end
-
-divinity.after_initialize do
-  divinity.pause!
-  divinity.assume_interface :main_menu
 end
 
 divinity.on :key_pressed do |evt|

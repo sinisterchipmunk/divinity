@@ -3,7 +3,7 @@ class Array
   # #extract_vector3d!
   def extract_vector3i!
     a = self
-    if a.length == 0 then raise "Expected vector coordinates"
+    if false and a.length == 0 then raise "Expected vector coordinates"
     elsif a.length >= 3 and a[0].kind_of? Numeric and a[1].kind_of? Numeric and a[2].kind_of? Numeric
       return a.slice!(0, 3)
     elsif a.length >= 1 and a[0].kind_of? Vertex3d
@@ -17,14 +17,15 @@ class Array
       i = a.slice!(0,1).first
       return [i, i, i]
     end
-    raise "Could not parse vector coordinates out of #{self.inspect}"
+    [0,0,0]
+    #raise "Could not parse vector coordinates out of #{self.inspect}"
   end
 
   # Returns a Vector3d comprised of either three integers, a Vector3d, a Vertex3d or an array of 3 integers
   # extracted from the beginning of this array. Probably less efficient than #extract_vector3d!
   def extract_vector3d!
     a = self
-    if a.length == 0 then raise "Expected vector coordinates"
+    if false and a.length == 0 then raise "Expected vector coordinates"
     elsif a.length >= 4 and a[0].kind_of? Numeric and a[1].kind_of? Numeric and a[2].kind_of? Numeric and
             a[3].kind_of? Numeric
       return Vector3d.new(a.slice!(0, 4))
@@ -40,6 +41,7 @@ class Array
     elsif a.length == 1 and a[0].kind_of? Numeric # but a[1] and/or a[2] are not, so it's only 1 number
       return Vector3d.new(a.slice!(0, 1).first)
     end
-    raise "Could not parse vector coordinates out of #{self.inspect}"
+    Vector3d.new(0,0,0)
+    #raise "Could not parse vector coordinates out of #{self.inspect}"
   end
 end

@@ -10,6 +10,14 @@ class Vertex3dTest < Test::Unit::TestCase
     [:x, :y, :z].each { |i| assert_kind_of Numeric, v.send(i) }
   end
 
+  def test_division
+    v = Vertex3d.new(1, 2, 3)
+    v /= 2.0
+    assert_equal 0.5, v.x
+    assert_equal 1, v.y
+    assert_equal 1.5, v.z
+  end
+
   def test_magnitude
     assert_equal 4, Vertex3d.new( 4, 0, 0).magnitude
     assert_equal 4, Vertex3d.new(-4, 0, 0).magnitude

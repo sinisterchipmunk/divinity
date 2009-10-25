@@ -34,7 +34,7 @@ class OpenGl::Frustum
 
   # Returns true if the specified point is in the frustum; false otherwise.
   def point_visible?(*point)
-    x, y, z = radius, *xyz(*point)
+    x, y, z = *xyz(*point)
     x, y, z = x.to_a if x.kind_of? Vertex3d
     planes.each { |side, plane| return false if plane.a * x + plane.b * y + plane.c * z + plane.d <= 0 }
     true
@@ -112,13 +112,13 @@ class OpenGl::Frustum
         else point
       end
 
-      raise "Could not calculate width, height and depth from arguments" unless w and h and d
-      raise "Could not calculate position, view, up and right vectors from arguments" unless position and view and
-              up and right
+      raise "Could not calculate width, height and depth from arguments: #{size}, #{point.inspect}" unless w and h and d
+      raise "Could not calculate position, view, up and right vectors from arguments: #{size}, #{point.inspect}" unless
+              position and view and up and right
       
       bounding_box(w, h, d, position, view, up, right)
     end
-    raise "Could not calculate any bounding box vertices from arguments" if corners.empty?
+    raise "Could not calculate any bounding box vertices from arguments: #{size}, #{point.inspect}" if corners.empty?
 
     within = 0
     len = corners.length
@@ -143,7 +143,7 @@ class OpenGl::Frustum
   # The position vector should be in worldspace.
   # The actual width, height and depth of the bounding box will be equal to 2 times the
   # supplied width, height and depth.  
-  def bounding_box(w, h, d, position, view, up, right)
+  def self.bounding_box(w, h, d, position, view, up, right)
     corners = []
     corners << ( view*d +  up*h + -right*w + position)    # front, top,    left
     corners << ( view*d +  up*h +  right*w + position)    # front, top,    right

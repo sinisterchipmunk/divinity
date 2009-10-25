@@ -2,7 +2,7 @@ module Interface::Components::Button::InstanceMethods
   def self.included(base)
     base.send :attr_reader, :state, :caption, :action_listeners
     base.send :theme_selection, :secondary
-    base.send :include, Components::Button::ButtonMouseListener
+    base.send :include, Interface::Components::Button::ButtonMouseListener
   end
 
   def init_variables(caption)

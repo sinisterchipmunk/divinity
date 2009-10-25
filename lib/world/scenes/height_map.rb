@@ -31,7 +31,9 @@ class World::Scenes::HeightMap < World::Scene
 
   ## TODO: After initial construction, pieces of height map should be fed into an octree for culling.
   def render
-    super { @display_list.call }
+    super do
+      @display_list.call
+    end
   end
 
   def render_without_display_list

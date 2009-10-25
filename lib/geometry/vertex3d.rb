@@ -11,9 +11,23 @@ class Geometry::Vertex3d
     @x, @y, @z = vertex.extract_vector3i!
   end
 
+  def [](a)
+    case a
+      when 0 then @x
+      when 1 then @y
+      when 2 then @z
+      else raise "Index out of bounds: #{a}"
+    end
+  end
+
   def ==(*vertex)
     x, y, z = vertex.extract_vector3i!
     @x == x and @y == y and @z == z
+  end
+
+  def assign!(*point)
+    @x, @y, @z = point.extract_vector3i!
+    self
   end
 
   def equal_magnitude?(v)
