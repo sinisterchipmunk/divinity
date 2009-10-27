@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=us-ascii">
+  <meta name="date" content="Wed Sep 28 00:00:00 UTC 2005">
+  <meta name="generator" content="deplate.rb">
+  <link rel="stylesheet" type="text/css" href="rubyStyle.css" title="rubyStyle">
+
+  <title></title>
+</head>
+
+<body>
+  <h1 id="hd001">RMagick 2.12.0 (ImageMagick 6.5.6-8) Win32 Installation</h1>
+
+  <p>In this file you find:</p>
+
+  <ul>
+    <li><a href="#hd001002">Prerequisites</a></li>
+
+    <li><a href="#hd001004">Installation instructions</a></li>
+
+    <li><a href="#hd001004002">Post Installation</a></li>
+
+    <li><a href="#hd001005">Documentation</a></li>
+
+    <li><a href="#hd001006">General Remarks</a></li>
+
+    <li><a href="#hd001007">Contact Information</a></li>
+
+    <li><a href="#hd001008">Thanks to</a></li>
+	  <li>
+		  <a href="#hd001001">Change log</a>
+	  </li>
+
+	  <li>
+		  <a href="#licensing">Licensing information</a>
+	  </li>
+
+	  <li><a href="#hd001009">License</a></li>
+  </ul>
+
+
+  <h2 id="hd001002">Prerequisites</h2>
+	<ul>
+		<li>Ruby 1.8.6, installed via the One-Click Installer. Other builds of
+		    1.8.6 may work if they were built with a compatible compiler.
+			This gem was built using Microsoft's Visual C++ 2008 Express
+			Edition.</li>
+		<li>RubyGems</li>
+	</ul>
+
+  <h2 id="hd001004">Installation instructions</h2>
+
+  <h3 id="hd001004001">Gem Install</h3>
+
+  <p>
+	  In order to be reading this file, you've already downloaded the zip file
+	  and unzipped it into a temporary directory.
+	  Double-click the ImageMagick installer (ImageMagick-6.5.6-8-Q8-windows-dll.exe) found in the temporary directory. The only option that
+	  you need to choose from the installation options is "Update executable search
+	  path." The other options are up to you.
+	  <em>Do not use any other version of ImageMagick.</em> 
+  RMagick will not run if you install any other version of ImageMagick.</p>
+
+	<p>Make sure RubyGems is up-to-date. If you are using an older version, update
+	it now. Enter the command</p>
+	<ul>
+		<li type="square">
+			<code>gem update --system</code></li>
+	</ul>
+
+  <p>Installing the gem is very simple. Start a Command Prompt window.
+  Use the chdir command to make the temporary directory that contains the unzipped files the current directory.
+  Enter this command:</p>
+	<ul>
+		<li type="square">
+			<code>gem install rmagick --local</code></li>
+	</ul>
+
+  <p>You should see:</p>
+	<ul>
+		<li type="square">
+			<code>Successfully installed rmagick-2.12.0-x86-mswin32</code></li>
+	</ul>
+	<p>If instead you get the message</p>
+	<ul>
+		<li type="square">
+			<code>Error installing gem rmagick[.gem]: buffer error</code></li>
+	</ul>
+	<p>then you didn't update RubyGems. Do so now and re-run the <code>gem install</code> command.</p>
+
+  <h3 id="hd001004002">Post Installation</h3>
+  <p>It may be necessary to restart any services, Command Prompt windows, or even
+  reboot for current applications (Ruby on Rails based apps, in particular)
+  after installing RMagick.</p>
+
+  <h2 id="hd001005">Documentation</h2>
+
+  <p>Documentation has been installed into the directory of the gem, which can be found using the command:</p>
+	<ul>
+		<li type="square">
+			<code>
+				gem environment
+			</code>
+		</li>
+	</ul>
+	The line(s) you should note is/are:
+  <pre>
+    - GEM PATH:
+       - c:/ruby/lib/ruby/gems/1.8
+</pre>Using this example, the documentation can be found in:
+  <pre>
+    c:\ruby\lib\ruby\gems\1.8\gems\rmagick-2.12.0-x86-mswin32\doc\index.html
+</pre>And additional examples are in:
+  <pre>
+    c:\ruby\lib\ruby\gems\1.8\gems\rmagick-2.12.0-x86-mswin32\examples
+</pre>
+
+  <h2 id="hd001006">General Remarks</h2>
+
+	<p>Most problems can be resolved by simply closing all existing Command Prompt windows and 
+	starting a new Command Prompt window after installing
+	ImageMagick and RMagick.</p>
+	
+  <p>If Ruby complains that it can't find RMagick, be sure that you have set up the RubyGems environment. The simplest way to do this is to require "rubygems" first:</p>
+  <pre>
+        require 'rubygems'
+        require 'RMagick'
+</pre>There are other ways to set up the RubyGems environment. See the RubyGems <a href="http://docs.rubygems.org/read/chapter/3#page70">documentation</a> for more information.
+
+  <p>Use <code>require 'RMagick</code>&rsquo;, spelled as shown. Ruby is case-sensitive, even if Windows isn't.</p>
+
+  <p>Don't use <code>require_gem</code> to require RMagick. This is obsolete.</p>
+
+  <p>If you need help using RMagick, use the <a href="http://rubyforge.org/forum/forum.php?forum_id=33">Help Forum on RubyForge</a>.</p>
+
+  <p>Please report bugs in RMagick, its documentation, or its installation programs to us via the bug tracker on the <a href="http://rubyforge.org/projects/rmagick/">RMagick project page</a> at RubyForge<a name="idx001" id="idx001"></a>. When reporting bugs, please specify that you are using the rmagick-win32 gem. 
+  Don&rsquo;t forget to mention the RMagick, Ruby, and Windows version.</p>
+
+  <h2 id="hd001007">Contact Information</h2>
+
+  <p>Comments for either the distribution or the library itself are welcome. <a href="mailto:rmagick@rubyforge.org">Write to us</a>.</p>
+
+  <h2 id="hd001008">Thanks to</h2>
+	
+  <ul>
+    <li>Brett DiFrischia, for developing the Win32 binary install.</li>
+
+    <li>Kaspar Schiess, for the previous releases of RMagick on Windows.</li>
+
+    <li>ImageMagick Studio LLC, for ImageMagick and for hosting the RMagick documentation.</li>
+
+    <li>Bob Friesenhahn, for GraphicsMagick.</li>
+
+    <li>Simple Systems, for hosting the RMagick documentation.</li>
+  </ul>
+	<h2 id="licensing">Licensing information</h2>
+
+	<p>
+		The RMagick library is released under the MIT license, below. ImageMagick uses a GPL compatible license (see the <a href="http://www.imagemagick.org/script/license.php">ImageMagick website</a>).
+	</p>
+
+	<h2 id="hd001009">License</h2>
+
+  <p>Copyright &copy; 2009 by Timothy P. Hunter</p>
+
+  <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &ldquo;Software&rdquo;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+  <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+  <p>THE SOFTWARE IS PROVIDED &ldquo;AS IS&rdquo;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+
+  <p><a href="http://www.opensource.org/docs/definition.php">http://www.opensource.org/docs/definition.php</a></p>
+
+  <p><em>This software is OSI Certified Open Source Software.</em></p>
+
+  <p>OSI Certified is a certification mark of the Open Source Initiative.</p>
+</body>
+</html>
+
