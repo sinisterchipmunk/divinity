@@ -16,9 +16,10 @@ class Array
     elsif a.length == 1 and a[0].kind_of? Numeric # but a[1] and/or a[2] are not, so it's only 1 number
       i = a.slice!(0,1).first
       return [i, i, i]
+    elsif a.length == 0
+      return [0,0,0]
     end
-    [0,0,0]
-    #raise "Could not parse vector coordinates out of #{self.inspect}"
+    raise "Could not parse vector coordinates out of #{self.inspect}"
   end
 
   # Returns a Vector3d comprised of either three integers, a Vector3d, a Vertex3d or an array of 3 integers
@@ -40,8 +41,9 @@ class Array
       return Vector3d.new(i, i, i)
     elsif a.length == 1 and a[0].kind_of? Numeric # but a[1] and/or a[2] are not, so it's only 1 number
       return Vector3d.new(a.slice!(0, 1).first)
+    elsif a.length == 0
+      return Vector3d.new(0,0,0)
     end
-    Vector3d.new(0,0,0)
-    #raise "Could not parse vector coordinates out of #{self.inspect}"
+    raise "Could not parse vector coordinates out of #{self.inspect}"
   end
 end
