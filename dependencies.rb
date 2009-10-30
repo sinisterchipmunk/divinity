@@ -1,6 +1,10 @@
 require 'rubygems'
+if RUBY_VERSION >= '1.9'
+  require 'fileutils'
+else
+  require 'ftools'
+end
 require 'opengl'
-require 'ftools'
 require 'sdl'
 require 'activesupport'
 require 'gl'
