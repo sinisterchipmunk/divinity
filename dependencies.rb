@@ -29,5 +29,7 @@ Dir.glob(File.join($basepath, "**", "*.rb")).each do |fi|
   fi.constantize
 end
 
+require File.join(File.dirname(__FILE__), 'ext/divinity_ext')
+
 include Magick
 include Helpers::RenderHelper

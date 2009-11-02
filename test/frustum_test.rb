@@ -11,7 +11,7 @@ class TestPoint
 
   def render
     puts "rendering point at #{Time.now.to_f}"
-    
+
     glTranslatef position.x, position.y, position.z
     glDisable GL_TEXTURE_2D
     glBegin GL_QUADS

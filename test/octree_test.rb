@@ -53,7 +53,7 @@ octree = OpenGl::Octree.new(divinity)
 for i in 1..99
     layer = (i / 33).to_f
 
-    pos = Vertex3d.new(0,0,-(layer+2))
+    pos = Vertex3d.new(0,0,0)#-(layer+2))
     pos.x = ((i % 33) / 33.0 + layer) * Math.cos(i / 45.0) * 3
     pos.y = ((i % 33) / 33.0 + layer) * Math.sin(i / 45.0) * 3
 

@@ -112,7 +112,8 @@ class OpenGl::Frustum
         else point
       end
 
-      raise "Could not calculate width, height and depth from arguments: #{size}, #{point.inspect}" unless w and h and d
+      raise "Could not calculate width, height and depth from arguments: #{size.inspect}, #{point.inspect}" unless
+              w and h and d
       raise "Could not calculate position, view, up and right vectors from arguments: #{size}, #{point.inspect}" unless
               position and view and up and right
       
@@ -143,17 +144,16 @@ class OpenGl::Frustum
   # The position vector should be in worldspace.
   # The actual width, height and depth of the bounding box will be equal to 2 times the
   # supplied width, height and depth.  
-  def self.bounding_box(w, h, d, position, view, up, right)
-    corners = []
-    corners << ( view*d +  up*h + -right*w + position)    # front, top,    left
-    corners << ( view*d +  up*h +  right*w + position)    # front, top,    right
-    corners << ( view*d + -up*h + -right*w + position)    # front, bottom, left
-    corners << ( view*d + -up*h +  right*w + position)    # front, bottom, right
-    corners << (-view*d +  up*h + -right*w + position)    # rear,  top,    left
-    corners << (-view*d +  up*h +  right*w + position)    # rear,  top,    right
-    corners << (-view*d + -up*h + -right*w + position)    # rear,  bottom, left
-    corners << (-view*d + -up*h +  right*w + position)    # rear,  bottom, right
-    corners
+  def self.bounding_box(box_array, w, h, d, position, view, up, right)
+    box_array[0] = ( view*d +  up*h + -right*w + position)    # front, top,    left
+    box_array[1] = ( view*d +  up*h +  right*w + position)    # front, top,    right
+    box_array[2] = ( view*d + -up*h + -right*w + position)    # front, bottom, left
+    box_array[3] = ( view*d + -up*h +  right*w + position)    # front, bottom, right
+    box_array[4] = (-view*d +  up*h + -right*w + position)    # rear,  top,    left
+    box_array[5] = (-view*d +  up*h +  right*w + position)    # rear,  top,    right
+    box_array[6] = (-view*d + -up*h + -right*w + position)    # rear,  bottom, left
+    box_array[7] = (-view*d + -up*h +  right*w + position)    # rear,  bottom, right
+    box_array
   end
 
   # Returns true if the specified polygon is within the frustum, false otherwise.
