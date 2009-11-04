@@ -85,16 +85,7 @@ class OpenGl::Octree
   alias << add
   alias >> remove
 
-  # Returns true if this octree contains the specified worldspace point.
-  def contains?(v3d)
-    [:x, :y, :z].each do |axis|
-      p = @position.send axis
-      s = @size.send axis
-      v = v3d.send axis
-      return false unless p - s <= v and p + s >= v
-    end
-    true
-  end
+
 
   protected
   attr_writer :position, :size

@@ -9,6 +9,7 @@ static void get_bounding_box_size(VALUE box, double *bb_size);
 static VALUE rb_fOpenGl_Octree_validate(VALUE self);
 static VALUE rb_fOpenGl_Octree_render(VALUE self);
 static VALUE rb_fOpenGl_Octree_update(int argc, VALUE *argv, VALUE self);
+static VALUE rb_fOpenGl_Octree_contains(VALUE self, VALUE v3d);
 
 static VALUE rb_cOctree = Qnil;
 static VALUE rb_cFrustum = Qnil;
@@ -25,8 +26,25 @@ void divinity_init_opengl_octree()
     rb_define_method(rb_cOctree, "validate!", rb_fOpenGl_Octree_validate, 0);
     rb_define_method(rb_cOctree, "render", rb_fOpenGl_Octree_render, 0);
     rb_define_method(rb_cOctree, "update", rb_fOpenGl_Octree_update, -1);
+    rb_define_method(rb_cOctree, "contains?", rb_fOpenGl_Octree_contains, 1);
 
     divinity_init_opengl_octree_object_descriptor();
+}
+
+static int contains_axis(VALUE self, VALUE v3d, VALUE pos, VALUE size, char *axis)
+{
+    double p = NUM2DBL(CALL_GETTER(pos, axis));
+    double s = NUM2DBL(CALL_GETTER(size, axis));
+    double v = NUM2DBL(CALL_GETTER(v3d, axis));
+    if (p - s <= v && p + s >= v) return 1;
+    return 0;
+}
+
+static VALUE rb_fOpenGl_Octree_contains(VALUE self, VALUE v3d)
+{
+    VALUE p = CALL_GETTER(self, "position"), s = CALL_GETTER(self, "size");
+    return contains_axis(self, v3d, p, s, "x") && contains_axis(self, v3d, p, s, "y") &&
+      contains_axis(self, v3d, p, s, "z");
 }
 
 static VALUE rb_fOpenGl_Octree_update(int argc, VALUE *argv, VALUE self)
