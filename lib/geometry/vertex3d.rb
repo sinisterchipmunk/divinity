@@ -7,34 +7,6 @@ class Geometry::Vertex3d
   #  Vertex3d.new(0, 1, 2)  # => x: 0, y: 1, z: 2
   #  Vertex3d.new [0, 1, 2) # => x: 0, y: 1, z: 2
   #  Vertex3d.new(other_vertex)  # => a copy of other_vertex
-  def initialize(*vertex)
-    @x, @y, @z = vertex.extract_vector3i!
-  end
-
-  def [](a)
-    case a
-      when 0 then @x
-      when 1 then @y
-      when 2 then @z
-      else raise "Index out of bounds: #{a}"
-    end
-  end
-
-  def ==(*vertex)
-    x, y, z = vertex.extract_vector3i!
-    @x == x and @y == y and @z == z
-  end
-
-  def assign!(*point)
-    @x, @y, @z = point.extract_vector3i!
-    self
-  end
-
-  def equal_magnitude?(v)
-    self.magnitude == v.magnitude
-  end
-
-  alias magnitude_equal? equal_magnitude?
 
   def to_s
     self.inspect

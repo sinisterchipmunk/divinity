@@ -25,4 +25,12 @@
 #define EQUAL(a, b) ((rb_funcall(a, rb_intern("=="), 1, b)) == Qtrue)
 #endif//EQUAL
 
+#ifndef debug_puts
+#define debug_puts(X) ((rb_funcall(rb_cObject, rb_intern("puts"), 1, rb_str_new2(X))))
+#endif//debug_puts
+
+#ifndef SET_ARRAY_INDEX
+#define SET_ARRAY_INDEX(a, i, j) ((rb_funcall(a, rb_intern("[]="), 2, INT2FIX(i), j)))
+#endif//SET_ARRAY_INDEX
+
 #endif//DIVINITY_MACROS_H

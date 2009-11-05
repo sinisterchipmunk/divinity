@@ -23,36 +23,25 @@ class OpenGl::Frustum
   include Geometry
   SIDES = [ :right, :left, :top, :bottom, :near, :far ]
 
-  attr_reader :planes, :modelview
+  attr_reader :planes#, :modelview
 
   def initialize
     @planes = { }
-    @modelview = Array.new(16) { 0.0 }
-    @clip = Array.new(16) { 0.0 }
+    #@modelview = Array.new(16) { 0.0 }
+    #@clip = Array.new(16) { 0.0 }
     SIDES.each { |k| @planes[k] = Plane.new }
   end
 
   # Returns true if the specified point is in the frustum; false otherwise.
   def point_visible?(*point)
-    x, y, z = *xyz(*point)
-    x, y, z = x.to_a if x.kind_of? Vertex3d
-    planes.each { |side, plane| return false if plane.a * x + plane.b * y + plane.c * z + plane.d <= 0 }
-    true
+    __point_visible?(*(point.extract_vector3i!))
   end
 
   # Returns true if the specified sphere is completely within the frustum;
   # returns :partial if the sphere is only partially within the frustum;
   # returns false if the sphere is completely outside the frustum.
   def sphere_visible?(radius, *point)
-    r, x, y, z = radius, *xyz(*point)
-    x, y, z = x.to_a if x.kind_of? Vertex3d
-    c = 0
-    planes.each do |side, plane|
-      return false if (d = plane.a*x + plane.b*y + plane.c*z + plane.d) <= -radius
-      c += 1 if d > radius
-    end
-    return true if c == 6
-    :partial
+    __sphere_visible?(radius, *(point.extract_vector3i!))
   end
 
   #
@@ -121,18 +110,20 @@ class OpenGl::Frustum
     end
     raise "Could not calculate any bounding box vertices from arguments: #{size}, #{point.inspect}" if corners.empty?
 
-    within = 0
-    len = corners.length
-    # for each plane in the frustum...
-    planes.each do |side, plane|
-      # ...test each corner of the bounding box, incrementing c if it's in the frustum
-      c = 0
-      corners.each { |v| c += 1 if plane.a * v.x + plane.b * v.y + plane.c * v.z + plane.d > 0 }
-      return false if c == 0
-      within += 1 if c == len
-    end
-    return true if within == planes.length # box is completely inside frustum
-    :partial # box ix partially inside frustum
+    __cube_visible?(corners)
+  end
+
+  # to be optimized
+  def each_plane
+    #warn "optimize me"
+    left = planes.keys
+    right = planes.values
+    yield left[0], right[0]
+    yield left[1], right[1]
+    yield left[2], right[2]
+    yield left[3], right[3]
+    yield left[4], right[4]
+    yield left[5], right[5]
   end
 
   # Returns the eight points that make up a bounding box calculated from the specified
@@ -158,84 +149,10 @@ class OpenGl::Frustum
 
   # Returns true if the specified polygon is within the frustum, false otherwise.
   def poly_visible?(*vertices)
-    planes.each do |side, plane|
-      n = 0
-      vertices.each do |vert|
-        x, y, z = if vert.kind_of? Array then vert else [vert.x, vert.y, vert.z] end
-        n += 1 and break if plane.a * x + plane.b * y + plane.c * z + plane.d > 0
-      end
-      return false if n == 0
-    end
-    true
+    __poly_visible?(*vertices)
   end
 
   alias polygon_visible? poly_visible?
-
-  # Updating the Frustum is EXPENSIVE and should only be done when necessary -- but must be done
-  # every time the matrix changes! (When the camera is moved, rotated, or whatever.)
-  def update!
-    proj, @modelview = glGetDoublev(GL_PROJECTION_MATRIX).flatten, glGetDoublev(GL_MODELVIEW_MATRIX)
-    modl = self.modelview.flatten
-
-    ## Brutally ripped from my old C++ code, then reformatted to match the new Ruby classes. Math hasn't changed.
-    # I'm not huge on math, and TBH I don't really have a firm understanding of what's happening here. Somehow,
-    # we are waving a magic wand and extracting the 6 planes which will represent the edges of the
-    # camera's viewable area. I'll let someone who's familiar with matrices explain how that happens.
-    # In any case, it works, and I have a lot of other things to do, so I just copy and paste it from
-    # one 3D app to the next.
-    @clip[ 0] = modl[ 0] * proj[ 0] + modl[ 1] * proj[ 4] + modl[ 2] * proj[ 8] + modl[ 3] * proj[12];
-    @clip[ 1] = modl[ 0] * proj[ 1] + modl[ 1] * proj[ 5] + modl[ 2] * proj[ 9] + modl[ 3] * proj[13];
-    @clip[ 2] = modl[ 0] * proj[ 2] + modl[ 1] * proj[ 6] + modl[ 2] * proj[10] + modl[ 3] * proj[14];
-    @clip[ 3] = modl[ 0] * proj[ 3] + modl[ 1] * proj[ 7] + modl[ 2] * proj[11] + modl[ 3] * proj[15];
-
-    @clip[ 4] = modl[ 4] * proj[ 0] + modl[ 5] * proj[ 4] + modl[ 6] * proj[ 8] + modl[ 7] * proj[12];
-    @clip[ 5] = modl[ 4] * proj[ 1] + modl[ 5] * proj[ 5] + modl[ 6] * proj[ 9] + modl[ 7] * proj[13];
-    @clip[ 6] = modl[ 4] * proj[ 2] + modl[ 5] * proj[ 6] + modl[ 6] * proj[10] + modl[ 7] * proj[14];
-    @clip[ 7] = modl[ 4] * proj[ 3] + modl[ 5] * proj[ 7] + modl[ 6] * proj[11] + modl[ 7] * proj[15];
-
-    @clip[ 8] = modl[ 8] * proj[ 0] + modl[ 9] * proj[ 4] + modl[10] * proj[ 8] + modl[11] * proj[12];
-    @clip[ 9] = modl[ 8] * proj[ 1] + modl[ 9] * proj[ 5] + modl[10] * proj[ 9] + modl[11] * proj[13];
-    @clip[10] = modl[ 8] * proj[ 2] + modl[ 9] * proj[ 6] + modl[10] * proj[10] + modl[11] * proj[14];
-    @clip[11] = modl[ 8] * proj[ 3] + modl[ 9] * proj[ 7] + modl[10] * proj[11] + modl[11] * proj[15];
-
-    @clip[12] = modl[12] * proj[ 0] + modl[13] * proj[ 4] + modl[14] * proj[ 8] + modl[15] * proj[12];
-    @clip[13] = modl[12] * proj[ 1] + modl[13] * proj[ 5] + modl[14] * proj[ 9] + modl[15] * proj[13];
-    @clip[14] = modl[12] * proj[ 2] + modl[13] * proj[ 6] + modl[14] * proj[10] + modl[15] * proj[14];
-    @clip[15] = modl[12] * proj[ 3] + modl[13] * proj[ 7] + modl[14] * proj[11] + modl[15] * proj[15];
-
-    right.a = @clip[ 3] - @clip[ 0];
-    right.b = @clip[ 7] - @clip[ 4];
-    right.c = @clip[11] - @clip[ 8];
-    right.d = @clip[15] - @clip[12];
-
-    left.a = @clip[ 3] + @clip[ 0];
-    left.b = @clip[ 7] + @clip[ 4];
-    left.c = @clip[11] + @clip[ 8];
-    left.d = @clip[15] + @clip[12];
-
-    bottom.a = @clip[ 3] + @clip[ 1];
-    bottom.b = @clip[ 7] + @clip[ 5];
-    bottom.c = @clip[11] + @clip[ 9];
-    bottom.d = @clip[15] + @clip[13];
-
-    top.a = @clip[ 3] - @clip[ 0];
-    top.b = @clip[ 7] - @clip[ 4];
-    top.c = @clip[11] - @clip[ 8];
-    top.d = @clip[15] - @clip[12];
-
-    far.a = @clip[ 3] - @clip[ 2];
-    far.b = @clip[ 7] - @clip[ 6];
-    far.c = @clip[11] - @clip[10];
-    far.d = @clip[15] - @clip[14];
-
-    near.a = @clip[ 3] + @clip[ 2];
-    near.b = @clip[ 7] + @clip[ 6];
-    near.c = @clip[11] + @clip[10];
-    near.d = @clip[15] + @clip[14];
-
-    normalize_planes!
-    self
-  end
 
   SIDES.each { |k| eval("def #{k}; @planes[#{k.inspect}]; end", binding, __FILE__, __LINE__)}
 
