@@ -19,7 +19,6 @@
 # as you can manage.
 #
 class OpenGl::Frustum
-  include Helpers::XyzHelper
   include Geometry
   SIDES = [ :right, :left, :top, :bottom, :near, :far ]
 
