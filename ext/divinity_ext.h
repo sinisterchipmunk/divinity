@@ -11,6 +11,7 @@ extern void divinity_init_opengl_octree();
 extern void divinity_init_opengl_octree_object_descriptor();
 extern void divinity_init_vertex3d();
 extern void divinity_init_render_helper();
+extern void divinity_init_array();
 
 extern void get_plane_values(VALUE plane, double *a, double *b, double *c, double *d);
 extern void set_plane_values(VALUE plane, double a, double b, double c, double d);

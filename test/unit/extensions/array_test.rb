@@ -2,11 +2,11 @@ require 'test_helper'
 
 class ArrayTest < Test::Unit::TestCase
   def test_vector3i_raises_on_fail
-    assert_raise RuntimeError do [1,2].extract_vector3i! end
+    assert_raise ArgumentError do [1,2].extract_vector3i! end
   end
 
   def test_vector3d_raises_on_fail
-    assert_raise RuntimeError do [1,2].extract_vector3d! end
+    assert_raise ArgumentError do [1,2].extract_vector3d! end
   end
 
   def test_vector3i_accepts_vertex3d

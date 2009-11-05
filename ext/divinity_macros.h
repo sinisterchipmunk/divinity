@@ -33,4 +33,8 @@
 #define SET_ARRAY_INDEX(a, i, j) ((rb_funcall(a, rb_intern("[]="), 2, INT2FIX(i), j)))
 #endif//SET_ARRAY_INDEX
 
+#ifndef RKIND_OF
+#define RKIND_OF(a, b) ((rb_funcall(a, rb_intern("kind_of?"), 1, b)) == Qtrue)
+#endif//RKIND_OF
+
 #endif//DIVINITY_MACROS_H
