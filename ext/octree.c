@@ -6,10 +6,10 @@ static void create_child(VALUE self, int current_depth, int mx, int my, int mz);
 static void delegate_objects(VALUE self, struct RArray *children, struct RArray *objects);
 static void get_bounding_box_size(VALUE box, double *bb_size);
 
-static VALUE rb_fOpenGl_Octree_validate(VALUE self);
-static VALUE rb_fOpenGl_Octree_render(VALUE self);
-static VALUE rb_fOpenGl_Octree_update(int argc, VALUE *argv, VALUE self);
-static VALUE rb_fOpenGl_Octree_contains(VALUE self, VALUE v3d);
+static VALUE rb_fValidate(VALUE self);
+static VALUE rb_fRender(VALUE self);
+static VALUE rb_fUpdate(int argc, VALUE *argv, VALUE self);
+static VALUE rb_fContains(VALUE self, VALUE v3d);
 
 static VALUE rb_cOctree = Qnil;
 static VALUE rb_cFrustum = Qnil;
@@ -23,10 +23,10 @@ void divinity_init_opengl_octree()
     rb_cFrustum = rb_define_class_under(rb_mOpenGl, "Frustum", rb_cObject);
     rb_cVector3d = rb_const_get(rb_const_get(rb_cObject, rb_intern("Geometry")), rb_intern("Vector3d"));
 
-    rb_define_method(rb_cOctree, "validate!", rb_fOpenGl_Octree_validate, 0);
-    rb_define_method(rb_cOctree, "render", rb_fOpenGl_Octree_render, 0);
-    rb_define_method(rb_cOctree, "update", rb_fOpenGl_Octree_update, -1);
-    rb_define_method(rb_cOctree, "contains?", rb_fOpenGl_Octree_contains, 1);
+    rb_define_method(rb_cOctree, "validate!", rb_fValidate, 0);
+    rb_define_method(rb_cOctree, "render", rb_fRender, 0);
+    rb_define_method(rb_cOctree, "update", rb_fUpdate, -1);
+    rb_define_method(rb_cOctree, "contains?", rb_fContains, 1);
 
     divinity_init_opengl_octree_object_descriptor();
 }
@@ -40,14 +40,14 @@ static int contains_axis(VALUE self, VALUE v3d, VALUE pos, VALUE size, char *axi
     return 0;
 }
 
-static VALUE rb_fOpenGl_Octree_contains(VALUE self, VALUE v3d)
+static VALUE rb_fContains(VALUE self, VALUE v3d)
 {
     VALUE p = CALL_GETTER(self, "position"), s = CALL_GETTER(self, "size");
     return contains_axis(self, v3d, p, s, "x") && contains_axis(self, v3d, p, s, "y") &&
       contains_axis(self, v3d, p, s, "z");
 }
 
-static VALUE rb_fOpenGl_Octree_update(int argc, VALUE *argv, VALUE self)
+static VALUE rb_fUpdate(int argc, VALUE *argv, VALUE self)
 {
     VALUE delta, scene;
     struct RArray *objects = RARRAY(CALL_GETTER(self, "objects"));
@@ -61,7 +61,7 @@ static VALUE rb_fOpenGl_Octree_update(int argc, VALUE *argv, VALUE self)
     return Qnil;
 }
 
-static VALUE rb_fOpenGl_Octree_render(VALUE self)
+static VALUE rb_fRender(VALUE self)
 {
     VALUE GL = rb_const_get(rb_cObject, rb_intern("Gl"));
     VALUE bounding_box = rb_ivar_get(self, rb_intern("@octree_bounding_box"));
@@ -102,7 +102,7 @@ static VALUE rb_fOpenGl_Octree_render(VALUE self)
 
 /* potentially generates bounding boxes for each object in this scene; this has to be done during every validation,
    because the object's transformations might just be what's causing this validation to commence. */
-static VALUE rb_fOpenGl_Octree_validate(VALUE self)
+static VALUE rb_fValidate(VALUE self)
 {
     const VALUE max_octree_depth = rb_const_get(rb_cOctree, rb_intern("MAX_OCTREE_DEPTH"));
     const VALUE object_threshold = rb_const_get(rb_cOctree, rb_intern("THRESHOLD"));
