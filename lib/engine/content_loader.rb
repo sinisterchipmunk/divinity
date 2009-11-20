@@ -1,33 +1,18 @@
 module Engine::ContentLoader
-  def load_content_for(name, class_name)
-    class_name = class_name.name unless class_name.kind_of? String
-    class_name = class_name.camelize
-
-    name = name.to_s.singularize
-    plural = name.pluralize
-
-    line = __LINE__ + 2
-    code = <<-end_code
-    def #{name}(id, &block)
-      r = self.#{plural}[id]
-      r = self.#{plural}[id] = #{class_name}.new(id, self, &block) if r.nil?
-      r.instance_eval &block if block_given?
-      r
+  def load_content!
+    # Theoretically, the options hash contains a list of modules to load, and they should be loaded in order of
+    # appearance. If this is not the case, create them from the module index loaded earlier. Whatever order they
+    # were detected in, that's the default load order.
+    options[:module_load_order] ||= Engine::ContentLoader.instance_variable_get("@modules")
+    options[:module_load_order].each do |mod|
+      puts "Loading module: #{mod}" if $VERBOSE
+      Engine::ContentModule.new(mod, self)
     end
+  end
 
-    def #{plural}
-      if @#{plural}.nil?
-        # Load them
-        @#{plural} ||= HashWithIndifferentAccess.new
-        Dir.glob("modules/*/#{plural}/**/*.rb").each do |fi|
-          next if File.directory? fi or fi =~ /\.svn/
-          eval File.read(fi), binding, fi, 1
-        end
-      end
-      @#{plural}
-    end
-    end_code
-
-    eval code, self.class_eval("binding"), __FILE__, line
+  def self.included(base)
+    # Index the available modules. Note that this does not actually load them, only creates a list of those available.
+    # This affords the user an opportunity to disable or reorder the modules.
+    @modules = Dir.glob(File.join(ENV['DIVINITY_ROOT'], "vendor/modules", "*"))
   end
 end

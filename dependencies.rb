@@ -13,6 +13,8 @@ require 'RMagick'
 require 'matrix'
 require 'mathn'
 
+ENV['DIVINITY_ROOT'] ||= File.dirname(__FILE__)
+
 $basepath = File.join(File.dirname(__FILE__), "lib", "")
 ActiveSupport::Dependencies.load_paths << File.join($basepath)
 
@@ -29,7 +31,7 @@ Dir.glob(File.join($basepath, "**", "*.rb")).each do |fi|
   fi.constantize
 end
 
-require File.join(File.dirname(__FILE__), 'ext/divinity_ext')
+require File.join(File.dirname(__FILE__), 'c_ext/divinity_ext')
 
 include Magick
 include Helpers::RenderHelper

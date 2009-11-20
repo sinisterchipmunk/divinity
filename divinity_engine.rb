@@ -6,11 +6,12 @@ require File.join(File.dirname(__FILE__), 'dependencies')
 # TODO: Provide an API for this in the DivinityEngine without forcing the user to interface directly to SDL.
 class DivinityEngine
   include Gl
-  extend Engine::ContentLoader
+  include Engine::ContentLoader
+#  extend Engine::ContentLoader
   include Engine::Delegation
   include Engine::DefaultRenderBlock
   include Engine::DefaultUpdateBlock
-  include Engine::Content
+#  include Engine::Content
   include Engine::DefaultGui
   include Helpers::EventListeningHelper
 
@@ -31,6 +32,7 @@ class DivinityEngine
     end
 
     @options = HashWithIndifferentAccess.new(args.extract_options!.reverse_merge(default_options))
+    load_content!
 
     add_default_render_block
     add_default_update_block

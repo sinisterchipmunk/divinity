@@ -13,7 +13,7 @@ ch = 0.0
 t = 0
 last_tick = 0
 divinity = DivinityEngine.new(options)
-scene = World::Scenes::HeightMap.new(divinity, "data/height_maps/test.bmp")
+scene = World::Scenes::HeightMap.new(divinity, "vendor/modules/divinity/data/height_maps/test.bmp")
 
 move_speed = 0
 strafe_speed = 0
@@ -25,6 +25,8 @@ divinity.during_render do
   scene.render
 end
 
+# we can use the after_render block to verify that this code runs *last*
+# of course, individual after_render blocks fire in order of creation.
 divinity.after_render do
   glColor4f 1, 1, 1, 1
   divinity.write(:right, :bottom, "AVG FPS: #{afps.to_i}")
