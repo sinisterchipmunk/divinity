@@ -56,7 +56,7 @@ end
 
 divinity.after_initialize do
   divinity.pause!
-  divinity.assume_interface :main_menu
+  #divinity.assume_interface :main_menu
 end
 
 divinity.on :key_pressed do |evt|

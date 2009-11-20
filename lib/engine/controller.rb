@@ -1,4 +1,4 @@
-module Engine::Controller::Errors
+module Engine::Controller
   class DivinityControllerError < StandardError
   end
 

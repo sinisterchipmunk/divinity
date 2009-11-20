@@ -12,7 +12,7 @@ theme :default do
                   :foreground_color => [ 1, 1, 1, 1 ],
                   :text_background_color => "#eeeeee"
 
-  set :primary,   :background_image => Resources::Image.new("data/ui/background.bmp"),
+  set :primary,   :background_image => image("data/ui/background.bmp"),
                   :scale_or_tile => :tile,
                   :fill_opacity => 0.2,
                   :fill_color => 'green',
@@ -31,7 +31,7 @@ theme :default do
                   :stroke_color => 'silver',
                   :raised => true,
                   :raised_size => 2,
-                  :background_image => Resources::Image.new("data/ui/background.bmp"),
+                  :background_image => image("data/ui/background.bmp"),
                   :scale_or_tile => :tile,
                   :fill_opacity => 0.6,
                   :fill_color => "#110000"

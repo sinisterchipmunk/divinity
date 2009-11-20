@@ -1,4 +1,36 @@
 module Engine::Content
+  { :themes => Interface::Theme, 
+    :actors => World::Actor, :languages => World::Character::Language,
+    :races  => World::Character::Race, :character_classes => World::Character::CharacterClass }.each do |plural, klass|
+    class_name = klass.name
+    singular = plural.to_s.singularize
+
+    line = __LINE__ + 2
+    code = <<-end_code
+      def #{singular}(id, &block)
+        r = self.#{plural}[id]
+        r = self.#{plural}[id] = #{class_name}.new(id, self, &block) if r.nil?
+        r.instance_eval(&block) if block_given?
+        r
+      end
+
+      def #{plural}
+        unless @#{plural}
+          @#{plural} = HashWithIndifferentAccess.new
+          content_modules.each do |mod|
+            @#{plural}.merge!(mod.#{plural})
+          end
+        end
+        @#{plural}
+      end
+    end_code
+    eval code, binding, __FILE__, line
+  end
+
+#  generic_content_loader :themes => Interface::Theme, :actors => World::Actor, :languages => World::Character::Language,
+#                         :races  => World::Character::Race, :character_classes => World::Character::CharacterClass
+
+
 =begin
   def self.included(base)
     base.load_content_for :themes,    Interface::Theme

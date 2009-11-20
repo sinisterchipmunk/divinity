@@ -1,4 +1,10 @@
 module Engine::Controller::ClassMethods
+  def root(a = nil)
+    r = Engine::Controller::Base.instance_variable_get("@root")
+    r = a ? a : r
+    Engine::Controller::Base.instance_variable_set("@root", r)
+  end
+
   def controller_class_name
     @controller_class_name ||= name.demodulize
   end
@@ -11,6 +17,18 @@ module Engine::Controller::ClassMethods
   # Converts the class name from something like "OneModule::TwoModule::NeatController" to "one_module/two_module/neat".
   def controller_path
     @controller_path ||= name.gsub(/Controller$/, '').underscore
+  end
+
+  def view_paths
+    @view_paths ||= Engine::Controller::ViewPaths.new
+  end
+
+  def append_view_path(path)
+    view_paths.push(*path)
+  end
+
+  def prepend_view_path(path)
+    view_paths.unshift *path
   end
 
   # Return an array containing the names of public methods that have been marked hidden from the action processor.

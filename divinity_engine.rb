@@ -7,12 +7,13 @@ require File.join(File.dirname(__FILE__), 'dependencies')
 class DivinityEngine
   include Gl
   include Engine::ContentLoader
+  include Engine::Controller::Routing
 #  extend Engine::ContentLoader
   include Engine::Delegation
   include Engine::DefaultRenderBlock
   include Engine::DefaultUpdateBlock
-#  include Engine::Content
-  include Engine::DefaultGui
+  include Engine::Content
+  #include Engine::DefaultGui
   include Helpers::EventListeningHelper
 
   attr_reader :frame_manager, :state, :ticks, :interval, :options, :camera
@@ -149,7 +150,7 @@ class DivinityEngine
       glEnable(GL_BLEND)
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
       call_blocks :during_init
-      init_default_gui
+      #init_default_gui
       call_blocks :after_init
     end
   

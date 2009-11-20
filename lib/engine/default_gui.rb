@@ -46,12 +46,12 @@ module Engine::DefaultGui
     end
   end
 
-  def self.interface(name, &blk)
-    @@interface_builders[name] = Interface::Builder.new(&blk)
-  end
-
-  Dir.glob("modules/*/interfaces/*.rb").each do |fi|
-    next if File.directory? fi or fi =~ /\.svn/
-    eval File.read(fi), binding, fi, 1
-  end
+#  def self.interface(name, &blk)
+#    @@interface_builders[name] = Interface::Builder.new(&blk)
+#  end
+#
+#  Dir.glob("modules/*/interfaces/*.rb").each do |fi|
+#    next if File.directory? fi or fi =~ /\.svn/
+#    eval File.read(fi), binding, fi, 1
+#  end
 end
