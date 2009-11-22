@@ -13,6 +13,6 @@ class Engine::Controller::ViewPaths < Array
         raise "View path is a directory! (#{fi})"
       end
     end
-    raise Engine::View::MissingInterfaceError, "No view found for action: #{name}"
+    raise Engine::View::MissingInterfaceError, "No view found for action: #{name} in view path #{self.inspect}"
   end
 end

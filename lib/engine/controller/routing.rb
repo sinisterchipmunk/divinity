@@ -18,9 +18,9 @@ module Engine::Controller::Routing
     if @instantiated_controllers[id]
       instance = @instantiated_controllers[id]
     else
-      request = Engine::Controller::Request.new(*args)
-      instance = @instantiated_controllers[id] = id.new(self, request)
-      instance.response.bounds = [0, 0, width, height]
+      request = Engine::Controller::Request.new(Geometry::Rectangle.new(0,0,width,height), *args)
+      response = Engine::Controller::Response.new
+      instance = @instantiated_controllers[id] = id.new(self, request, response)
       instance.process(:index, Engine::Controller::Events::ControllerCreatedEvent.new(instance))
     end
 

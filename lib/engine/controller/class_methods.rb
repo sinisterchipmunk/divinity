@@ -20,7 +20,7 @@ module Engine::Controller::ClassMethods
   end
 
   def view_paths
-    @view_paths ||= Engine::Controller::ViewPaths.new
+    read_inheritable_attribute(:view_paths) || write_inheritable_attribute(:view_paths, Engine::Controller::ViewPaths.new)
   end
 
   def append_view_path(path)

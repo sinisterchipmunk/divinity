@@ -11,6 +11,7 @@ module Interface
       def layout_container(parent); raise "Layout::layout_container must be overridden"; end
       def remove_layout_component(comp); raise "Layout::remove_layout_component must be overridden"; end
       def remove_all_components; raise "Layout::remove_all_components must be overridden"; end
+      def components; raise "Layout::components must be overridden to return all components associated with this Layout"; end
 
       protected
       def layout_size(cont, &blk); raise "Layout::layout_size must be overridden"; end

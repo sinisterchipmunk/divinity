@@ -10,8 +10,8 @@
 # primary background with the secondary foreground.
 theme :primary
 
-if button.state == :pressed then background :brightness => 0.8
-else background
+if button.state == :pressed then paint_background :brightness => 0.8
+else paint_background
 end
 
 # text is centered vertically and horizontally by default. Other usages include:

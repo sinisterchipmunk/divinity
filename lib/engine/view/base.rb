@@ -29,22 +29,52 @@
 #   end
 #
 class Engine::View::Base
-  include Helpers::ComponentHelper
+  class ProxyModule < Module
+    def initialize(receiver)
+      @receiver = receiver
+    end
 
-  def initialize(path, locals = {})
-    @path, @locals = path, locals
-    load
+    def include(*args)
+      super(*args)
+      @receiver.extend(*args)
+    end
   end
 
-  def process(controller)
-    locals = ""
+  #include Helpers::ComponentHelper
+  delegate :engine, :request, :response, :to => :controller
+  attr_accessor :path, :locals
+  attr_reader :controller, :helpers
+
+  def initialize(controller)
     @controller = controller
+    @helpers = ProxyModule.new(self)
+  end
+
+  def layout(a = nil, *args, &block)
+    return @layout if a.nil?
+    a = "interface/layouts/#{a}_layout".camelize.constantize unless a.kind_of? Interface::Layouts::Layout
+    @layout = a.new(*args, &block)
+    @layout
+  end
+
+  def process
+    load
+    locals = ""
     @locals.keys.each { |k| locals += "#{k} = @locals[#{k.inspect};" }
-    instance_eval "#{locals}#{@content}"
+    layout :border
+    instance_eval "#{locals}; #{@content}; instance_eval(&request.block) if request.block"
+    do_layout
   end
 
   private
   def load
     @content = File.read(@path)
+  end
+
+  def do_layout
+    layout.layout_container(response)
+    layout.components.each do |component|
+      component.process 'index', {}
+    end
   end
 end

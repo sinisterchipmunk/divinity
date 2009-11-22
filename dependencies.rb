@@ -18,6 +18,10 @@ ENV['DIVINITY_ROOT'] ||= File.dirname(__FILE__)
 $basepath = File.join(File.dirname(__FILE__), "lib", "")
 ActiveSupport::Dependencies.load_paths << File.join($basepath)
 
+["controllers", 'models', 'views', 'helpers'].each do |i|
+  ActiveSupport::Dependencies.load_paths << File.join(ENV['DIVINITY_ROOT'], "engine", i)
+end
+
 Dir.glob(File.join($basepath, "extensions", "**", "*.rb")).each do |fi|
   require fi.sub(/(.*)\.rb$/, '\1') unless fi =~ /\.svn/
 end

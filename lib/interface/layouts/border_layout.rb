@@ -22,6 +22,12 @@ module Interface
           else ""
         end
       end
+
+      def components
+        a = [ @north, @south, @east, @west, @center ]
+        a.delete nil
+        a
+      end
     
       def add_layout_component(comp, name="")
         name = name.to_s if name.kind_of? Symbol
@@ -57,13 +63,14 @@ module Interface
     
       def layout_container(cont)
         #bool ltr = true  #TODO: Make this do stuff.
-        buf = cont.insets.dup
+        buf = Engine::Controller::Response::Insets.new(cont.insets.tlx, cont.insets.tly, cont.insets.brx, cont.insets.bry)#cont.insets.dup
 
-        buf.x, buf.y = 0, 0
+        _x, _y, _w, _h = 0, 0, cont.bounds.width - cont.insets.brx, cont.bounds.height - cont.insets.bry
+        
         nx = (@west ? 1 : 0) + (@center ? 1 : 0) + (@east ? 1 : 0)
         ny = (@north ? 1 : 0) + (@center ? 1 : 0) + (@south ? 1 : 0)
-        mx = (buf.width  - (@hgap * (nx-1)))
-        my = (buf.height - (@vgap * (ny-1)))
+        mx = (_w  - (@hgap * (nx-1)))
+        my = (_h - (@vgap * (ny-1)))
         mx /= nx if nx > 0
         my /= ny if ny > 0
         #buf = Geometry::Rectangle.new(border_size, border_size, cont.bounds.width-border_size, cont.bounds.height-border_size)
@@ -71,29 +78,29 @@ module Interface
         if @north
           b = @north.preferred_size
           h = min(b.height, my)
-          @north.bounds = Geometry::Rectangle.new(buf.x, buf.y, buf.width - buf.x, h)
-          buf.y += h + @vgap
+          @north.bounds = Geometry::Rectangle.new(_x, _y, _w - _x, h)
+          _y += h + @vgap
         end
         if @south
           b = @south.preferred_size
           h = min(b.height, my)
-          @south.bounds = Geometry::Rectangle.new(buf.x, buf.height - h, buf.width - buf.x, h)
-          buf.height -= h + @vgap
+          @south.bounds = Geometry::Rectangle.new(_x, _h - h, _w - _x, h)
+          _h -= h + @vgap
         end
         if @east
           b = @east.preferred_size
           w = min(b.width, mx)
-          @east.bounds = Geometry::Rectangle.new(buf.width - w, buf.y, w, buf.height - buf.y)
-          buf.width -= w + @hgap
+          @east.bounds = Geometry::Rectangle.new(_w - w, _y, w, _h - _y)
+          _w -= w + @hgap
         end
         if @west
           b = @west.preferred_size
           w = min(b.width, mx)
-          @west.bounds = Geometry::Rectangle.new(buf.x, buf.y, w, buf.height - buf.y)
-          buf.x += w + @hgap
+          @west.bounds = Geometry::Rectangle.new(_x, _y, w, _h - _y)
+          _x += w + @hgap
         end
         if @center
-          @center.bounds = Geometry::Rectangle.new(buf.x, buf.y, buf.width - buf.x, buf.height - buf.y)
+          @center.bounds = Geometry::Rectangle.new(_x, _y, _w - _x, _h - _y)
         end
 
         [@north, @south, @east, @west, @center].each do |comp|

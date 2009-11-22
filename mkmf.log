@@ -1,0 +1,24 @@
+have_library: checking for main() in opengl32.lib... -------------------- no
+
+"cl -nologo -Feconftest -I. -IC:/ruby186-mswin/lib/ruby/1.8/i386-mswin32 -IC:\Program Files\JetBrains\RubyMine 2.0b\rb\testing\runner -IC:/ruby186-mswin/lib/ruby/1.8/i386-mswin32  -MD -Zi -O2b2xg- -G6 conftest.c   msvcrt-ruby18-static.lib opengl32.lib  oldnames.lib user32.lib advapi32.lib ws2_32.lib   -link    -libpath:"." -libpath:"C:/ruby186-mswin/lib" -stack:0x2000000"
+checked program was:
+/* begin */
+1: #define WIN32_LEAN_AND_MEAN
+2: #include <winsock2.h>
+3: #include <windows.h>
+4: 
+5: /*top*/
+6: int main() { return 0; }
+7: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+"cl -nologo -Feconftest -I. -IC:/ruby186-mswin/lib/ruby/1.8/i386-mswin32 -IC:\Program Files\JetBrains\RubyMine 2.0b\rb\testing\runner -IC:/ruby186-mswin/lib/ruby/1.8/i386-mswin32  -MD -Zi -O2b2xg- -G6 conftest.c   msvcrt-ruby18-static.lib opengl32.lib  oldnames.lib user32.lib advapi32.lib ws2_32.lib   -link    -libpath:"." -libpath:"C:/ruby186-mswin/lib" -stack:0x2000000"
+checked program was:
+/* begin */
+1: /*top*/
+2: int main() { return 0; }
+3: int t() { main(); return 0; }
+/* end */
+
+--------------------
+

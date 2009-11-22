@@ -18,10 +18,10 @@
 # Per Rails convention, ButtonController should actually extend a ComponentController (or some such) which in turn
 # extends Engine::Controller::Base. That way helpers, filters, etc. can be specified at the Component level.
 #
-class ButtonController < ComponentController
-  redirect :mouse_released, :mouse_exited, :to => :button_released
-  redirect :mouse_pressed, :to => :button_pressed
-  model :button # this should be automated for models that share a name with the controller. Also, the model object
+class Components::ButtonController < Components::ComponentController
+  #redirect :mouse_released, :mouse_exited, :to => :button_released
+  #redirect :mouse_pressed, :to => :button_pressed
+  #model :button # this should be automated for models that share a name with the controller. Also, the model object
                 # is assigned to both self.model and self.[name].
 
   def index

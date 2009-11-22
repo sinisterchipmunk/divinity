@@ -7,6 +7,7 @@
 #
 class Engine::Controller::Base
   include Helpers::EventListeningHelper
+  include Engine::Controller::Helpers
   extend  Engine::Controller::ClassMethods
 
   attr_accessor :action_name
@@ -25,9 +26,12 @@ class Engine::Controller::Base
   attr_internal :event
   attr_internal :engine
 
+  delegate :width, :height, :bounds, :bounds=, :to => :request
+  delegate :insets, :preferred_size, :minimum_size, :maximum_size, :to => :response
+
   public
-    def initialize(engine, request)
-      assign_shortcuts(engine, request, Engine::Controller::Response.new)
+    def initialize(engine, request, response)
+      assign_shortcuts(engine, request, response)
     end
 
     def process_event(action, options = {})
@@ -42,6 +46,7 @@ class Engine::Controller::Base
       options = { :event => options } unless options.kind_of? Hash
 
       params['action'] = action
+      initialize_view
       assign_names
       @_event = options.delete :event
       find_models(options)
@@ -99,6 +104,7 @@ class Engine::Controller::Base
     # Clears the rendered results, allowing for another render to be performed.
     def erase_render_results #:nodoc:
       @performed_render = false
+      @performed_redirect = false
     end
 
     # Clears the redirected results from the headers, resets the status to 200 and returns
@@ -120,16 +126,38 @@ class Engine::Controller::Base
 
   private
     def find_models(options = {})
+      # look for a model by the same name as the controller. Example: Components::ButtonController => Components::Button
+      model = nil
+      begin
+        model = controller_path.camelize.constantize.new
+      rescue NameError
+        # fail silently if the model class doesn't exist
+        unless $!.message =~ /#{Regexp::escape(controller_path.camelize)}/
+          raise
+        end
+      rescue
+      end
+      
+      if model
+        options[:model] ||= model
+        options[controller_name] ||= model
+      end
+
+      # define all relevant model methods
       options.each do |key, value|
         define_singleton_method(key) { value }
+        # Now proxy the same methods into the view. We allow then to pass through the controller in case the developer
+        # decides to override any of them.
+        response.view.define_singleton_method(key) { controller.send(key) }
       end
     end
 
     def render_view(path, locals = {})
       @performed_render = true
       ## TODO: something like view.copy_ivars_from(self)
-      view = Engine::View::Base.new(path, locals)
-      response.process(self, view)
+      response.view.path = path
+      response.view.locals = locals
+      response.process
     end
 
     def render_text(text)
@@ -158,6 +186,13 @@ class Engine::Controller::Base
       end
     end
 
+    def initialize_view
+      response.view = Engine::View::Base.new(self)
+      response.view.helpers.send :include, self.class.master_helper_module
+      response.redirected_to = nil
+      @performed_render = @performed_redirect = false
+    end
+
     def validate_render_arguments(options, extra_options)
       if options && !options.is_a?(String) && !options.is_a?(Hash) && !options.is_a?(Symbol)
         raise Engine::Controller::RenderError, "You called render with invalid options : #{options.inspect}"
@@ -172,6 +207,7 @@ class Engine::Controller::Base
       @_engine = engine
       @_request, @_params = request, request.parameters
       @_response         = response
+      @_response.request = @_request
     end
 
     def performed?
