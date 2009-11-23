@@ -5,6 +5,12 @@ module Engine::Controller::ClassMethods
     Engine::Controller::Base.instance_variable_set("@root", r)
   end
 
+  def theme(a = nil)
+    @default_theme_sel = :default if a.nil? and @default_theme_sel.nil?
+    @default_theme_sel = a if a
+    @default_theme_sel
+  end
+
   def controller_class_name
     @controller_class_name ||= name.demodulize
   end

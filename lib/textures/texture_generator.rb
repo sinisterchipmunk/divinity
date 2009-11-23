@@ -23,11 +23,7 @@ class Textures::TextureGenerator < Textures::Texture
     end
   end
 
-  def set_options(options)
-    options.each do |key, value|
-      set_option key, value
-    end
-  end
+  def set_options(options) options.each { |key, value| set_option key, value } end
   
   def options; define_defaults(@options); @options; end
   def option(s); define_defaults(@options); @options[s]; end
@@ -46,68 +42,52 @@ class Textures::TextureGenerator < Textures::Texture
   end
 
   def generate
+    @_generating = true
     define_defaults(@options)
-    if not @surface.nil?
+    if not image.nil?
       # should consider not doing this, if we want to keep the cached copy in GL memory
+      # note that it's ok right now because we're only keeping the cached *image* in system memory (and not GL memory)
       free_resources
     end
     if @@generated_textures[cache_key]
-      @surface = @@generated_textures[cache_key]
-#    elsif File.exist? "data/cache/#{cache_key}.img"
-#      @surface = @@generated_textures[cache_key] = surface_from_file("data/cache/#{cache_key}.img")
-    elsif File.exist? "data/cache/#{cache_key}.png"
-      @surface = @@generated_textures[cache_key] = Resources::Image.new("data/cache/#{cache_key}.png").surface
+      self.image = @@generated_textures[cache_key]
     else
-      File.makedirs(File.dirname("data/cache/#{cache_key}.img"))
-      @surface = @@generated_textures[cache_key] = do_generation(@options)
-#      save_to_file("data/cache/#{cache_key}.img")
+#      if File.exist? "data/cache/#{cache_key}.png"
+#        self.image = Resources::Image.new("data/cache/#{cache_key}.png").image
+#      else
+        File.makedirs(File.dirname("data/cache/#{cache_key}.img"))
+        do_generation(@options)
+#      end
+      @@generated_textures[cache_key] = self.image
     end
+    @_generating = false
   end
 
   def save_to_file(fi)
-    pixels = surface.pixels
-    width, height, depth, pitch = surface.w, surface.h, surface.format.bytes_per_pixel*8, surface.pitch
-    rmask, gmask, bmask, amask = surface.format.Rmask, surface.format.Gmask, surface.Bmask, surface.format.Amask
-
-    data = [ pixels, width, height, depth, pitch, rmask, gmask, bmask, amask ]
-    File.open(fi, "wb") { |f| f.print data.pack("biiiiIIII") }
-#    SDL_CreateRGBSurfaceFrom(void *pixels,
-#                        int width, int height, int depth, int pitch,
-#                        Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask
+    File.open(fi, "wb") { |f| f.print image.to_blob { self.format = 'PNG' } }
   end
 
-  def surface_from_file(fi)
-    data = (File.open(fi, "rb").read.unpack("biiiiIIII"))
-    puts data
-    SDL::Surface.new_from(*data)
+  def load_from_file(fi)
+    self.image = Magick::ImageList.new(fi)
   end
   
-  def bind
-    self.surface #Generate surface if necessary
-    super
-  end
-  
-  def free_resources
-    super
-    #SDL::FreeSurface(@surface)
-    @surface = nil
-  end
-
   protected
   def define_defaults(options); end
 
   def do_generation(options)
-    raise "TextureGenerator::do_generation must be overridden. Should return an SDL_Surface."
+    raise "TextureGenerator::do_generation must be overridden. Should return a Magick::Image."
   end
   
   #def data
   #  self.surface
   #end
   
-  def surface
-    if @options[:auto_generate] == false and @surface.nil?
-      raise "Texture hasn't been generated yet"
+  def image
+    r = super
+    if r.nil? and not @_generating
+      generate if r.nil?
+      return super
     end
-    if @surface.nil? then generate; else @surface; end
+    r
   end
 end

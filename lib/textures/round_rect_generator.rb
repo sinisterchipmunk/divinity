@@ -99,18 +99,7 @@ class Textures::RoundRectGenerator < Textures::TextureGenerator
       puts ae
     end
 
-    #convert to binary string
-    imgdata = canvas.to_blob { self.format = "PNG" }
-    #convert binstr to raw data
-    #for some reason the load_from_string alias isn't working
-    surface = SDL::Surface.loadFromString((imgdata))
-    
-    #FIXME: And if I could get RMagick to give me raw data, I could load it directly with:
-    #       SDL::load_from(imgdata, height, width, 32, width*4,
-    #                      0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF)
-    #...and not have to worry about it any more. But then, if I could get the raw
-    #data, I wouldn't need SDL at all, because OpenGL takes raw data as a parameter.
-    return surface
+    self.image = canvas
   rescue
     puts "ERROR COMPUTING:\n#{options.to_yaml}"
     raise $!

@@ -23,6 +23,26 @@ speed = 0.25
 divinity.during_render do
   glColor4f 1, 1, 1, 1
   scene.render
+  ortho(divinity.width, divinity.height) do
+    #divinity.current_interface.resultant_image.to_gl
+    #.send(:image).to_gl
+    glColor4f 1, 1, 1, 1
+    (tex = divinity.current_interface.resultant_image.to_gl).bind do
+      glBegin GL_QUADS
+        tex.coord2f(0, 0)
+        glVertex3i(0, 0, 0)
+
+        tex.coord2f(0, 1)
+        glVertex3i(0, divinity.height, 0)
+
+        tex.coord2f(1, 1)
+        glVertex3i(divinity.width, divinity.height, 0)
+
+        tex.coord2f(1, 0)
+        glVertex3i(divinity.width, 0, 0)
+      glEnd
+    end
+  end
 end
 
 # we can use the after_render block to verify that this code runs *last*

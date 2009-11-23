@@ -1,6 +1,7 @@
 --- !map:HashWithIndifferentAccess 
 module_load_order: 
 - ./vendor/modules/divinity
+theme: :default
 fullscreen: false
 height: 600
 color_depth: 32

@@ -7,9 +7,11 @@ module Engine::Content
 
     line = __LINE__ + 2
     code = <<-end_code
-      def #{singular}(id, &block)
+      def #{singular}(id, *args, &block)
         r = self.#{plural}[id]
-        r = self.#{plural}[id] = #{class_name}.new(id, self, &block) if r.nil?
+        if r.nil? then r = self.#{plural}[id] = #{class_name}.new(id, self, *args)
+        elsif args.length > 0 then r = r.with_args(*args)
+        end
         r.instance_eval(&block) if block_given?
         r
       end

@@ -7,7 +7,9 @@
 #
 
 # note that theme can be called multiple times during the render, so that the textures can be swapped... ie use the
-# primary background with the secondary foreground.
+# primary background with the secondary foreground. Switching between themes for, as an example, using different fonts
+# is greatly preferred to using a font or color directly, because the latter reduces the flexibility of a given
+# theme.
 theme :primary
 
 if button.state == :pressed then paint_background :brightness => 0.8

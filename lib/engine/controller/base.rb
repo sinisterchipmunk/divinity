@@ -27,7 +27,7 @@ class Engine::Controller::Base
   attr_internal :engine
 
   delegate :width, :height, :bounds, :bounds=, :to => :request
-  delegate :insets, :preferred_size, :minimum_size, :maximum_size, :to => :response
+  delegate :insets, :preferred_size, :minimum_size, :maximum_size, :resultant_image, :to => :response
 
   public
     def initialize(engine, request, response)

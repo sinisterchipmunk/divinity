@@ -17,6 +17,7 @@ class DivinityEngine
   include Helpers::EventListeningHelper
 
   attr_reader :frame_manager, :state, :ticks, :interval, :options, :camera
+  attr_accessor :current_theme
 
   def initialize(*args, &blk)
     @blocks = {}
@@ -24,6 +25,7 @@ class DivinityEngine
     @camera = OpenGl::Camera.new
 
     during_init do
+      self.current_theme = theme(options[:theme])
       @frame_manager = Interface::Managers::FrameManager.new
       @frame_manager.register_keyboard_shortcut(:keys   => [ SDL::Key::LALT, SDL::Key::F4 ],
                                                 :target => self,
@@ -50,10 +52,10 @@ class DivinityEngine
 #    init
   end
 
-  def waiting?; @state == :waiting; end
-  def running?; @state == :running; end
+  def waiting?;  @state == :waiting;  end
+  def running?;  @state == :running;  end
   def starting?; @state == :starting; end
-  def paused?; @state == :paused; end
+  def paused?;   @state == :paused;   end
   def stopping?; @state == :stopping; end
 
   def go!
@@ -95,7 +97,7 @@ class DivinityEngine
     def main_loop
       @main_loop_running = true
       # FIXME: Hitting a lot of issues with deadlock right now. I'm currently blaming ActiveSupport, but it could be
-      # a synchronization issue within the engine. In the ideal world, we'd have the #update method firing on one
+      # a synchronization issue within the engine. In a better world, we'd have the #update method firing on one
       # thread, and #render firing on the other. In a *perfect* world, we'd have different during_update blocks firing
       # on their own threads, with #render firing on a single thread.
 #      Thread.new do
@@ -213,7 +215,8 @@ class DivinityEngine
     def default_options
     {
       :width => 640, :height => 480, :color_depth => 32, :fullscreen => false,
-      :clear_on_render => GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
+      :clear_on_render => GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
+      :theme => :default
     }
     end
 end

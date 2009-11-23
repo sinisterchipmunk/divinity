@@ -1,6 +1,11 @@
 class Textures::Font < Textures::TextureGenerator
   attr_reader :max_glyph_size
 
+  # It's dangerous to let the width and height methods face public because they are A) of extremely limited public use
+  # and B) they can be easily confused with line_height and text_width.
+  protected :width
+  protected :height
+
   @@instantiated_fonts = { }
   def self.select(options = { })
     options ||= { }
@@ -18,7 +23,6 @@ class Textures::Font < Textures::TextureGenerator
     super
     @metrics = [ ]
     @max_glyph_size = Dimension.new
-    @image_size = Dimension.new
     bind { } # generate the font
     @display_list = OpenGl::DisplayList.new(256) { |i| build_list(i) }
   end
@@ -26,12 +30,12 @@ class Textures::Font < Textures::TextureGenerator
   def sizeof(str)
     str = str.join("\n") if str.kind_of? Array
     size = Dimension.new
-    size.height = self.height
+    size.height = self.line_height
     maxw = 0
     str.each_byte do |i|
       chr = i.chr
       if chr == "\n"
-        size.height += self.height
+        size.height += self.line_height
         size.width = maxw if maxw > size.width
         maxw = 0
       else
@@ -48,17 +52,17 @@ class Textures::Font < Textures::TextureGenerator
     @display_list.rebuild!
   end
 
-  def width(str)
+  def text_width(str)
     sizeof(str).width
   end
   
-  def height
+  def line_height
     @max_glyph_size.height
   end
 
   def put(x, y, str)
     str = str.to_s.split(/\n/) unless str.kind_of? Array
-    
+
     bind do
       push_matrix do
         glTranslated(x, y, 0)
@@ -73,15 +77,15 @@ class Textures::Font < Textures::TextureGenerator
   def build_list(index)
     i = index
     return if i == 0
-    tw  = (@max_glyph_size.width - 1)  / @image_size.width
-    th  = (@max_glyph_size.height) / @image_size.height
+    tw  = (@max_glyph_size.width - 1)  / width
+    th  = (@max_glyph_size.height) / height
     ch = i.chr
     metrics = @metrics[i]
 
     tx = (i % 16).to_i * (@max_glyph_size.width+1)
     ty = (i / 16).to_i * (@max_glyph_size.height+1)
-    tx /= @image_size.width
-    ty /= @image_size.height
+    tx /= width
+    ty /= height
 
     # we don't bind the texture here because it's bound in #put just once (as opposed to once per char if we do it here)
     glBegin(GL_QUADS)
@@ -115,22 +119,11 @@ class Textures::Font < Textures::TextureGenerator
     fn = "data/cache/font"
     options.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |n,v| fn = "#{fn}_#{n}-#{v}" }; fn = "#{fn}.png"
     if File.exists? fn
-      blob = load_font(options, fn)
+      load_font(options, fn)
     else
-      blob = gen_font(options)
-      File.open(fn, "wb") { |file| file.print blob }
+      gen_font(options)
+      File.open(fn, "wb") { |file| file.print self.image.to_blob { self.format = 'PNG' } }
     end
-    
-    #convert binstr to raw data
-    #for some reason the load_from_string alias isn't working
-    surface = SDL::Surface.loadFromString(blob)
-    
-    #And if I could get RMagick to give me raw data, I could load it directly with:
-    #       SDL::load_from(imgdata, height, width, 32, width*4,
-    #                      0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF)
-    #...and not have to worry about it any more. But then, if I could get the raw
-    #data, I wouldn't need SDL at all, because OpenGL takes raw data as a parameter.
-    return surface
   end
   
   def build_metrics(draw, options, img = nil)
@@ -155,12 +148,10 @@ class Textures::Font < Textures::TextureGenerator
   
   def load_font(options, fn)
     img = ImageList.new(fn)
-    @image_size.width = img.columns
-    @image_size.height = img.rows
-    
+
     build_metrics(Magick::Draw.new, options, img)
     
-    img.to_blob
+    self.image = img
   end
   
   def gen_font(options)
@@ -176,12 +167,12 @@ class Textures::Font < Textures::TextureGenerator
     
     max_descent = build_metrics(draw, options)
                           #for old video cards
-    @image_size.width  = next_pow2(@max_glyph_size.width.to_i  * 16)
-    @image_size.height = next_pow2(@max_glyph_size.height.to_i * 16)
+    width  = next_pow2(@max_glyph_size.width.to_i  * 16)
+    height = next_pow2(@max_glyph_size.height.to_i * 16)
     
     #create the canvas
     canvas = Magick::ImageList.new
-    canvas.new_image(@image_size.width, @image_size.height)
+    canvas.new_image(width, height)
     canvas.x_resolution = options[:dpi_x]
     canvas.y_resolution = options[:dpi_y]
     canvas.matte_reset! #Make all pixels transparent.
@@ -191,7 +182,6 @@ class Textures::Font < Textures::TextureGenerator
       i = c.to_i
       x = (i % 16).to_i * (@max_glyph_size.width+1)
       y = (i / 16).to_i * (@max_glyph_size.height+1)
-#      puts @max_descent
       y += max_descent
       
       str = i.chr
@@ -207,9 +197,7 @@ class Textures::Font < Textures::TextureGenerator
 
     #commit the above operations
     draw.draw(canvas)
-
-    #convert to binary string
-    canvas.to_blob { self.format = "PNG" }
+    self.image = canvas
   end
   
   def next_pow2(val)

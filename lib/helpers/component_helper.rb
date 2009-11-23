@@ -35,7 +35,7 @@ module Helpers::ComponentHelper
       args.slice!(0, x)
     else nil
     end
-    request = Engine::Controller::Request.new(Geometry::Rectangle.new(0,0,1,1), *args, &block)
+    request = Engine::Controller::Request.new(engine, Geometry::Rectangle.new(0,0,1,1), *args, &block)
     comp = Components::ButtonController.new(engine, request, Engine::Controller::Response.new)
     layout.add_layout_component(comp, *layout_arguments) if layout
   end

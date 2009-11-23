@@ -42,6 +42,11 @@ class Engine::View::Base
 
   #include Helpers::ComponentHelper
   delegate :engine, :request, :response, :to => :controller
+  delegate :components, :to => :layout
+  delegate :center, :width, :height, :bounds, :to => :request
+  delegate :current_theme, :to => :engine
+  delegate :theme, :to => :response
+
   attr_accessor :path, :locals
   attr_reader :controller, :helpers
 
