@@ -17,7 +17,7 @@ class Engine::ContentModule
     @module_name = File.basename(base_path)
     @engine = engine
 
-    load :themes, :interfaces, :actors, :languages, :races, :character_classes
+    load :themes, :interfaces, :actors, :languages, :races, :character_classes, :images
   end
 
   def respond_to?(name, *args, &block)
@@ -31,7 +31,7 @@ class Engine::ContentModule
 
   include Engine::Content
 
-  [ :themes, :actors, :languages, :races, :character_classes ].each do |plural|
+  [ :themes, :actors, :languages, :races, :character_classes, :images ].each do |plural|
     line = __LINE__+2
     code = <<-end_code
       def #{plural}

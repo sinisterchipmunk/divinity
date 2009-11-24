@@ -43,23 +43,14 @@ class Textures::TextureGenerator < Textures::Texture
 
   def generate
     @_generating = true
-    define_defaults(@options)
+    @options.reverse_merge! default_options
     if not image.nil?
       # should consider not doing this, if we want to keep the cached copy in GL memory
-      # note that it's ok right now because we're only keeping the cached *image* in system memory (and not GL memory)
+      # (which we're not yet doing)
       free_resources
     end
-    if @@generated_textures[cache_key]
-      self.image = @@generated_textures[cache_key]
-    else
-#      if File.exist? "data/cache/#{cache_key}.png"
-#        self.image = Resources::Image.new("data/cache/#{cache_key}.png").image
-#      else
-        File.makedirs(File.dirname("data/cache/#{cache_key}.img"))
-        do_generation(@options)
-#      end
-      @@generated_textures[cache_key] = self.image
-    end
+    File.makedirs(File.dirname("data/cache/#{cache_key}.img"))
+    do_generation(@options)
     @_generating = false
   end
 
@@ -72,7 +63,7 @@ class Textures::TextureGenerator < Textures::Texture
   end
   
   protected
-  def define_defaults(options); end
+  def default_options; end
 
   def do_generation(options)
     raise "TextureGenerator::do_generation must be overridden. Should return a Magick::Image."
@@ -85,7 +76,7 @@ class Textures::TextureGenerator < Textures::Texture
   def image
     r = super
     if r.nil? and not @_generating
-      generate if r.nil?
+      generate
       return super
     end
     r

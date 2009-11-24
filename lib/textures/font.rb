@@ -6,10 +6,10 @@ class Textures::Font < Textures::TextureGenerator
   protected :width
   protected :height
 
-  @@instantiated_fonts = { }
+  @@instantiated_fonts = HashWithIndifferentAccess.new
   def self.select(options = { })
     options ||= { }
-    @@instantiated_fonts[options.to_s] ||= self.new(options)
+    @@instantiated_fonts[options.sort { |a,b| a[0].to_s <=> b[0].to_s }.to_s] ||= self.new(options)
   end
 
   # Causes all fonts to be invalid, forcing them to be recreated the next time they are used.
@@ -20,10 +20,10 @@ class Textures::Font < Textures::TextureGenerator
   end
   
   def initialize(opt = { })
-    super
+    super()
     @metrics = [ ]
     @max_glyph_size = Dimension.new
-    bind { } # generate the font
+    image # generate the font
     @display_list = OpenGl::DisplayList.new(256) { |i| build_list(i) }
   end
   
@@ -98,21 +98,24 @@ class Textures::Font < Textures::TextureGenerator
   end
   
   protected
-  def define_defaults(options)
-    #define a default set of options, if necessary
-    options[:dpi_x]          ||= 200
-    options[:dpi_y]          ||= 200
-    options[:fill_color]     ||= "#fff"
-    options[:fill_opacity]   ||= 1
-    options[:stroke_color]   ||= "transparent" #"#fff"
-    options[:stroke_opacity] ||= 0
-    options[:stroke_width]   ||= 0
-    options[:family]         ||= "Arial"
-    options[:style]          ||= "normal"#, italic, oblique, any
-    options[:weight]         ||= 100
-    options[:pointsize]      ||= 12
-    options[:antialias]      ||= true
-    options[:stretch]        ||= "normal"#, ultraCondensed, extraCondensed, condensed, semiCondensed, semiExpanded, expanded, extraExpanded, ultraExpanded, any
+  def default_options
+    #define a default set of options
+    {
+      :dpi_x => 200,
+      :dpi_y => 200,
+      :fill_color => "#fff",
+      :fill_opacity => 1,
+      :stroke_color => 'transparent',
+      :stroke_opacity => 0,
+      :stroke_width => 0,
+      :family => 'Arial',
+      :style => 'normal', #italic, oblique, any
+      :weight => 100,
+      :pointsize => 12,
+      :antialias => true,
+      :stretch => 'normal', # ultraCondensed, extraCondensed, condensed, semiCondensed, semiExpanded, expanded,
+                            # extraExpanded, ultraExpanded, any
+    }
   end
   
   def do_generation(options)
@@ -142,7 +145,7 @@ class Textures::Font < Textures::TextureGenerator
       @max_glyph_size.height = @metrics[i].height      if @max_glyph_size.height < @metrics[i].height
       max_descent = @metrics[i].descent if max_descent > @metrics[i].descent
     end
-    
+
     max_descent
   end
   

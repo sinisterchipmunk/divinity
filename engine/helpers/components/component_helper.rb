@@ -1,12 +1,73 @@
 module Components::ComponentHelper
-  def paint_background(options = {})
-    draw.fill "#ff0000cc"
-    draw.stroke "#99000099"
-    draw.roundrectangle(0, 0, width, height, 10, 10)
+  # delegate these methods into response
+  def graphics_context; response.graphics_context end
+  def colorize!(color, amount) response.colorize!(color, amount) end
+
+  def paint_background(options = HashWithIndifferentAccess.new)
+    options.reverse_merge! theme[:background] if theme[:background]
+    if options
+      if image = options[:image]
+        image = Textures::Texture.new(engine.find_file(image)).send(:image)#engine.image(options[:image]).image_list
+        if options[:mode] == :tile or options[:mode].nil?
+          graphics_context.composite_tiled!(image, OverCompositeOp)#AtopCompositeOp)
+        else #scale
+          image.resize!(width, height)
+          graphics_context.composite!(image, 0, 0, OverCompositeOp)#AtopCompositeOp)
+        end
+      end
+    end
   end
 
-  def text(text, x = :center, y = :center)
-    dims = Textures::Font.select.sizeof(text)
+  def paint_border(options = HashWithIndifferentAccess.new)
+    options.reverse_merge! theme[:border] if theme[:border]
+    options[:style] = :none if options[:style].nil?
+    return if options[:style] == :none
+
+    # first we need a stencil
+    d = Magick::Draw.new
+    theme.apply_to(d)
+    d.fill("white")
+    d.stroke("transparent")
+    just_paint_the_border(options[:style], d)
+    stencil = Magick::Image.new(width, height)
+    stencil.matte_reset!
+    d.draw(stencil)
+
+    # now we place the graphics context over the stencil, causing any areas blocked (transparent pixels) by the stencil
+    # to be blocked in the graphics context
+    stencil.composite!(graphics_context, 0, 0, AtopCompositeOp)
+
+    # then we need to retrace the border, this time using the colors we want
+    d = Magick::Draw.new
+    theme.apply_to(d)
+    d.fill(theme[:background][:color]) if theme[:background] and theme[:background][:color]
+    d.stroke(options[:color] || theme[:stroke][:color]) if options[:color] || (theme[:stroke] && theme[:stroke][:color])
+    just_paint_the_border(options[:style], d)
+
+    # finally, we can composite the stencil (which is now the actual image) back into the graphics context (which is
+    # useless), and then commit the border to the finished product.
+    graphics_context.composite!(stencil, 0, 0, CopyCompositeOp)
+    d.draw(graphics_context)
+  end
+
+  # Paints the border of this component without creating a stencil or applying the changes to the graphics context.
+  # Expects a style, which is a symbol such as :round_rect, :rectangle, etc., and a Magick::Draw object to draw the
+  # border to.
+  def just_paint_the_border(style, d)
+    case style
+      when :round_rect then d.roundrectangle(0, 0, width, height, 10, 10)
+      # default is :round_rect, but treat anything unrecognized as :rectangle (use entire image)
+      else d.rectangle(0, 0, width, height)
+    end
+  end
+
+  def text(text, x = :center, y = :center, options = HashWithIndifferentAccess.new)
+    font = theme.font
+    unless options.empty?
+      options.reverse_merge! theme[:font]
+      font = Font.select(options)
+    end
+    dims = font.sizeof(text)
 
     case x
       when :left, :west  then x = 0
@@ -22,9 +83,11 @@ module Components::ComponentHelper
       else raise ArgumentError, "Expected y to be one of [:north, :center, :south, :top, :bottom]; found #{y.inspect}"
     end if y.kind_of? Symbol
 
-    draw.stroke "black"
-    draw.fill "black"
+    draw.stroke options[:stroke] || "transparent"
+    draw.fill options[:color] || theme[:font][:color] if options[:color] || theme[:font][:color]
     draw.text(x, y, text)
+    draw.fill theme[:fill][:color] if theme[:fill] and theme[:fill][:color]
+    draw.stroke theme[:stroke][:color] if theme[:stroke] and theme[:stroke][:color]
   end
 
   def draw(*a, &b)

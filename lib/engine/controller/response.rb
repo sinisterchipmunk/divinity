@@ -19,10 +19,6 @@ class Engine::Controller::Response
   # Note that the button insets above don't really have any effect because a Button object is not capable of containing
   # child objects. However, all components have an Insets object whether it is used or not.
   #
-  # Insets can be altered by the component itself; the component's bounds are set by its parent and so cannot be
-  # altered by the component. This is why insets are a field of Engine::Controller::Response, while bounds are
-  # a field of Engine::Controller::Request (even though they are delegated by Response for convenience).
-  #
   # Insets have no direct effect on rendering. That is, they do not directly change the location or size of any
   # component's graphics context (image). Instead, they are used more as a stencil or ruler by the Layout, which sets
   # the bounds of all child components. A component may feel free (and is expected) to utilize the entire
@@ -31,7 +27,13 @@ class Engine::Controller::Response
   # The ultimate purpose of Insets is to allow space between one component and the next. This is purely aesthetic
   # and is generally used to, for instance, draw a border around the edges of a frame. Without insets, you could
   # have no borders, because child elements would be placed directly on top of them. The space provided by insets
-  # also has a de-cluttering effect on the interface, and generally results in an easier-to-use GUI.
+  # also has a de-cluttering effect on the interface, and generally results in an easier-to-use GUI. They can also
+  # be used to reserve an area of the GUI as "off-limits" -- for example, you could modify the bottom_right insets
+  # of a component to make room for a status message that is to be drawn directly to a component.
+  #
+  # Insets can be altered by the component itself, unlike the component's Bounds, which are set by its parent and
+  # so cannot be altered by the component. This is why insets are a field of Engine::Controller::Response, while
+  # bounds are a field of Engine::Controller::Request (even though they are delegated by Response for convenience).
   #
   class Insets
     attr_accessor :top_left, :bottom_right
@@ -68,7 +70,7 @@ class Engine::Controller::Response
       @theme_sel = current_theme.select(sel)
 
       ## need to apply theme settings to the Draw object. This might be a method of Interface::Theme:
-      @theme_sel.apply_to(graphics_context, draw)
+      @theme_sel.apply_to(draw)
     end
     @theme_sel
   end
@@ -83,12 +85,34 @@ class Engine::Controller::Response
     @_completed = false
     prepare_graphics_context!
     view.process
-    @draw.draw(@graphics_context)
+    finalize_graphics_context!
   rescue ArgumentError => err
     raise unless err.message =~ /nothing to draw/
   ensure
     @_valid = false
     @_completed = true
+  end
+
+  def finalize_graphics_context!
+    @draw.draw(@graphics_context)
+    if theme[:colorization]
+      colorize!(theme[:colorization][:color], theme[:colorization][:amount])
+    end
+  end
+
+  def colorize!(color, amount)
+    unless color
+      raise ArgumentError, "Could not colorize: no color specified for theme #{current_theme.name}, set #{@theme_sel}"
+    end
+
+    unless amount
+      raise ArgumentError, "Could not colorize: no amount specified for theme #{current_theme.name}, set #{@theme_sel}"
+    end
+
+    amount = [amount,amount,amount,0] unless amount.kind_of? Array
+    if amount.inject { |a,b| a + b } > 0
+      @graphics_context = @graphics_context.colorize(*([amount, color].flatten))
+    end
   end
 
   def prepare_graphics_context!
@@ -102,7 +126,6 @@ class Engine::Controller::Response
     @graphics_context.matte_reset!
     @resultant_image.matte_reset!
     @draw = Magick::Draw.new
-
     theme controller.class.theme
   end
 

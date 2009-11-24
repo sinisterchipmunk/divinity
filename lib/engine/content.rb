@@ -1,5 +1,5 @@
 module Engine::Content
-  { :themes => Interface::Theme, 
+  { :themes => Interface::Theme, :images => Resources::Image, 
     :actors => World::Actor, :languages => World::Character::Language,
     :races  => World::Character::Race, :character_classes => World::Character::CharacterClass }.each do |plural, klass|
     class_name = klass.name

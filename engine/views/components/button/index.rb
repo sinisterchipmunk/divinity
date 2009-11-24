@@ -10,11 +10,17 @@
 # primary background with the secondary foreground. Switching between themes for, as an example, using different fonts
 # is greatly preferred to using a font or color directly, because the latter reduces the flexibility of a given
 # theme.
-theme :primary
 
-if button.state == :pressed then paint_background :brightness => 0.8
-else paint_background
+# Best practice is to allow the user to configure all options via theme. That means we won't be specifying
+# color or brightness, for example, if the button is pressed; instead, we'll switch to another theme set
+# (such as :inset or :outset). This should actually be done in the controller, not the view.
+if button.state == :pressed then theme :inset
+else theme :outset
 end
+
+
+paint_background
+paint_border
 
 # text is centered vertically and horizontally by default. Other usages include:
 #   text [label], [:west, :left, :east, :right], [:north, :top, :south, :bottom]

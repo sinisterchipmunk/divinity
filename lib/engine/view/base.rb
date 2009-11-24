@@ -67,7 +67,7 @@ class Engine::View::Base
     locals = ""
     @locals.keys.each { |k| locals += "#{k} = @locals[#{k.inspect};" }
     layout :border
-    instance_eval "#{locals}; #{@content}; instance_eval(&request.block) if request.block"
+    eval "#{locals}; #{@content}; instance_eval(&request.block) if request.block", binding, __FILE__, __LINE__
     do_layout
   end
 

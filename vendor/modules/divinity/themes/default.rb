@@ -1,38 +1,45 @@
 theme :default do
   name "Default Theme"
 
-  # You can also use the name of an exact class, ie
-  #   set "Interface::Components::Button", . . .
-  # This will affect only Button. Currently, inheritance is not supported, but will be in a future version.
-  
-  set :default,   :radx => 0, :rady => 0,
-                  :stroke_color => "black",#"#770013",
-                  :stroke_width => 1,
-                  :stroke_opacity => 1,
-                  :foreground_color => [ 1, 1, 1, 1 ],
-                  :text_background_color => "#eeeeee"
+  # You can also use the name of a controller, ie
+  #   set "components/button", . . .
+  # This will affect only Components::ButtonController.
 
-  set :primary,   :background_image => image("data/ui/background.bmp"),
-                  :scale_or_tile => :tile,
-                  :fill_opacity => 0.2,
-                  :fill_color => 'green',
-                  :stroke_color => 'green',#"#770013",
-                  :stroke_width => 0,
-                  :stroke_opacity => 0.0,
-                  :raised => true
+  set :default do
+    # Note on background colors: these take priority over background images! So specify an alpha channel
+    # if you want them to be opaque, or specify "transparent" if you don't want a background color at all.
+    background :color => "transparent"
+    border :round_rect, :radx => 10, :rady => 10
+    stroke :color => "#ccc", :width => 2, :opacity => 0
+    font :color => "#000",
+         :family => "Arial",
+         :style => "normal",# italic, oblique, any
+         :weight => 400,
+         :pointsize => 12,
+         :antialias => true,
+         :stretch => "normal" # ultraCondensed, extraCondensed, condensed, semiCondensed, semiExpanded,
+                              # expanded, extraExpanded, ultraExpanded, any
+  end
 
-  set :secondary, :fill_color => '#cccccc',
-                  :radx => 8,
-                  :rady => 8,
-                  :foreground_color => [ 0, 0, 0, 1 ],
-                  :stroke_color => 'black'
+  # All remaining sets inherit their attributes from the :default set. So we don't need to specify any value
+  # that we don't plan on overriding. Currently, no other forms of inheritance are supported.
 
-  set :text,      :radx => 0, :rady => 0,
-                  :stroke_color => 'silver',
-                  :raised => true,
-                  :raised_size => 2,
-                  :background_image => image("data/ui/background.bmp"),
-                  :scale_or_tile => :tile,
-                  :fill_opacity => 0.6,
-                  :fill_color => "#110000"
+  # looks like an object set into its parent, or 'inset', like a button that is pressed.
+  set :inset do
+    background :image => "data/ui/background.bmp", :mode => :tile, :color => "#0a02"
+  end
+
+  # looks like an object set out of parent, or 'outset', like a button that is not pressed.
+  set :outset do
+    background :image => "data/ui/background.bmp", :mode => :tile, :color => "#0f02"
+  end
+
+  set :primary do
+  end
+
+  set :secondary do
+    fill :color => "#cccccc"
+    border :radx => 8, :rady => 8
+    stroke :color => "black"
+  end
 end

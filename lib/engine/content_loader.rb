@@ -1,4 +1,23 @@
 module Engine::ContentLoader
+  # Iterates through each active ContentModule and searches its base path for the specified file.
+  # As a last resort, looks for the file in "data/#{filename}".
+  # The last ContentModule loaded has the highest priority and will be searched first.
+  def find_file(filename)
+    return filename if File.file? filename
+
+    locations = ""
+    load_content! unless @content_modules
+    @content_modules.each do |cm|
+      fi = File.join(cm.base_path, filename)
+      locations.concat "; #{fi}"
+      return fi if File.file? fi
+    end
+    fi = File.join(File.dirname(__FILE__), '../..', 'data', filename)
+    locations.concat "; #{fi}"
+    return fi if File.file? fi
+    raise "Could not find file #{filename} in any of the following locations:\n\t#{locations.split(/;/).join("\n\t")}"
+  end
+
   def load_content!
     # Theoretically, the options hash contains a list of modules to load, and they should be loaded in order of
     # appearance. If this is not the case, create them from the module index loaded earlier. Whatever order they
