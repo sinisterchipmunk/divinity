@@ -21,6 +21,7 @@ end
 
 paint_background
 paint_border
+paint_effects
 
 # text is centered vertically and horizontally by default. Other usages include:
 #   text [label], [:west, :left, :east, :right], [:north, :top, :south, :bottom]

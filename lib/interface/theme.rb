@@ -1,6 +1,7 @@
 class Interface::Theme < Resources::Content
   class ThemeType < HashWithIndifferentAccess
-    def initialize(*a, &b)
+    def initialize(theme, *a, &b)
+      @theme = theme
       super(*a, &b)
 #      border nil
 #      stroke nil
@@ -9,6 +10,12 @@ class Interface::Theme < Resources::Content
 #      background nil
 #      fill nil
 #      effects nil
+    end
+
+    def inherit(*other_sets)
+      other_sets.flatten.each do |other_set|
+        self.merge! @theme.select(other_set)
+      end
     end
 
     [:fill, :background, :stroke].each do |f|
@@ -37,6 +44,15 @@ class Interface::Theme < Resources::Content
       self[:effects] += list.flatten
       self[:effects].delete nil
       self[:effects]
+    end
+    
+    alias effect effects
+
+    def Effect(*args)
+      name, *args = args
+      name = name.to_s if name.kind_of? Symbol
+      klass = name.kind_of?(String) ? "Interface::Theme::Effects::#{name.camelize}Effect".constantize : name
+      klass.new(*args)
     end
 
     def font(*options)
@@ -99,11 +115,11 @@ class Interface::Theme < Resources::Content
     super(id, engine, &block)
   end
 
-  def select(type = :default, defaults = ThemeType.new)
+  def select(type = :default, defaults = ThemeType.new(self))
     type = type.to_s unless type.kind_of? String
     defaults = defaults.reverse_merge @options['default'] if @options['default']
 
-    @options[type] = ThemeType.new if @options[type].nil?
+    @options[type] = ThemeType.new(self) if @options[type].nil?
     @options[type].reverse_merge!(defaults)
     @options[type]
   end

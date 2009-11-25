@@ -3,6 +3,8 @@ module Components::ComponentHelper
   def graphics_context; response.graphics_context end
   def colorize!(color, amount) response.colorize!(color, amount) end
 
+  # options used are (:image, :mode, :effect[s])
+  # the :effect[s] option is passed into #paint_effect!
   def paint_background(options = HashWithIndifferentAccess.new)
     options.reverse_merge! theme[:background] if theme[:background]
     if options
@@ -15,9 +17,27 @@ module Components::ComponentHelper
           graphics_context.composite!(image, 0, 0, OverCompositeOp)#AtopCompositeOp)
         end
       end
+      if arr = options[:effect] || options[:effects]
+        paint_effects! graphics_context, arr
+      end
     end
   end
 
+  # paints the specified effect or Array of effects to the specified image.
+  def paint_effects!(image, *effects)
+    effects.flatten.each { |effect| effect.apply_to(image) }
+  end
+
+  # paints the list of effects to this image. Note that this does not count backgroud effects, which are
+  # added at the end of #paint_background.
+  def paint_effects(effects = Array.new)
+    effects.concat(theme[:effect] ? [theme[:effect]] : [])
+    effects.concat((theme[:effects].kind_of? Array) ? theme[:effects] : [theme[:effects]]) if theme[:effects]
+    paint_effects! graphics_context, *effects
+  end
+
+  # options used are (:style, :color); tries to guess these from theme settings if they're not found.
+  # Also makes use of theme[:background], theme[:stroke].
   def paint_border(options = HashWithIndifferentAccess.new)
     options.reverse_merge! theme[:border] if theme[:border]
     options[:style] = :none if options[:style].nil?
@@ -28,7 +48,7 @@ module Components::ComponentHelper
     theme.apply_to(d)
     d.fill("white")
     d.stroke("transparent")
-    just_paint_the_border(options[:style], d)
+    paint_border!(options[:style], d)
     stencil = Magick::Image.new(width, height)
     stencil.matte_reset!
     d.draw(stencil)
@@ -42,7 +62,7 @@ module Components::ComponentHelper
     theme.apply_to(d)
     d.fill(theme[:background][:color]) if theme[:background] and theme[:background][:color]
     d.stroke(options[:color] || theme[:stroke][:color]) if options[:color] || (theme[:stroke] && theme[:stroke][:color])
-    just_paint_the_border(options[:style], d)
+    paint_border!(options[:style], d)
 
     # finally, we can composite the stencil (which is now the actual image) back into the graphics context (which is
     # useless), and then commit the border to the finished product.
@@ -53,7 +73,7 @@ module Components::ComponentHelper
   # Paints the border of this component without creating a stencil or applying the changes to the graphics context.
   # Expects a style, which is a symbol such as :round_rect, :rectangle, etc., and a Magick::Draw object to draw the
   # border to.
-  def just_paint_the_border(style, d)
+  def paint_border!(style, d)
     case style
       when :round_rect then d.roundrectangle(0, 0, width, height, 10, 10)
       # default is :round_rect, but treat anything unrecognized as :rectangle (use entire image)
@@ -61,6 +81,8 @@ module Components::ComponentHelper
     end
   end
 
+  # options used are (:stroke, :color) and the current theme[:font] options.
+  # Also makes use of theme[:fill], theme[:stroke].
   def text(text, x = :center, y = :center, options = HashWithIndifferentAccess.new)
     font = theme.font
     unless options.empty?

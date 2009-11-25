@@ -22,19 +22,24 @@ theme :default do
   end
 
   # All remaining sets inherit their attributes from the :default set. So we don't need to specify any value
-  # that we don't plan on overriding. Currently, no other forms of inheritance are supported.
+  # that we don't plan on overriding. You can directly inherit attributes from other sets with the
+  # #inherit method.
+
+  set :primary do
+    background :image => "data/ui/background.bmp", :mode => :tile, :color => "#0a02"
+  end
 
   # looks like an object set into its parent, or 'inset', like a button that is pressed.
   set :inset do
-    background :image => "data/ui/background.bmp", :mode => :tile, :color => "#0a02"
+    inherit :primary
+    background :effects => Effect(:button, :inset)
   end
 
   # looks like an object set out of parent, or 'outset', like a button that is not pressed.
   set :outset do
-    background :image => "data/ui/background.bmp", :mode => :tile, :color => "#0f02"
-  end
-
-  set :primary do
+    inherit :primary
+    #background :effects => Effect(:button, :outset)
+    effect Effect(:button, :outset)
   end
 
   set :secondary do
