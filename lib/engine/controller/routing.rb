@@ -9,7 +9,7 @@ module Engine::Controller::Routing
     instance = find_controller_instance(klass, *args)
 
     # Dispatch a focus event to both controllers
-    evt = Engine::Controller::Events::FocusEvent.new(cur, instance)
+    evt = Events::FocusEvent.new(cur, instance)
     cur.process_event(:focus_lost, evt) if cur
     instance.process_event(:focus_gained, evt)
     self.current_controller = instance
@@ -28,10 +28,15 @@ module Engine::Controller::Routing
       request = Engine::Controller::Request.new(self, Geometry::Rectangle.new(0,0,width,height), *args)
       response = Engine::Controller::Response.new
       instance = @instantiated_controllers[klass] = klass.new(self, request, response)
-      instance.process(:index, Engine::Controller::Events::ControllerCreatedEvent.new(instance))
+      instance.process(:index, Events::ControllerCreatedEvent.new(instance))
       instance
     end
     instance
+  end
+
+  def dispatch_event(type, event)
+    fire_event type, event unless paused?
+    current_interface.dispatch_event type, event
   end
 
   alias find_interface find_controller_instance

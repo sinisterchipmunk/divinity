@@ -28,11 +28,13 @@ end
 
 include Geometry
 
-Dir.glob(File.join($basepath, "**", "*.rb")).each do |fi|
-  next if File.directory? fi or fi =~ /\.svn/ or fi =~ /extensions/
-  fi = fi.gsub(/^#{Regexp::escape $basepath}(.*)\.rb$/, '\1').camelize
-  puts "loading: #{fi}" if $DEBUG
-  fi.constantize
+[$basepath, File.join(ENV['DIVINITY_ROOT'], "engine/models")].each do |bp|
+  Dir.glob(File.join(bp, "**", "*.rb")).each do |fi|
+    next if File.directory? fi or fi =~ /\.svn/ or fi =~ /extensions/
+    fi = fi.gsub(/^#{Regexp::escape bp}(.*)\.rb$/, '\1').camelize
+    puts "loading: #{fi}" if $DEBUG
+    fi.constantize
+  end
 end
 
 require File.join(File.dirname(__FILE__), 'c_ext/divinity_ext')

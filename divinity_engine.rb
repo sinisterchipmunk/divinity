@@ -4,6 +4,8 @@ require File.join(File.dirname(__FILE__), 'dependencies')
 # then the mouse will give relative motion events even when the cursor reaches
 # the edge fo the screen.
 # TODO: Provide an API for this in the DivinityEngine without forcing the user to interface directly to SDL.
+#
+# Note: Joystick support not yet implemented.
 class DivinityEngine
   include Gl
   include Engine::ContentLoader
@@ -16,22 +18,18 @@ class DivinityEngine
   #include Engine::DefaultGui
   include Helpers::EventListeningHelper
 
-  attr_reader :frame_manager, :state, :ticks, :interval, :options, :camera
+  attr_reader :state, :ticks, :interval, :options, :camera, :mouse, :keyboard
   attr_accessor :current_theme
 
   def initialize(*args, &blk)
     @blocks = {}
     @state = :waiting
     @camera = OpenGl::Camera.new
+    @mouse = Devices::Mouse.new(self)
+    @keyboard = Devices::Keyboard.new(self)
 
     during_init do
       self.current_theme = theme(options[:theme])
-      @frame_manager = Interface::Managers::FrameManager.new
-      @frame_manager.register_keyboard_shortcut(:keys   => [ SDL::Key::LALT, SDL::Key::F4 ],
-                                                :target => self,
-                                                :method => 'stop!',
-                                                :args   => [ ])
-      @frame_manager.should_update_viewport = false
     end
 
     @options = HashWithIndifferentAccess.new(args.extract_options!.reverse_merge(default_options))
@@ -124,7 +122,7 @@ class DivinityEngine
 
     def render
       call_blocks :before_render, :during_render
-      frame_manager.render
+      # TODO: we should probably render an interface here.
       call_blocks :after_render
     end
 

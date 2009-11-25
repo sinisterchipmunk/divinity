@@ -54,7 +54,7 @@ class Engine::Controller::Response
   attr_reader :graphics_context, :draw
   delegate :engine, :bounds, :width, :height, :to => :request
   delegate :current_theme, :to => :engine
-  delegate :controller, :to => :view
+  delegate :controller, :components, :to => :view
 
   def initialize()
     @_completed = false

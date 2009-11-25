@@ -8,6 +8,7 @@
 class Engine::Controller::Base
   include Helpers::EventListeningHelper
   include Engine::Controller::Helpers
+  include Engine::Controller::EventDispatching
   extend  Engine::Controller::ClassMethods
 
   attr_accessor :action_name
@@ -26,15 +27,18 @@ class Engine::Controller::Base
   attr_internal :event
   attr_internal :engine
 
-  delegate :width, :height, :bounds, :bounds=, :to => :request
+  delegate :width, :height, :bounds, :bounds=, :translate, :contains?, :to => :request
   delegate :insets, :preferred_size, :minimum_size, :maximum_size, :resultant_image, :to => :response
+  delegate :components, :to => :response
 
   public
     def initialize(engine, request, response)
+      @focused = self
       assign_shortcuts(engine, request, response)
     end
 
     def process_event(action, options = {})
+      puts "#{action} - #{controller_name}" if action == :focus_lost or action == :focus_gained
       # All events are optional, and only result in actions if the controller responds_to? them.
       action = action.to_s if action.kind_of? Symbol
       if self.class.action_methods.include? action

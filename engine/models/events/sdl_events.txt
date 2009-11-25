@@ -1,0 +1,170 @@
+From: http://www.kmc.gr.jp/~ohai/rubysdl_doc_1.en.html
+
+SDL::Event2::KeyDown
+
+This event occurs when a key is pressed.
+
+Method
+
+SDL::Event2::KeyDown#press
+Returns true.
+SDL::Event2::KeyDown#sym
+Returns the pressed key such as SDL::Key::ESCAPE.
+SDL::Event2::KeyDown#mod
+Same as SDL::Key.modState.
+SDL::Event2::KeyDown#unicode
+Returns key input translated to UNICODE.If you will use this, you need to call SDL::Event2.enableUNICODE beforehand.
+
+
+SDL::Event2::KeyUp
+
+This event occurs when a key is released.
+
+Method
+
+SDL::Event2::KeyUp#press
+Returns false.
+SDL::Event2::KeyUp#sym
+Returns the released key such as SDL::Key::ESCAPE.
+SDL::Event2::KeyUp#mod
+Same as SDL::Key.modState.
+
+
+SDL::Event2::MouseMotion
+
+This event occurs when mouse is moved.
+
+Method
+
+SDL::Event2::MouseMotion#state
+Returns the button state.
+SDL::Event2::MouseMotion#x
+Returns x of mouse cursor.
+SDL::Event2::MouseMotion#y
+Returns y of mouse cursor.
+SDL::Event2::MouseMotion#xrel
+Returns relative x coordinates.
+SDL::Event2::MouseMotion#yrel
+Returns relative y coordinates.
+
+
+SDL::Event2::MouseButtonDown
+
+This event occurs when a mouse button is pressed.
+
+Method
+
+SDL::Event2::MouseButtonDown#button
+Returns the which button is pressed.
+
+SDL::Mouse::BUTTON_LEFT
+SDL::Mouse::BUTTON_MIDDLE
+SDL::Mouse::BUTTON_RIGHT
+SDL::Event2::MouseButtonDown#press
+Returns true.
+SDL::Event2::MouseButtonDown#x
+Returns x of mouse cursor.
+SDL::Event2::MouseButtonDown#y
+Returns y of mouse cursor.
+
+
+SDL::Event2::MouseButtonUp
+
+This event occurs when a mouse button is pressed.
+
+Method
+
+SDL::Event2::MouseButtonUp#button
+Returns the which button is released.
+
+SDL::Mouse::BUTTON_LEFT
+SDL::Mouse::BUTTON_MIDDLE
+SDL::Mouse::BUTTON_RIGHT
+SDL::Event2::MouseButtonUp#press
+Returns false.
+SDL::Event2::MouseButtonUp#x
+Returns x of mouse cursor.
+SDL::Event2::MouseButtonUp#y
+Returns y of mouse cursor.
+
+
+SDL::Event2::JoyAxis
+
+This event occurs when axis of joystick is moved.
+
+Method
+
+SDL::Event2::JoyAxis#which
+Returns joystick device index.
+SDL::Event2::JoyAxis#axis
+Returns joystick axis index.
+SDL::Event2::JoyAxis#value
+Returns axis value(from -32768 to 32767).
+SDL::Event2::JoyBall
+
+This event occurs when joystick trackball moves.
+
+Method
+
+SDL::Event2::JoyBall#which
+Returns joystick device index.
+SDL::Event2::JoyBall#ball
+Returns joystick trackball index.
+SDL::Event2::JoyBall#xrel
+Returns the relative motion in the X direction.
+SDL::Event2::JoyBall#yrel
+Returns the relative motion in the Y direction.
+
+
+SDL::Event2::JoyHat
+
+This event occurs when joystick hat moves.
+
+Method
+
+SDL::Event2::JoyHat#which
+Returns joystick device index.
+SDL::Event2::JoyHat#hat
+Returns joystick hat index.
+SDL::Event2::JoyHat#value
+Returns hat position. That values is a logically OR'd combination of the following values.
+
+SDL::Joystick::HAT_CENTERED
+SDL::Joystick::HAT_UP
+SDL::Joystick::HAT_RIGHT
+SDL::Joystick::HAT_DOWN
+SDL::Joystick::HAT_LEFT
+The following defines are also provided
+
+SDL::Joystick::HAT_RIGHTUP
+SDL::Joystick::HAT_RIGHTDOWN
+SDL::Joystick::HAT_LEFTUP
+SDL::Joystick::HAT_LEFTDOWN
+
+
+SDL::Event2::JoyButtonUp
+
+This event occurs when joystick button is released.
+
+Method
+
+SDL::Event2::JoyButtonUp#which
+Returns joystick device index.
+SDL::Event2::JoyButtonUp#button
+Returns joystick button index.
+SDL::Event2::JoyButtonUp#press
+Returns false.
+
+
+SDL::Event2::JoyButtonDown
+
+This event occurs when joysick button is pressed.
+
+Method
+
+SDL::Event2::JoyButtonDown#which
+Returns joystick device index.
+SDL::Event2::JoyButtonDown#button
+Returns joystick button index.
+SDL::Event2::JoyButtonDown#press
+Returns true.

@@ -5,17 +5,18 @@ module Engine::ContentLoader
   def find_file(filename)
     return filename if File.file? filename
 
-    locations = ""
+    # Search the user-defined overrides first
+    fi = File.join(ENV['DIVINITY_ROOT'], 'data/override', filename)
+    return fi if File.file? fi
+    locations = [ fi ]
+
     load_content! unless @content_modules
     @content_modules.each do |cm|
       fi = File.join(cm.base_path, filename)
-      locations.concat "; #{fi}"
       return fi if File.file? fi
+      locations << fi
     end
-    fi = File.join(File.dirname(__FILE__), '../..', 'data', filename)
-    locations.concat "; #{fi}"
-    return fi if File.file? fi
-    raise "Could not find file #{filename} in any of the following locations:\n\t#{locations.split(/;/).join("\n\t")}"
+    raise "Could not find file #{filename} in any of the following locations:\n\t#{locations.join("\n\t")}"
   end
 
   def load_content!
