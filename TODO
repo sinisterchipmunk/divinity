@@ -1,0 +1,27 @@
+Figured I'd better start making a list of to-do items somewhere. Comments in source code only go so far.
+
+* Implement :mouse_entered, :mouse_exited and :mouse_over interface events.
+
+* Implement keyboard events of all flavors, namely :key_pressed, :key_released, :key_typed
+
+* Streamline height map loading. Right now it has to be manually loaded from the engine itself; they need to be
+  triggered by controller actions and the maps themselves loaded from modules. This includes the Scene that makes use
+  of the height map, which would also be in charge of figuring out texturing, bump maps and whatnot.
+
+* Implement multitexturing. The first test of this will be with the height maps. It's not as hard as it sounds.
+
+* Implement bump mapping. Also not as hard as it sounds.
+
+* Implement a particle generator. I've written about half a dozen of them, so I know how to do it, but this one needs
+  to be fairly advanced so that it can be used for anything from torches to spells extremely easily. These also need
+  to be configurable and triggered from modules.
+
+* Come up with a character editor similar to Oblivion's. I'm eyeing MakeHuman for this, though I don't know much about
+  it yet. If it works out, it'll save me a whole lot of time.
+
+* Streamline the installation process. I think we're far enough along at this point to make it easy to install Divinity.
+
+* Come up with object models: arrows, weapons, armor, clothing, etc.
+
+* Make these models available in-game via modules.
+

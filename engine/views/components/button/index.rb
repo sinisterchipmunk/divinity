@@ -14,8 +14,6 @@
 # Best practice is to allow the user to configure all options via theme. That means we won't be specifying
 # color or brightness, for example, if the button is pressed; instead, we'll switch to another theme set
 # (such as :inset or :outset). This should actually be done in the controller, not the view.
-puts button.state.inspect
-
 if button.state == :pressed then theme :inset
 else theme :outset
 end

@@ -23,7 +23,8 @@ To run all tests, use:
 
 = Usage
 
-Because this is what you're here for, isn't it? Here's the quickest way to instantiate and start using the engine:
+Because this is what you're here for, isn't it? Here's the quickest way to instantiate and start using the engine for
+a new project (a game of your own design):
 
   require 'divinity_engine'
 
