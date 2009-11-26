@@ -60,7 +60,7 @@ class Textures::Texture
 
   def free_resources
     glDeleteTextures(id) if id and id != -1
-    self.id = -1
+    @id = -1
     @bound = false
   end
 

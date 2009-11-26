@@ -12,6 +12,7 @@ require 'glu'
 require 'RMagick'
 require 'matrix'
 require 'mathn'
+require 'lib/extensions/magick_extensions'
 
 ENV['DIVINITY_ROOT'] ||= File.dirname(__FILE__)
 

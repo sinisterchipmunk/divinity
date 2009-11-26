@@ -50,7 +50,7 @@ class Engine::Controller::Response
   end
 
   attr_accessor :insets, :default_theme
-  attr_accessor :preferred_size, :minimum_size, :maximum_size, :request, :view, :redirected_to
+  attr_accessor :preferred_size, :minimum_size, :maximum_size, :request, :view, :redirected_to, :redirected_to_params
   attr_reader :graphics_context, :draw
   delegate :engine, :bounds, :width, :height, :to => :request
   delegate :current_theme, :to => :engine
@@ -62,6 +62,25 @@ class Engine::Controller::Response
     @minimum_size = Geometry::Dimension.new(1, 1)
     @maximum_size = Geometry::Dimension.new(1024, 1024)
     @insets = Insets.new(0, 0, 0, 0)
+  end
+
+  def redirect(options)
+    controller = options.delete :controller
+    action = options.delete :action
+    self.redirected_to = { :controller => controller, :action => action }
+    self.redirected_to_params = options
+  end
+
+  def do_redirect
+    # controller has signaled that everything's cleaned up for this request and it's safe to begin the redirection
+    controller, action = redirected_to[:controller], redirected_to[:action]
+    revt = Events::Redirected.new(self.controller, self.controller.action_name, controller, action)
+    if controller == self.controller.controller_path
+      # controller hasn't changed, so we're just firing another action.
+      self.controller.process(action, :event => revt)
+    else
+      assume_interface controller, redirected_to_params.merge(:action => action, :event => revt)
+    end
   end
 
   def theme(sel = nil, options = {})
@@ -129,14 +148,24 @@ class Engine::Controller::Response
     theme controller.class.theme
   end
 
+  # Returns true if this and all subcomponents are valid (do not need their images regenerated)
+  def valid?
+    return false unless @_valid
+    view.components.each do |comp|
+      return false unless comp.valid?
+    end
+    true
+  end
+
   def resultant_image
-    unless @_valid
+    unless valid?
       @resultant_image.composite!(@graphics_context, 0, 0, Magick::CopyCompositeOp)
       view.components.each do |child|
         x, y = child.bounds.x, child.bounds.y
         sub_image = child.resultant_image
         @resultant_image.composite!(sub_image, x, y, Magick::OverCompositeOp)
       end
+      @resultant_image.invalidate_gl
       @_valid = true
     end
     @resultant_image

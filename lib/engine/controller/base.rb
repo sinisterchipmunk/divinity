@@ -27,18 +27,32 @@ class Engine::Controller::Base
   attr_internal :event
   attr_internal :engine
 
-  delegate :width, :height, :bounds, :bounds=, :translate, :contains?, :to => :request
-  delegate :insets, :preferred_size, :minimum_size, :maximum_size, :resultant_image, :to => :response
+  attr_reader :mouse, :keyboard
+  delegate :width, :height, :bounds, :bounds=, :translate, :translate_absolute, :contains?, :to => :request
+  delegate :insets, :preferred_size, :minimum_size, :maximum_size, :resultant_image, :valid?, :to => :response
   delegate :components, :to => :response
 
   public
+    def dump_events; false; end
+
     def initialize(engine, request, response)
+      @mouse = Engine::Controller::MouseProxy.new(self, engine.mouse)
+      @keyboard = Engine::Controller::KeyboardProxy.new(self, engine.keyboard)
+      
       @focused = self
       assign_shortcuts(engine, request, response)
     end
 
     def process_event(action, options = {})
-      puts "#{action} - #{controller_name}" if action == :focus_lost or action == :focus_gained
+      options = { :event => :options } unless options.kind_of? Hash
+      
+      #TODO: Replace with real logging.
+      puts "#{controller_name} - #{action}: #{options.inspect}" if dump_events
+
+      case options[:event]
+        when Events::MouseEvent then @mouse.update(options[:event])
+        when Events::KeyEvent   then @keyboard.update(options[:event])
+      end
       # All events are optional, and only result in actions if the controller responds_to? them.
       action = action.to_s if action.kind_of? Symbol
       if self.class.action_methods.include? action
@@ -49,13 +63,15 @@ class Engine::Controller::Base
     def process(action, options = {})
       options = { :event => options } unless options.kind_of? Hash
 
-      params['action'] = action
+      params['action'] = action.to_s
       initialize_view
       assign_names
       @_event = options.delete :event
       find_models(options)
       erase_results if response.completed?
       perform_action
+
+      response.do_redirect if performed_redirect?
     end
 
     # Converts the class name from something like "OneModule::TwoModule::NeatController" to "NeatController".
@@ -106,7 +122,7 @@ class Engine::Controller::Base
     end
   
     # Clears the rendered results, allowing for another render to be performed.
-    def erase_render_results #:nodoc:
+    def erase_render_results
       @performed_render = false
       @performed_redirect = false
     end
@@ -115,16 +131,23 @@ class Engine::Controller::Base
     # the URL that was used to redirect or nil if there was no redirected URL
     # Note that +redirect_to+ will change the body of the response to indicate a redirection.
     # The response body is not reset here, see +erase_render_results+
-    def erase_redirect_results #:nodoc:
+    def erase_redirect_results
       @performed_redirect = false
-#      response.redirected_to = nil
-#      response.redirected_to_method_params = nil
+      response.redirected_to = nil
+      response.redirected_to_params = HashWithIndifferentAccess.new
     end
 
     # Erase both render and redirect results
-    def erase_results #:nodoc:
+    def erase_results
       erase_render_results
       erase_redirect_results
+    end
+
+    def redirect_to(options)
+      raise Engine::Controller::DoubleRenderError if performed?
+      #logger.info("Redirected to #{url}") if logger && logger.info?
+      response.redirect(options.reverse_merge(:controller => controller_path, :action => 'index'))
+      @performed_redirect = true
     end
 
 
@@ -193,8 +216,7 @@ class Engine::Controller::Base
     def initialize_view
       response.view = Engine::View::Base.new(self)
       response.view.helpers.send :include, self.class.master_helper_module
-      response.redirected_to = nil
-      @performed_render = @performed_redirect = false
+      erase_results
     end
 
     def validate_render_arguments(options, extra_options)
@@ -212,10 +234,19 @@ class Engine::Controller::Base
       @_request, @_params = request, request.parameters
       @_response         = response
       @_response.request = @_request
+      @_request.controller = self
     end
 
     def performed?
-      @performed_render || @performed_redirect
+      performed_render? || performed_redirect?
+    end
+
+    def performed_render?
+      @performed_render
+    end
+
+    def performed_redirect?
+      @performed_redirect
     end
 
     def assign_names

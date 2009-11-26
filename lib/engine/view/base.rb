@@ -41,7 +41,7 @@ class Engine::View::Base
   end
 
   #include Helpers::ComponentHelper
-  delegate :engine, :request, :response, :to => :controller
+  delegate :engine, :request, :response, :mouse, :keyboard, :to => :controller
   delegate :components, :to => :layout
   delegate :center, :width, :height, :bounds, :to => :request
   delegate :current_theme, :to => :engine
@@ -53,6 +53,7 @@ class Engine::View::Base
   def initialize(controller)
     @controller = controller
     @helpers = ProxyModule.new(self)
+    layout :border
   end
 
   def layout(a = nil, *args, &block)

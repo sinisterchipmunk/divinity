@@ -17,6 +17,7 @@ class Devices::Mouse < Devices::InputDevice
     end
   end
 
+  delegate :x, :y, :pressed?, :to => :state
   attr_reader :cursor
 
   def state() State.new(*SDL::Mouse.state) end
@@ -39,6 +40,22 @@ class Devices::Mouse < Devices::InputDevice
     event.device_type == :mouse
   end
 
+  def process_event(event)
+    case event
+      when Events::MouseMoved
+        type = event.dragged? ? :mouse_dragged : :mouse_moved
+      when Events::MousePressed
+        type = :mouse_pressed
+      when Events::MouseReleased
+        type = :mouse_released
+    end
+
+    engine.dispatch_event type, event
+
+    process_clicking(type, event)
+  end
+
+  private
   def process_clicking(type, event)
     click_timeout = 200
     @last_press ||= {}
@@ -62,20 +79,5 @@ class Devices::Mouse < Devices::InputDevice
           engine.dispatch_event :mouse_clicked, event
         end
     end
-  end
-
-  def process_event(event)
-    case event
-      when Events::MouseMoved
-        type = event.dragged? ? :mouse_dragged : :mouse_moved
-      when Events::MousePressed
-        type = :mouse_pressed
-      when Events::MouseReleased
-        type = :mouse_released
-    end
-
-    engine.dispatch_event type, event
-
-    process_clicking(type, event)
   end
 end

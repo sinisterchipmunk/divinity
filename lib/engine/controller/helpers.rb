@@ -23,6 +23,25 @@ module Engine::Controller::Helpers
   end
 
   module ClassMethods
+    def dump_events
+      define_method :dump_events do true end
+    end
+
+    # Causes all methods listed to silently redirect to the specified action.
+    # Example:
+    #   redirect :mouse_moved, :mouse_dragged, :to => :some_movement
+    #
+    def redirect(*actions)
+      options = actions.extract_options!
+      to = options.delete :to
+      raise "Expected a :to option to point to an action" unless to
+      actions.each do |action|
+        define_method action do
+          redirect_to :action => to
+        end
+      end
+    end
+
     # Makes all the (instance) methods in the helper module available to views rendered through this controller.
     def add_template_helper(helper_module) #:nodoc:
       master_helper_module.module_eval { include helper_module }

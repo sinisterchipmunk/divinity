@@ -23,7 +23,7 @@ theme :default do
   # looks like an object set into its parent, or 'inset', like a button that is pressed.
   set :inset do
     inherit :primary
-    effect Effect(:button, :outset)
+    effect Effect(:button, :inset)
   end
 
   # looks like an object set out of parent, or 'outset', like a button that is not pressed.

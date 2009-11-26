@@ -22,4 +22,6 @@ class Devices::Keyboard < Devices::InputDevice
   def process_event(event)
 
   end
+
+  private
 end

@@ -4,15 +4,25 @@
 module Engine::Controller::Routing
   def assume_interface(id, *args)
     klass = find_controller_class(id)
+    options = args.extract_options!
+    action = options.delete(:action)
+    event = options.delete(:event)
 
     cur = current_interface
-    instance = find_controller_instance(klass, *args)
+    instance = find_controller_instance(klass, *[args, options])
+    event ||= Events::InterfaceAssumed.new(cur, instance.action_name, instance, action)
 
-    # Dispatch a focus event to both controllers
-    evt = Events::FocusEvent.new(cur, instance)
-    cur.process_event(:focus_lost, evt) if cur
-    instance.process_event(:focus_gained, evt)
-    self.current_controller = instance
+    # Dispatch a focus event to both controllers if they're not the same thing
+    if cur != instance
+      evt = Events::FocusEvent.new(cur, instance)
+      cur.process_event(:focus_lost, evt) if cur
+      instance.process_event(:focus_gained, evt)
+      self.current_controller = instance
+    end
+
+    # A freshly initialized root interface is not going to include an action, and should already be pointed at 'index'
+    # so we don't do anything if action is undefined.
+    self.current_controller.process(action, event) unless action.nil?
   end
 
   def current_interface() current_controller end
@@ -20,17 +30,21 @@ module Engine::Controller::Routing
 
   def find_controller_instance(id, *args)
     klass = find_controller_class(id)
+
     # If we have a running instance of klass, we should switch over to it.
     # If not, we should construct request and response objects and instantiate the controller.
     @instantiated_controllers ||= Hash.new
-    instance = if @instantiated_controllers.keys.include? klass then @instantiated_controllers[klass]
+    instance = if @instantiated_controllers.keys.include? klass then
+      instance = @instantiated_controllers[klass]
+      instance
     else
       request = Engine::Controller::Request.new(self, Geometry::Rectangle.new(0,0,width,height), *args)
       response = Engine::Controller::Response.new
       instance = @instantiated_controllers[klass] = klass.new(self, request, response)
-      instance.process(:index, Events::ControllerCreatedEvent.new(instance))
+      instance.process('index', Events::ControllerCreatedEvent.new(instance))
       instance
     end
+
     instance
   end
 

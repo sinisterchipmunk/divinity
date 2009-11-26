@@ -1,6 +1,6 @@
 class Engine::Controller::Request
   attr_reader :args, :options, :block, :engine
-  attr_accessor :bounds
+  attr_accessor :bounds, :controller
   delegate :width, :height, :to => :bounds
 
   def initialize(engine, bounds, *args, &block)
@@ -17,6 +17,14 @@ class Engine::Controller::Request
   
   def parameters
     options
+  end
+
+  # Converts the given screen coordinates into local space, using the root element's bounds as the origin.
+  def translate_absolute(x, y)
+    if controller.parent
+      x, y = *controller.parent.translate_absolute(x, y)
+    end
+    translate(x, y)
   end
 
   # Converts the given coordinates into local space; that is, uses bounds.x and bounds.y for the origin.
