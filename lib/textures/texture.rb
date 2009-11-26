@@ -16,8 +16,7 @@ class Textures::Texture
     free_resources
     @mipmap
   end
-
-  def image=(a)
+ def image=(a)
     @image = a
     free_resources
     @image

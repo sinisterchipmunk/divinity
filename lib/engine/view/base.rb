@@ -29,6 +29,10 @@
 #   end
 #
 class Engine::View::Base
+  # Should we be doing this??? An alternative would be to include it into a singleton view during #process...
+  include Helpers::ComponentHelper
+
+
   class ProxyModule < Module
     def initialize(receiver)
       @receiver = receiver

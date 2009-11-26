@@ -89,10 +89,10 @@ class Textures::Font < Textures::TextureGenerator
 
     # we don't bind the texture here because it's bound in #put just once (as opposed to once per char if we do it here)
     glBegin(GL_QUADS)
-      coord2f(tx+tw,    1-ty   ); glVertex2i(@max_glyph_size.width, @max_glyph_size.height)
-      coord2f(tx+tw,    1-ty+th); glVertex2i(@max_glyph_size.width,                      0)
-      coord2f(tx,       1-ty+th); glVertex2i(                    0,                      0)
-      coord2f(tx,       1-ty   ); glVertex2i(                    0, @max_glyph_size.height)
+      coord2f(tx+tw,    ty   ); glVertex2i(@max_glyph_size.width, @max_glyph_size.height)
+      coord2f(tx+tw,    ty-th); glVertex2i(@max_glyph_size.width,                      0)
+      coord2f(tx,       ty-th); glVertex2i(                    0,                      0)
+      coord2f(tx,       ty   ); glVertex2i(                    0, @max_glyph_size.height)
     glEnd()
     glTranslatef(metrics.width+2, 0, 0)
   end
@@ -181,6 +181,7 @@ class Textures::Font < Textures::TextureGenerator
     canvas.matte_reset! #Make all pixels transparent.
     
     #draw each character
+    draw.encoding = "Unicode"
     1.upto 255 do |c|
       i = c.to_i
       x = (i % 16).to_i * (@max_glyph_size.width+1)
