@@ -3,8 +3,7 @@ class Textures::Texture
   include Magick
   include ::Geometry
 
-  attr_reader :id, :image
-  attr_writer :image
+  attr_reader :id, :mipmap, :image
   protected :image
 
   def bytes_per_pixel; image.depth / 8 end
@@ -12,7 +11,21 @@ class Textures::Texture
   def height; image.rows end
   def image_data; image.to_blob { self.format = 'RGBA' } end
 
+  def mipmap=(a)
+    @mipmap = a
+    free_resources
+    @mipmap
+  end
+
+  def image=(a)
+    @image = a
+    free_resources
+    @image
+  end
+
   def initialize(image_or_path_to_image = nil)
+    @mipmap = true # majority of textures will be mipmapped.
+    
     if image_or_path_to_image
       @path, image = if image_or_path_to_image.kind_of? Magick::Image or image_or_path_to_image.kind_of? Magick::ImageList
         [image_or_path_to_image.filename, image_or_path_to_image]
@@ -31,11 +44,21 @@ class Textures::Texture
       @id = glGenTextures(1)[0]
       glEnable(GL_TEXTURE_2D)
       glBindTexture(GL_TEXTURE_2D, id)
-      glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
-      gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-      glEnable(GL_TEXTURE_2D)
+      if mipmap
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+        gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glEnable(GL_TEXTURE_2D)
+      else
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data)
+      end
     end
     @bound = id
     glBindTexture(GL_TEXTURE_2D, id)

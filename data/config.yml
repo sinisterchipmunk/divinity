@@ -3,7 +3,7 @@ module_load_order:
 - ./vendor/modules/divinity
 theme: :default
 fullscreen: false
-height: 600
 color_depth: 32
+height: 600
 clear_on_render: 16640
 width: 800

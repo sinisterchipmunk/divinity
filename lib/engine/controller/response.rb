@@ -165,7 +165,9 @@ class Engine::Controller::Response
         sub_image = child.resultant_image
         @resultant_image.composite!(sub_image, x, y, Magick::OverCompositeOp)
       end
-      @resultant_image.invalidate_gl
+      @resultant_image.to_gl.mipmap = false
+      # gl was invalidated when mipmap was set.
+      #@resultant_image.invalidate_gl
       @_valid = true
     end
     @resultant_image
