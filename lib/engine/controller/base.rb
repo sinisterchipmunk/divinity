@@ -33,7 +33,7 @@ class Engine::Controller::Base
   delegate :components, :to => :response
 
   public
-    def dump_events; false; end
+    def dump_events(*which); false; end #:nodoc:
 
     def initialize(engine, request, response)
       @mouse = Engine::Controller::MouseProxy.new(self, engine.mouse)
@@ -44,15 +44,16 @@ class Engine::Controller::Base
     end
 
     def process_event(action, options = {})
-      options = { :event => :options } unless options.kind_of? Hash
+      options = { :event => options } unless options.kind_of? Hash
       
       #TODO: Replace with real logging.
-      puts "#{controller_name} - #{action}: #{options.inspect}" if dump_events
+      puts "#{controller_name} - #{action}: #{options.inspect}" if dump_events(action)
 
-      case options[:event]
-        when Events::MouseEvent then @mouse.update(options[:event])
-        when Events::KeyEvent   then @keyboard.update(options[:event])
-      end
+      # decided to let the proxies scan the devices directly for the most up-to-date info
+#      case options[:event]
+#        when Events::MouseEvent then @mouse.update(options[:event])
+#        when Events::KeyEvent   then @keyboard.update(options[:event])
+#      end
       # All events are optional, and only result in actions if the controller responds_to? them.
       action = action.to_s if action.kind_of? Symbol
       if self.class.action_methods.include? action

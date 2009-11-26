@@ -23,13 +23,27 @@ module Engine::Controller::Helpers
   end
 
   module ClassMethods
-    def dump_events
-      define_method :dump_events do true end
+    # Causes any events to be dumped to stdout. If arguments are specified, then only those arguments are dumped.
+    #
+    # Example:
+    #   class MyController < Engine::Controller::Base
+    #     dump_events # will dump all events to stdout
+    #     dump_events :mouse_clicked, :mouse_pressed, :mouse_released
+    #   end
+    #
+    def dump_events(*events)
+      events = ['any'] if events.empty?
+      events.collect! { |i| i.to_s }
+      define_method :dump_events do |which|
+        return false unless events.include?('any') || events.include?(which.to_s)
+        true
+      end
     end
 
-    # Causes all methods listed to silently redirect to the specified action.
+    # Causes all methods listed to cause a redirect to the specified action.
+    #
     # Example:
-    #   redirect :mouse_moved, :mouse_dragged, :to => :some_movement
+    #   redirect :mouse_moved, :mouse_dragged, :to => :movement_detected
     #
     def redirect(*actions)
       options = actions.extract_options!
