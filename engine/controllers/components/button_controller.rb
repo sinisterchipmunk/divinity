@@ -19,7 +19,7 @@
 # extends Engine::Controller::Base. That way helpers, filters, etc. can be specified at the Component level.
 #
 class Components::ButtonController < Components::ComponentController
-  dump_events :mouse_clicked, :mouse_pressed, :mouse_released
+  #dump_events :mouse_clicked, :mouse_pressed, :mouse_released
   redirect :mouse_released, :mouse_exited, :to => :button_released
   redirect :mouse_pressed, :to => :button_pressed
   #model :button # this should be automated for models that share a name with the controller. Also, the model object
@@ -35,14 +35,7 @@ class Components::ButtonController < Components::ComponentController
 
   def button_released
     button.state = :released
-    
-    # When an event is fired, we should expect the standard event functionality (via #on), but additionally,
-    # the parent controller should receive the event automatically as an action. If the parent doesn't respond
-    # to the event, then it is sent to the parent's parent, and so on until something responds or the root element
-    # has been reached. If nothing receives the event, it should fail silently because it's apparently a nonessential
-    # result.
     fire_event :button_clicked if mouse.over?
-    
     render :action => :index
   end
 end

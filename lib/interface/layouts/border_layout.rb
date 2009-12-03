@@ -79,6 +79,7 @@ module Interface
           b = @north.preferred_size
           h = min(b.height, my)
           @north.bounds = Geometry::Rectangle.new(_x, _y, _w - _x, h)
+
           _y += h + @vgap
         end
         if @south

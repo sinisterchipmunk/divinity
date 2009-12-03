@@ -20,6 +20,12 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
     x.times { |i| y.times { |j| @grid[i][j] = nil }}
     options.each { |k,v| self.send("#{k}=", v) }
   end
+
+  def components
+    components = []
+    @grid.each { |row| components.concat(row - [nil]) }
+    components
+  end
   
   def get_constraints(comp)
     @grid.each_with_index { |a, x| a.each_with_index { |c, y| return x, y if c == comp } }
@@ -64,7 +70,7 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
   
   def layout_container(parent)
     insets = parent.insets
-    width, height = insets.width - hgap, insets.height - vgap
+    width, height = parent.width - (insets.brx + insets.tlx), parent.height - (insets.bry + insets.tly)
     gridx, gridy = @grid.width, @grid.height
     xpix, ypix = width, height
     xpix = width  / gridx unless gridx == 0
@@ -73,11 +79,13 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
     ypix -= vgap
     #bs = parent.border_size
 
+#    puts xpix, ypix
+#    puts
+
     do_layout(xpix, ypix, parent)
   end
 
   def do_layout(xpix, ypix, parent)
-    insets = parent.insets
     previous = []
     @grid.each_with_index do |arr, x|
       arr.each_with_index do |comp, y|
@@ -90,7 +98,7 @@ class Interface::Layouts::GridLayout < Interface::Layouts::Layout
             do_layout(xpix, ypix, parent)
             return
           end
-          
+
           b = Geometry::Rectangle.new(x*(xpix+hgap)+hgap, y*(ypix+vgap)+vgap, xpix, ypix)
           if previous.include? comp
             comp.bounds.union! b

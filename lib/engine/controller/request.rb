@@ -33,14 +33,10 @@ class Engine::Controller::Request
   end
 
   # Returns true if the specified point is contained within the bounds of this request.
-  # X and Y are expected to be within this component's local space (that is, an X coordinate of 0 references
-  # the top-left corner of this component, regardless of the value of bounds.x).
-  # Use #translate to translate a point into local space.
+  # X and Y are expected to be within this component's parent's local space (that is, an X coordinate of 0 references
+  # the top-left corner of the parent component).
+  # Use #translate to translate a point into the parent's local space.
   def contains?(x, y)
-#    puts x, y
-#    puts bounds.width, bounds.height
-#    puts
-    
-    x < bounds.width && y < bounds.height
+    x > bounds.x && x < bounds.x+bounds.width && y > bounds.y && y < bounds.y+bounds.height
   end
 end

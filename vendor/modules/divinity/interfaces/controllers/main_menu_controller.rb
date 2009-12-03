@@ -1,6 +1,7 @@
 class MainMenuController < InterfaceController
   def button_clicked
-    puts event.inspect
+    puts 'click!'
+    redirect_to :action => :index
   end
 
   def index

@@ -27,7 +27,7 @@ class Engine::Controller::Base
   attr_internal :event
   attr_internal :engine
 
-  attr_reader :mouse, :keyboard
+  attr_reader :mouse, :keyboard#, :event_queue
   delegate :width, :height, :bounds, :bounds=, :translate, :translate_absolute, :contains?, :to => :request
   delegate :insets, :preferred_size, :minimum_size, :maximum_size, :resultant_image, :valid?, :to => :response
   delegate :components, :to => :response
@@ -38,30 +38,41 @@ class Engine::Controller::Base
     def initialize(engine, request, response)
       @mouse = Engine::Controller::MouseProxy.new(self, engine.mouse)
       @keyboard = Engine::Controller::KeyboardProxy.new(self, engine.keyboard)
+      #@event_queue = []
       
       @focused = self
       assign_shortcuts(engine, request, response)
     end
 
     def process_event(action, options = {})
-      options = { :event => options } unless options.kind_of? Hash
-      
-      #TODO: Replace with real logging.
-      puts "#{controller_name} - #{action}: #{options.inspect}" if dump_events(action)
-
-      # decided to let the proxies scan the devices directly for the most up-to-date info
-#      case options[:event]
-#        when Events::MouseEvent then @mouse.update(options[:event])
-#        when Events::KeyEvent   then @keyboard.update(options[:event])
-#      end
-      # All events are optional, and only result in actions if the controller responds_to? them.
       action = action.to_s if action.kind_of? Symbol
-      if self.class.action_methods.include? action
-        process action, options
+      if action_methods.include?(action)
+        puts "#{action} - #{self.class}"
+        if @processing
+          redirect_to action
+          #event_queue << action
+        else
+          options = { :event => options } unless options.kind_of? Hash
+          options[:event] = Events::Generic.new(action)
+
+          #TODO: Replace with real logging.
+          puts "#{controller_name} - #{action}: #{options.inspect}" if dump_events(action)
+
+          # decided to let the proxies scan the devices directly for the most up-to-date info
+    #      case options[:event]
+    #        when Events::MouseEvent then @mouse.update(options[:event])
+    #        when Events::KeyEvent   then @keyboard.update(options[:event])
+    #      end
+          # All events are optional, and only result in actions if the controller responds_to? them.
+          if self.class.action_methods.include? action
+            process action, options
+          end
+        end
       end
     end
-
+  
     def process(action, options = {})
+      @processing = true
       options = { :event => options } unless options.kind_of? Hash
 
       params['action'] = action.to_s
@@ -71,8 +82,26 @@ class Engine::Controller::Base
       find_models(options)
       erase_results if response.completed?
       perform_action
+      @processing = false
 
       response.do_redirect if performed_redirect?
+
+      
+#      # these are calls to #fire_event! that could not be processed because an action was already processing.
+#      # basically we just treat each of them as a call to redirect_to, and since there's nothing else to do,
+#      # we do each redirect in turn. If one of those results in another action firing, it's added to the queue,
+#      # and processed last.
+#      event_queue.each do |action|
+#        redirect_to action
+#        response.do_redirect
+#      end
+    end
+
+    # Fired events have the expected functionality (they are sent to any action listeners), and additionally
+    # call this controller's #process_event method.
+    def fire_event(name, *args)
+      process_event(name, :event => Events::Generic.new(name, *args))
+      super
     end
 
     # Converts the class name from something like "OneModule::TwoModule::NeatController" to "NeatController".
@@ -146,6 +175,7 @@ class Engine::Controller::Base
 
     def redirect_to(options)
       raise Engine::Controller::DoubleRenderError if performed?
+      options = { :action => options } unless options.kind_of? Hash
       #logger.info("Redirected to #{url}") if logger && logger.info?
       response.redirect(options.reverse_merge(:controller => controller_path, :action => 'index'))
       @performed_redirect = true

@@ -1,8 +1,19 @@
-Figured I'd better start making a list of to-do items somewhere. Comments in source code only go so far.
+Figured I'd better start making a list of to-do items somewhere. Comments in source code only go so far. Following is
+**probably** the order I'll work in, but I reserve the right to jump around in a completely unpredictable fashion.
 
 * Implement :mouse_entered, :mouse_exited and :mouse_over interface events.
 
 * Implement keyboard events of all flavors, namely :key_pressed, :key_released, :key_typed
+
+* GUI components:
+    * TextComponent - a generic component for receiving or displaying text input
+        * TextArea
+        * TextField
+    * TitleBar
+    * RadioButton
+    * CheckBox
+    * Image
+    * Label
 
 * Streamline height map loading. Right now it has to be manually loaded from the engine itself; they need to be
   triggered by controller actions and the maps themselves loaded from modules. This includes the Scene that makes use
