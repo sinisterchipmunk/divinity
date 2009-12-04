@@ -145,7 +145,7 @@ class Engine::Controller::Response
     @graphics_context.matte_reset!
     @resultant_image.matte_reset!
     @draw = Magick::Draw.new
-    theme controller.class.theme
+    theme(default_theme || controller.class.theme)
   end
 
   # Returns true if this and all subcomponents are valid (do not need their images regenerated)

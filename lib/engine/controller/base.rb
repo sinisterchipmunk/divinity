@@ -42,12 +42,13 @@ class Engine::Controller::Base
       
       @focused = self
       assign_shortcuts(engine, request, response)
+
+      response.default_theme = params.delete(:theme) if params.key?(:theme)
     end
 
     def process_event(action, options = {})
       action = action.to_s if action.kind_of? Symbol
       if action_methods.include?(action)
-        puts "#{action} - #{self.class}"
         if @processing
           redirect_to action
           #event_queue << action
