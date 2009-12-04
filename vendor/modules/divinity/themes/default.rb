@@ -7,7 +7,7 @@ theme :default do
     background :color => "transparent"
     border :round_rect, :radx => 10, :rady => 10
     stroke :color => "#ccc", :width => 2, :opacity => 0
-    font :color => "#000",
+    font :color => "#fff",
          :family => "Arial",
          :style => "normal",
          :weight => 400,
