@@ -5,4 +5,6 @@ panel :center, :theme => :primary do
   layout :grid, 3, 12
   
   button [1,4], "Single Player"
+  button [1,6], "Options"
+  button [1,7], "Quit"
 end
