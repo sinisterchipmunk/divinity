@@ -3,7 +3,7 @@
 
 scene :game_start do
   scene_type :height_map, "data/height_maps/test.bmp"
-  start_position [0,0] # unless it's overridden
+  start_position [0,0] # unless it's overridden, f/e by a script
 
   # now to paint the height map, more or less.
   # multitexturing should be handled automatically.
