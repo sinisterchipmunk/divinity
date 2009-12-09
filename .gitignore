@@ -22,3 +22,5 @@ pkg
 .idea
 *.o
 *.so
+.loadpath
+.project

@@ -1,1 +1,0 @@
-# Gameplay should have a very sparse interface, because most screen space should be reserved for the game itself.
