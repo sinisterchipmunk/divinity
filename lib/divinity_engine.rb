@@ -10,12 +10,9 @@ class DivinityEngine
   include Gl
   include Engine::ContentLoader
   include Engine::Controller::Routing
-#  extend Engine::ContentLoader
   include Engine::Delegation
   include Engine::DefaultRenderBlock
   include Engine::DefaultUpdateBlock
-  include Engine::Content
-  #include Engine::DefaultGui
   include Helpers::EventListeningHelper
 
   attr_reader :state, :ticks, :interval, :options, :camera, :mouse, :keyboard
@@ -39,6 +36,7 @@ class DivinityEngine
     add_default_update_block
 
     during_render &blk if block_given?
+    Resource::Base.create_resource_hooks(self)
   end
 
   [ :width, :height, :color_depth, :fullscreen, :clear_on_render ].each do |i|

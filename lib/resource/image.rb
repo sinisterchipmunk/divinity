@@ -1,7 +1,7 @@
 # TODO: Note that this entire class is going to be replaced by the base Textures::Texture class
 # at one point or another; it's only a matter of time.
 #
-class Resources::Image < Textures::Texture
+class Resource::Image < Textures::Texture
   include ::Geometry
   include Magick
 

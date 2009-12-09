@@ -1,4 +1,4 @@
-module World
+module Resource::World
   class Scene
     attr_reader :gravitational_field, :engine, :octree
     attr_accessor :objects

@@ -1,4 +1,4 @@
-module World
+module Resource::World
   class Object
     attr_accessor :position, :velocity, :acceleration
     attr_accessor :mass

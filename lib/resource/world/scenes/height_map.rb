@@ -1,4 +1,4 @@
-class World::Scenes::HeightMap < World::Scene
+class Resource::World::Scenes::HeightMap < Resource::World::Scene
   include Geometry
   include Helpers::RenderHelper
 

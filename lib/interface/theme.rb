@@ -54,7 +54,7 @@
 #                      # "expanded", "extraExpanded", "ultraExpanded", "any"
 #
 #
-class Interface::Theme < Resources::Content
+class Interface::Theme < Resource::Content
   class ThemeType < HashWithIndifferentAccess
     def initialize(theme, *a, &b)
       @theme = theme
