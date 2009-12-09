@@ -1,31 +1,32 @@
+require 'rubygems'
 require 'rake'
-require 'rake/testtask'
-require 'rake/rdoctask'
 
-desc 'Generate documentation'
-Rake::RDocTask.new(:doc) do |t|
-  t.rdoc_dir = "doc"
-  t.title = 'DivinityEngine'
-  t.options << '--line-numbers' << '--inline-source'
-  t.rdoc_files.include 'README'
-  t.rdoc_files.include 'divinity_engine.rb'
-  t.rdoc_files.include 'dependencies.rb'
-  t.rdoc_files.include 'lib/**/*.rb'
-  accessors = { :delegate => "delegate" }
-  t.options << "--accessor" << accessors.collect { |a| "#{a[0]}=#{a[1]}" }.join(",")
-end
+Dir['tasks/**/*.rb'].each { |fi| require fi }
 
-namespace :test do
-  desc 'Run all unit tests'
-  Rake::TestTask.new(:unit) do |t|
-    t.libs << "test/common"
-    t.libs << "lib"
-    t.test_files = "test/unit/**/*.rb"
-    t.verbose = true
+namespace :dev do
+  desc "Rakes gemspec and build, then reinstalls the gem"
+  task :reinstall do
+    Rake::Task['gemspec'].invoke
+    Rake::Task['build'].invoke
+    `gem install pkg/divinity-0.0.0.gem --no-ri --no-rdoc`
   end
 
-  desc 'Run all tests'
-  task :all do |t|
-    Rake::Task['test:unit'].invoke
+  desc "Removes rdoc and makes clean the C extensions"
+  task :clean do
+    Rake::Task['clobber_doc']
+    Dir["ext/**"].each do |fi|
+      next unless File.directory?(fi)
+      chdir(fi)
+      `make clean`
+    end
+  end
+
+  desc "Compiles C extensions"
+  task :compile do
+    Dir["ext/**"].each do |fi|
+      next unless File.directory?(fi)
+      chdir(fi)
+      `make`
+    end
   end
 end

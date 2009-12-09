@@ -79,7 +79,7 @@ class Engine::Controller::Response
       # controller hasn't changed, so we're just firing another action.
       self.controller.process(action, :event => revt)
     else
-      assume_interface controller, redirected_to_params.merge(:action => action, :event => revt)
+      engine.assume_interface controller, redirected_to_params.merge(:action => action, :event => revt)
     end
   end
 
@@ -145,7 +145,7 @@ class Engine::Controller::Response
     @graphics_context.matte_reset!
     @resultant_image.matte_reset!
     @draw = Magick::Draw.new
-    theme controller.class.theme
+    theme(default_theme || controller.class.theme)
   end
 
   # Returns true if this and all subcomponents are valid (do not need their images regenerated)

@@ -24,7 +24,7 @@ class Engine::Controller::Request
     if controller.parent
       x, y = *controller.parent.translate_absolute(x, y)
     end
-    translate(x, y)
+    [x,y]
   end
 
   # Converts the given coordinates into local space; that is, uses bounds.x and bounds.y for the origin.

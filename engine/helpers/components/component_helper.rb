@@ -100,7 +100,7 @@ module Components::ComponentHelper
 
     case y
       when :top, :north    then y = 0
-      when :center         then y = center.y - dims.height / 2
+      when :center         then y = center.y + dims.height / 2
       when :bottom, :south then y = height - dims.height
       else raise ArgumentError, "Expected y to be one of [:north, :center, :south, :top, :bottom]; found #{y.inspect}"
     end if y.kind_of? Symbol

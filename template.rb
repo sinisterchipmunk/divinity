@@ -1,3 +1,5 @@
+## Remove me, or do something smart with me. Either way, I don't belong here.
+
 require 'divinity_engine'
 include Math
 

@@ -42,18 +42,22 @@ class Engine::Controller::Base
       
       @focused = self
       assign_shortcuts(engine, request, response)
+
+      response.default_theme = params.delete(:theme) if params.key?(:theme)
     end
 
     def process_event(action, options = {})
       action = action.to_s if action.kind_of? Symbol
       if action_methods.include?(action)
-        puts "#{action} - #{self.class}"
         if @processing
           redirect_to action
           #event_queue << action
         else
           options = { :event => options } unless options.kind_of? Hash
-          options[:event] = Events::Generic.new(action)
+          unless options[:event]
+            model = (self.respond_to?(:model) ? self.model : nil)
+            options[:event] = Events::Generic.new(action, model)
+          end
 
           #TODO: Replace with real logging.
           puts "#{controller_name} - #{action}: #{options.inspect}" if dump_events(action)
@@ -100,7 +104,7 @@ class Engine::Controller::Base
     # Fired events have the expected functionality (they are sent to any action listeners), and additionally
     # call this controller's #process_event method.
     def fire_event(name, *args)
-      process_event(name, :event => Events::Generic.new(name, *args))
+      process_event(name, :event => Events::Generic.new(name, model, *args))
       super
     end
 
@@ -187,13 +191,14 @@ class Engine::Controller::Base
       # look for a model by the same name as the controller. Example: Components::ButtonController => Components::Button
       model = nil
       begin
-        model = controller_path.camelize.constantize.new
-      rescue NameError
+        model = controller_path.camelize.constantize.new(*request.args)
+      rescue NameError, ArgumentError
         # fail silently if the model class doesn't exist
         unless $!.message =~ /#{Regexp::escape(controller_path.camelize)}/
           raise
         end
       rescue
+        puts $!.class, $!.message, $!.backtrace if $VERBOSE
       end
       
       if model
