@@ -19,7 +19,6 @@ rdoc
 pkg
 
 ## PROJECT::SPECIFIC
-doc
 .idea
 *.o
 *.so

@@ -1,7 +1,7 @@
 require 'rake/rdoctask'
 desc 'Generate documentation'
 Rake::RDocTask.new(:doc) do |t|
-  t.rdoc_dir = "doc"
+  t.rdoc_dir = "rdoc"
   t.title = 'DivinityEngine'
   t.options << '--line-numbers' << '--inline-source'
   t.rdoc_files.include 'README*', 'TODO*', 'LICENSE'

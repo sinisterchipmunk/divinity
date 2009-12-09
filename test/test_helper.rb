@@ -7,6 +7,13 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'divinity_engine'
 
 class Test::Unit::TestCase
+  def setup
+    @engine = DivinityEngine.new(:dry_run => true)
+  end
+
+  def teardown
+    @engine.stop!
+  end
 end
 
 module Test::Unit::Assertions

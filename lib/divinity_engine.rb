@@ -43,6 +43,12 @@ class DivinityEngine
     eval "def #{i}; options[#{i.inspect}]; end", binding, __FILE__, __LINE__
   end
 
+  # True if options[:dry_run] has been set to true; determines whether the engine will be started in "dry run" mode,
+  # in which no window will actually be created, no events will fire, etc.
+  #
+  # During a dry run, the engine should be programmatically stopped via #stop! in order to exit.
+  def dry_run?; options[:dry_run]; end
+
   def options=(o)
     @options.merge! o
 #    init
@@ -108,7 +114,7 @@ class DivinityEngine
         @state = :running unless @state == :paused
         update
         render
-        SDL.GLSwapBuffers()
+        SDL.GLSwapBuffers() unless dry_run?
       end
 
       @main_loop_running = false
@@ -136,8 +142,10 @@ class DivinityEngine
 
     def init_video_mode
       Textures::Font.invalidate!
-      err("set video mode") unless (@sdl_screen = SDL.setVideoMode(options[:width], options[:height], options[:color_depth],
-                                                                   sdl_video_mode_flags))
+      unless dry_run?
+        err("set video mode") unless (@sdl_screen = SDL.setVideoMode(options[:width], options[:height],
+                                                                     options[:color_depth], sdl_video_mode_flags))
+      end
       glViewport(0, 0, options[:width], options[:height])
       glMatrixMode(GL_PROJECTION)
       glLoadIdentity
@@ -156,14 +164,16 @@ class DivinityEngine
       @state = :initializing
 
       call_blocks :before_init
-      SDL.init(SDL::INIT_VIDEO) and err("initialize SDL")
-      SDL.setGLAttr(SDL::GL_DOUBLEBUFFER,1) and err("enable double-buffering")
-      SDL.setGLAttr(SDL::GL_DEPTH_SIZE, 16) and err("set depth buffer size")
-      SDL.setGLAttr(SDL::GL_RED_SIZE, 8) and err("set red bit depth")
-      SDL.setGLAttr(SDL::GL_GREEN_SIZE, 8) and err("set green bit depth")
-      SDL.setGLAttr(SDL::GL_BLUE_SIZE, 8) and err("set blue bit depth")
-      SDL.setGLAttr(SDL::GL_ALPHA_SIZE, 8) and err("set alpha bit depth")
-      SDL::Event.enable_unicode
+      unless dry_run?
+        SDL.init(SDL::INIT_VIDEO) and err("initialize SDL")
+        SDL.setGLAttr(SDL::GL_DOUBLEBUFFER,1) and err("enable double-buffering")
+        SDL.setGLAttr(SDL::GL_DEPTH_SIZE, 16) and err("set depth buffer size")
+        SDL.setGLAttr(SDL::GL_RED_SIZE, 8) and err("set red bit depth")
+        SDL.setGLAttr(SDL::GL_GREEN_SIZE, 8) and err("set green bit depth")
+        SDL.setGLAttr(SDL::GL_BLUE_SIZE, 8) and err("set blue bit depth")
+        SDL.setGLAttr(SDL::GL_ALPHA_SIZE, 8) and err("set alpha bit depth")
+        SDL::Event.enable_unicode
+      end
       init_video_mode
     end
 
@@ -212,7 +222,7 @@ class DivinityEngine
     {
       :width => 640, :height => 480, :color_depth => 32, :fullscreen => false,
       :clear_on_render => GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
-      :theme => :default
+      :theme => :default, :dry_run => false
     }
     end
 end
