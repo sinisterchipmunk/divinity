@@ -2,17 +2,23 @@ require 'rubygems'
 require 'test/unit'
 require 'shoulda'
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-$LOAD_PATH.unshift(File.dirname(__FILE__))
+$LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib')))
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
+$LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), '..', 'ext', 'divinity'))
 require 'divinity_engine'
 
 class Test::Unit::TestCase
   def setup
     @engine = DivinityEngine.new(:dry_run => true)
+  rescue
+    backtrace = $!.backtrace.collect { |i| "  #{i}" }.select { |i| i =~ /divinity/ }
+    puts $!.message
+    puts backtrace
+    exit
   end
 
   def teardown
-    @engine.stop!
+    @engine.stop! if @engine
   end
 end
 

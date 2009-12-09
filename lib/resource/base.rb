@@ -1,4 +1,4 @@
-module Resource::Base
+class Resource::Base
   extend Resource::ClassMethods
   include Helpers::AttributeHelper
   attr_reader :engine

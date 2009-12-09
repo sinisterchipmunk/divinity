@@ -1,4 +1,4 @@
-class Resource::ClassMethods
+module Resource::ClassMethods
 #  @@content_types = {
 #    #:themes => Interface::Theme,
 #    #:images => Resource::Image,
@@ -35,10 +35,11 @@ class Resource::ClassMethods
       end
     end
 
-    content_types.each do |plural, klass|
-      plural = plural.pluralize
+    content_types.each do |name, klass|
+      plural = name.pluralize
       class_name = klass.name
       singular = plural.to_s.singularize
+      Engine::ContentModule.add_resource_loader(plural)
 
       line = __LINE__ + 2
       code = <<-end_code

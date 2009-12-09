@@ -17,7 +17,7 @@ class Engine::ContentModule
     @module_name = File.basename(base_path)
     @engine = engine
 
-    load :themes, :interfaces, :actors, :languages, :races, :character_classes, :images
+    load *(self.class.resource_loaders)
   end
 
   def respond_to?(name, *args, &block)
@@ -29,24 +29,27 @@ class Engine::ContentModule
     super
   end
 
-  include Engine::Content
+  def self.resource_loaders
+    @resource_loaders ||= []
+  end
 
-  [ :themes, :actors, :languages, :races, :character_classes, :images ].each do |plural|
+  def self.add_resource_loader(name)
+    resource_loaders << name
     line = __LINE__+2
     code = <<-end_code
-      def #{plural}
-        @#{plural} || HashWithIndifferentAccess.new
+      def #{name}
+        @#{name} || HashWithIndifferentAccess.new
       end
 
-      def load_#{plural}
-        @#{plural} ||= HashWithIndifferentAccess.new
-        Dir.glob(File.join(base_path, '#{plural}', "**", "*.rb")).each do |fi|
+      def load_#{name}
+        @#{name} ||= HashWithIndifferentAccess.new
+        Dir.glob(File.join(base_path, '#{name}', "**", "*.rb")).each do |fi|
           next if File.directory? fi or fi =~ /\.svn/
           eval File.read(fi), binding, fi, 1
         end
       end
 
-      private :load_#{plural}
+      private :load_#{name}
     end_code
     eval code, binding, __FILE__, line
   end
