@@ -9,7 +9,7 @@ module Engine::Controller::Helpers
 
     # Set the default directory for helpers
     base.class_inheritable_accessor :helpers_dirs
-    base.helpers_dirs = [ENV['DIVINITY_ROOT']?"#{ENV['DIVINITY_ROOT']}/engine/helpers":"engine/helpers"]
+    base.helpers_dirs = ["#{DIVINITY_GEM_ROOT}/engine/helpers", "#{DIVINITY_ROOT}/resources/interfaces/helpers"]
 
     # Extend base with class methods to declare helpers.
     base.extend(Engine::Controller::Helpers::ClassMethods)

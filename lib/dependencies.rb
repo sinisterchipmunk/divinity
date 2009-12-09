@@ -1,48 +1,18 @@
-## need some TLC here
-$LOAD_PATH << "ext/divinity"
-
-require 'rubygems'
-if RUBY_VERSION >= '1.9'
-  require 'fileutils'
-else
-  require 'ftools'
+unless defined? DIVINITY_ROOT
+  DIVINITY_ROOT = File.expand_path(ENV['DIVINITY_ROOT'] || File.join(File.dirname(__FILE__), ".."))
 end
-require 'opengl'
-require 'sdl'
-require 'activesupport'
-require 'gl'
-require 'glu'
-require 'RMagick'
-require 'matrix'
-require 'mathn'
-require 'lib/extensions/magick_extensions'
 
-ENV['DIVINITY_ROOT'] ||= File.join(File.dirname(__FILE__), "..")
+unless defined? DIVINITY_GEM_ROOT
+  DIVINITY_GEM_ROOT = File.expand_path(ENV['DIVINITY_GEM_ROOT'] || File.join(File.dirname(__FILE__), ".."))
+end
 
-$basepath = File.join(ENV['DIVINITY_ROOT'], "lib", "")
-paths = [ $basepath ]
+require 'requires'
 
 ["controllers", 'models', 'views', 'helpers'].each do |i|
-  paths << File.join(ENV['DIVINITY_ROOT'], "engine", i)
+  path = File.join(DIVINITY_GEM_ROOT, "engine", i)
+  ActiveSupport::Dependencies.load_paths << path
+  ActiveSupport::Dependencies.load_once_paths << path
 end
-ActiveSupport::Dependencies.load_paths.concat paths
-ActiveSupport::Dependencies.load_once_paths.concat paths
-paths = nil
-
-Dir.glob(File.join($basepath, "extensions", "**", "*.rb")).each do |fi|
-  require fi.sub(/(.*)\.rb$/, '\1') unless fi =~ /\.svn/
-end
-
-[$basepath, File.join(ENV['DIVINITY_ROOT'], "engine/models")].each do |bp|
-  Dir.glob(File.join(bp, "**", "*.rb")).each do |fi|
-    next if File.directory? fi or fi =~ /\.svn/ or fi =~ /extensions/
-    fi = fi.gsub(/^#{Regexp::escape bp}(.*)\.rb$/, '\1').camelize
-    puts "loading: #{fi}" if $DEBUG
-    fi.constantize unless fi == "Dependencies" || fi == "DivinityEngine" || fi == "Divinity"
-  end
-end
-
-require File.join('divinity.so')
 
 include Magick
 include Geometry

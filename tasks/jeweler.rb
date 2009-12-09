@@ -9,9 +9,11 @@ begin
     gem.authors = ["Colin MacKenzie IV (sinisterchipmunk)"]
     gem.files.concat FileList["ext/**/*.c"].to_a
     gem.files.concat FileList["ext/**/*.h"].to_a
-    gem.files.concat FileList["lib/**/*.rb"].to_a
+    gem.files.concat FileList["**/*.rb"].to_a
+    gem.files.reject! { |i| i =~ /data\/cache/ }
     # dependencies
     gem.add_development_dependency "shoulda", ">= 0"
+    #gem.add_development_dependency "rake-compiler", ">= 0.7.0"
     gem.add_dependency "activesupport", ">= 2.3.4"
     gem.add_dependency "ruby-opengl", ">= 0.60.1"
     gem.add_dependency "rmagick", ">= 2.12.0"

@@ -2,7 +2,6 @@
 
 VALUE rb_cNumeric = Qnil;
 VALUE rb_mGeometry = Qnil;
-VALUE rb_cVertex3d = Qnil;
 VALUE rb_cArray = Qnil;
 
 static VALUE rb_fExtractVector3i(VALUE self);
@@ -10,8 +9,6 @@ static VALUE rb_fExtractVector3i(VALUE self);
 void divinity_init_array()
 {
     rb_cNumeric = rb_const_get(rb_cObject, rb_intern("Numeric"));
-    rb_mGeometry = rb_const_get(rb_cObject, rb_intern("Geometry"));
-    rb_cVertex3d = rb_const_get(rb_mGeometry, rb_intern("Vertex3d"));
     rb_cArray = rb_const_get(rb_cObject, rb_intern("Array"));
 
     rb_define_method(rb_cArray, "__extract_vector3i!", rb_fExtractVector3i, 0);

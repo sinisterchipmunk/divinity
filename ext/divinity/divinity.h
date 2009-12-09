@@ -5,6 +5,9 @@
 #include "gl/gl.h"
 #include "divinity_macros.h"
 
+extern VALUE rb_cVertex3d;
+extern VALUE rb_cVector3d;
+
 extern void divinity_init_opengl();
 extern void divinity_init_opengl_frustum();
 extern void divinity_init_opengl_octree();

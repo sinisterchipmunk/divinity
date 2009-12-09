@@ -5,7 +5,7 @@
 #
 
 module Helpers::ComponentHelper
-  Dir.glob(File.join(ENV['DIVINITY_ROOT'], "engine", "controllers", "components", "*.rb")).each do |fi|
+  Dir.glob(File.join(DIVINITY_GEM_ROOT, "engine", "controllers", "components", "*.rb")).each do |fi|
     next unless File.file?(fi) and not fi =~ /\.svn/
     require_dependency fi
   end

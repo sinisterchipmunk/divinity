@@ -13,7 +13,7 @@ module Devices::Keyboard::Modifiers
                 :alt       => SDL::Key::MOD_ALT,
                 :meta      => SDL::Key::MOD_META,
               }
-  
+
   def array_of_modifiers(mod)
     r = []
     MODIFIERS.each do |sym, val|

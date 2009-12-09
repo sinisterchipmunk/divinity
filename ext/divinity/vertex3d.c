@@ -1,7 +1,8 @@
 #include "divinity.h"
 
 static VALUE rb_mGeometry = Qnil;
-static VALUE rb_cVertex3d = Qnil;
+VALUE rb_cVertex3d = Qnil;
+VALUE rb_cVector3d = Qnil;
 
 static VALUE rb_fInitialize(VALUE self, VALUE args);
 static VALUE rb_fArrayAccessor(VALUE self, VALUE index);
@@ -13,6 +14,7 @@ void divinity_init_vertex3d()
 {
     rb_mGeometry = rb_define_module("Geometry");
     rb_cVertex3d = rb_define_class_under(rb_mGeometry, "Vertex3d", rb_cObject);
+    rb_cVector3d = rb_define_class_under(rb_mGeometry, "Vector3d", rb_cVertex3d);
 
     rb_define_method(rb_cVertex3d, "initialize", rb_fInitialize, -2);
     rb_define_method(rb_cVertex3d, "[]", rb_fArrayAccessor, 1);

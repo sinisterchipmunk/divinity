@@ -1,7 +1,7 @@
 require 'rake/testtask'
 namespace :test do
   desc 'Run all unit tests'
-  Rake::TestTask.new(:unit => :check_dependencies) do |t|
+  Rake::TestTask.new(:unit => [:check_dependencies]) do |t|
     t.libs << "lib"
     t.libs << "test"
     t.test_files = "test/unit/**/*.rb"

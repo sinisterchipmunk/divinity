@@ -1,0 +1,6 @@
+require 'geometry/dimension'
+require 'geometry/plane'
+require 'geometry/point'
+require 'geometry/rectangle'
+require 'geometry/vertex3d'
+require 'geometry/vector3d'

@@ -6,7 +6,7 @@ module Engine::ContentLoader
     return filename if File.file? filename
 
     # Search the user-defined overrides first
-    fi = File.join(ENV['DIVINITY_ROOT'], 'data/override', filename)
+    fi = File.join(DIVINITY_ROOT, 'data/override', filename)
     return fi if File.file? fi
     locations = [ fi ]
 
@@ -44,6 +44,7 @@ module Engine::ContentLoader
     
     # Index the available modules. Note that this does not actually load them, only creates a list of those available.
     # This affords the user an opportunity to disable or reorder the modules.
-    @content_module_index = Dir.glob(File.join(ENV['DIVINITY_ROOT'], "vendor/modules", "*"))
+    @content_module_index = [File.join(DIVINITY_ROOT, "resources")] +
+                            Dir.glob(File.join(DIVINITY_ROOT, "vendor/modules", "*"))
   end
 end

@@ -1,6 +1,5 @@
 #include "divinity.h"
 
-static VALUE rb_cVector3d = Qnil;
 static VALUE rb_mOpenGl = Qnil;
 static VALUE rb_cFrustum = Qnil;
 
@@ -13,11 +12,8 @@ void divinity_init_opengl_octree_object_descriptor()
 {
     rb_mOpenGl  = rb_const_get(rb_cObject, rb_intern("OpenGl"));
     rb_cFrustum = rb_define_class_under(rb_mOpenGl, "Frustum", rb_cObject);//rb_const_get(rb_mOpenGl, rb_intern("Frustum"));
-    rb_cVector3d = rb_const_get(rb_const_get(rb_cObject, rb_intern("Geometry")), rb_intern("Vector3d"));
     VALUE rb_cOctree = rb_const_get(rb_mOpenGl, rb_intern("Octree"));
     VALUE rb_cObjectDescriptor = rb_define_class_under(rb_cOctree, "ObjectDescriptor", rb_cObject);
-
-    rb_cVector3d = rb_const_get(rb_const_get(rb_cObject, rb_intern("Geometry")), rb_intern("Vector3d"));
 
     rb_define_method(rb_cObjectDescriptor, "update", rb_f_update, -1);
     rb_define_method(rb_cObjectDescriptor, "render", rb_f_render, 0);

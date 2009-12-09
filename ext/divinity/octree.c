@@ -13,15 +13,14 @@ static VALUE rb_fContains(VALUE self, VALUE v3d);
 
 static VALUE rb_cOctree = Qnil;
 static VALUE rb_cFrustum = Qnil;
-static VALUE rb_cVector3d = Qnil;
 static VALUE NORMAL_VIEW_VECTOR = Qnil, NORMAL_UP_VECTOR = Qnil, NORMAL_RIGHT_VECTOR = Qnil;
 
 void divinity_init_opengl_octree()
 {
-    VALUE rb_mOpenGl = rb_const_get(rb_cObject, rb_intern("OpenGl"));
+    VALUE rb_mOpenGl = rb_define_module("OpenGl");//rb_const_get(rb_cObject, rb_intern("OpenGl"));
     rb_cOctree = rb_define_class_under(rb_mOpenGl, "Octree", rb_cObject);
     rb_cFrustum = rb_define_class_under(rb_mOpenGl, "Frustum", rb_cObject);
-    rb_cVector3d = rb_const_get(rb_const_get(rb_cObject, rb_intern("Geometry")), rb_intern("Vector3d"));
+//    rb_cVector3d = rb_const_get(rb_const_get(rb_cObject, rb_intern("Geometry")), rb_intern("Vector3d"));
 
     rb_define_method(rb_cOctree, "validate!", rb_fValidate, 0);
     rb_define_method(rb_cOctree, "render", rb_fRender, 0);
