@@ -27,9 +27,7 @@ module Resource::ClassMethods
 
   def create_resource_hooks(engine)
     load_paths.each do |load_path|
-      puts load_path
       Dir[File.join(load_path, "**", "*.rb")].each do |fi|
-        puts fi
         next unless File.file?(fi)
         require_dependency(fi)
       end

@@ -4,13 +4,21 @@ namespace :test do
   Rake::TestTask.new(:unit => [:check_dependencies]) do |t|
     t.libs << "lib"
     t.libs << "test"
-    t.test_files = "test/unit/**/*.rb"
+    t.test_files = "test/unit/**/*_test.rb"
+    t.verbose = true
+  end
+
+  Rake::TestTask.new(:engine => [:check_dependencies]) do |t|
+    t.libs << "lib"
+    t.libs << "test"
+    t.test_files = "test/engine/**/*_test.rb"
     t.verbose = true
   end
 
   desc 'Run all tests'
   task :all do |t|
     Rake::Task['test:unit'].invoke
+    Rake::Task['test:engine'].invoke
   end
 end
 

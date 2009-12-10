@@ -43,7 +43,7 @@ class Engine::ContentModule
 
       def load_#{name}
         @#{name} ||= HashWithIndifferentAccess.new
-        Dir.glob(File.join(base_path, '#{name}', "**", "*.rb")).each do |fi|
+        Dir.glob(File.join(base_path, 'resources/#{name}', "**", "*.rb")).each do |fi|
           next if File.directory? fi or fi =~ /\.svn/
           eval File.read(fi), binding, fi, 1
         end
@@ -63,11 +63,13 @@ class Engine::ContentModule
     end
 
     def load_interfaces
-      controller_path = File.join(base_path, "interfaces/controllers/")
-      model_path = File.join(base_path, "interfaces/models")
-      view_path = File.join(base_path, "interfaces/views")
+      controller_path = File.join(base_path, "app/interface/controllers/")
+      model_path = File.join(base_path, "app/interface/models")
+      view_path = File.join(base_path, "app/interface/views")
       ActiveSupport::Dependencies.load_paths << controller_path
+      ActiveSupport::Dependencies.load_once_paths << controller_path
       ActiveSupport::Dependencies.load_paths << model_path
+      ActiveSupport::Dependencies.load_once_paths << model_path
       Dir.glob(File.join(controller_path, "**/*.rb")).each do |fi|
         next if File.directory? fi or fi =~ /\.svn/
         # bring the controllers into existence

@@ -18,6 +18,11 @@ class DivinityEngine
   attr_reader :state, :ticks, :interval, :options, :camera, :mouse, :keyboard
   attr_accessor :current_theme
 
+  def blocks(type)
+    @blocks[type] ||= []
+  end
+  private :blocks
+
   def initialize(*args, &blk)
     @blocks = {}
     @state = :waiting
@@ -43,10 +48,13 @@ class DivinityEngine
     eval "def #{i}; options[#{i.inspect}]; end", binding, __FILE__, __LINE__
   end
 
-  # True if options[:dry_run] has been set to true; determines whether the engine will be started in "dry run" mode,
-  # in which no window will actually be created, no events will fire, etc.
+  # True if options[:dry_run] has been set to true; determines whether the engine will be started in "dry run" mode.
+  #
+  # When in "dry run" mode, Divinity will run without user interaction. User input events will only be processed if the
+  # window is active, but the window itself will be invisible. Fullscreen mode is forcefully disabled during a dry run.
   #
   # During a dry run, the engine should be programmatically stopped via #stop! in order to exit.
+  #
   def dry_run?; options[:dry_run]; end
 
   def options=(o)
@@ -84,10 +92,11 @@ class DivinityEngine
     types.each { |t| eval "def #{t}(&blk); add_game_block(#{t.inspect}, &blk); end", binding, __FILE__, __LINE__ }
   end
 
-  block_types :before_init,     :during_init,   :after_init
-  block_types :before_update,   :during_update, :after_update
-  block_types :before_render,   :during_render, :after_render
-  block_types :before_shutdown, :during_shutdown, :after_shutdown
+  block_types :before_init,       :during_init,       :after_init
+  block_types :before_initialize, :during_initialize, :after_initialize
+  block_types :before_update,     :during_update,     :after_update
+  block_types :before_render,     :during_render,     :after_render
+  block_types :before_shutdown,   :during_shutdown,   :after_shutdown
 
   alias before_initialize before_init
   alias during_initialize during_init
@@ -114,7 +123,7 @@ class DivinityEngine
         @state = :running unless @state == :paused
         update
         render
-        SDL.GLSwapBuffers() unless dry_run?
+        SDL.GLSwapBuffers()
       end
 
       @main_loop_running = false
@@ -141,11 +150,14 @@ class DivinityEngine
     end
 
     def init_video_mode
-      Textures::Font.invalidate!
-      unless dry_run?
-        err("set video mode") unless (@sdl_screen = SDL.setVideoMode(options[:width], options[:height],
-                                                                     options[:color_depth], sdl_video_mode_flags))
+      if dry_run?
+        options[:width] = options[:height] = 0
+        options[:noframe] = true
+        options[:fullscreen] = false
       end
+      Textures::Font.invalidate!
+      err("set video mode") unless (@sdl_screen = SDL.setVideoMode(options[:width], options[:height],
+                                                                   options[:color_depth], sdl_video_mode_flags))
       glViewport(0, 0, options[:width], options[:height])
       glMatrixMode(GL_PROJECTION)
       glLoadIdentity
@@ -155,25 +167,23 @@ class DivinityEngine
       glEnable(GL_TEXTURE_2D)
       glEnable(GL_BLEND)
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-      call_blocks :during_init
+      call_blocks :during_init, :during_initialize
       #init_default_gui
-      call_blocks :after_init
+      call_blocks :after_init, :after_initialize
     end
   
     def init
       @state = :initializing
 
-      call_blocks :before_init
-      unless dry_run?
-        SDL.init(SDL::INIT_VIDEO) and err("initialize SDL")
-        SDL.setGLAttr(SDL::GL_DOUBLEBUFFER,1) and err("enable double-buffering")
-        SDL.setGLAttr(SDL::GL_DEPTH_SIZE, 16) and err("set depth buffer size")
-        SDL.setGLAttr(SDL::GL_RED_SIZE, 8) and err("set red bit depth")
-        SDL.setGLAttr(SDL::GL_GREEN_SIZE, 8) and err("set green bit depth")
-        SDL.setGLAttr(SDL::GL_BLUE_SIZE, 8) and err("set blue bit depth")
-        SDL.setGLAttr(SDL::GL_ALPHA_SIZE, 8) and err("set alpha bit depth")
-        SDL::Event.enable_unicode
-      end
+      call_blocks :before_init, :before_initialize
+      SDL.init(SDL::INIT_VIDEO) and err("initialize SDL")
+      SDL.setGLAttr(SDL::GL_DOUBLEBUFFER,1) and err("enable double-buffering")
+      SDL.setGLAttr(SDL::GL_DEPTH_SIZE, 16) and err("set depth buffer size")
+      SDL.setGLAttr(SDL::GL_RED_SIZE, 8) and err("set red bit depth")
+      SDL.setGLAttr(SDL::GL_GREEN_SIZE, 8) and err("set green bit depth")
+      SDL.setGLAttr(SDL::GL_BLUE_SIZE, 8) and err("set blue bit depth")
+      SDL.setGLAttr(SDL::GL_ALPHA_SIZE, 8) and err("set alpha bit depth")
+      SDL::Event.enable_unicode
       init_video_mode
     end
 
@@ -186,14 +196,14 @@ class DivinityEngine
     def sdl_video_mode_flags
       flags = SDL::OPENGL
       flags |= SDL::FULLSCREEN if options[:fullscreen]
-
+      flags |= SDL::NOFRAME if options[:noframe]
       flags
     end
 
     def call_blocks(*types)
       options = types.extract_options!
       types.each do |type|
-        @blocks[type].each do |blk|
+        blocks(type).each do |blk|
           if options.key? :args and blk.arity > 0
             if options[:args].kind_of? Array then blk.call(*(options[:args][0...(blk.arity)]))
             else blk.call(options[:args])
@@ -203,14 +213,13 @@ class DivinityEngine
           else
             blk.call
           end
-        end if @blocks[type]
+        end
       end
     end
 
     def add_game_block(type, &blk)
       raise "Expected to evaluate a block #{type.to_s.humanize}" unless block_given?
-      @blocks[type] ||= []
-      @blocks[type] << blk
+      blocks(type) << blk
     end
 
     def err(action = nil)

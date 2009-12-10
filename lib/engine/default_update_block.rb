@@ -29,7 +29,7 @@ module Engine::DefaultUpdateBlock
             rescue Errors::EventNotRecognized
             end
         end
-      end
+      end unless dry_run?
     end
   end
 end

@@ -160,6 +160,7 @@ Gem::Specification.new do |s|
      "test/test_helper.rb",
      "test/unit/extensions/array_test.rb",
      "test/unit/extensions/fixnum_test.rb",
+     "test/unit/geometry/vector3d_test.rb",
      "test/unit/geometry/vertex3d_test.rb",
      "test/unit/models/events_test.rb",
      "vendor/dependencies/1.8/linux/rmagick-2.12.2.gem",
@@ -256,6 +257,7 @@ Gem::Specification.new do |s|
      "test/test_helper.rb",
      "test/unit/extensions/array_test.rb",
      "test/unit/extensions/fixnum_test.rb",
+     "test/unit/geometry/vector3d_test.rb",
      "test/unit/geometry/vertex3d_test.rb",
      "test/unit/models/events_test.rb"
   ]
