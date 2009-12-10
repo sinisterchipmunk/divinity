@@ -1,4 +1,4 @@
-class Resource::Theme::Effects::Effect
+class Theme::Effects::Effect
   attr_reader :args
 
   class << self

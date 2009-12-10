@@ -27,7 +27,7 @@ class Engine::Controller::Response
   # The ultimate purpose of Insets is to allow space between one component and the next. This is purely aesthetic
   # and is generally used to, for instance, draw a border around the edges of a frame. Without insets, you could
   # have no borders, because child elements would be placed directly on top of them. The space provided by insets
-  # also has a de-cluttering effect on the interface, and generally results in an easier-to-use GUI. They can also
+  # also has a de-cluttering effect on the old, and generally results in an easier-to-use GUI. They can also
   # be used to reserve an area of the GUI as "off-limits" -- for example, you could modify the bottom_right insets
   # of a component to make room for a status message that is to be drawn directly to a component.
   #

@@ -1,4 +1,4 @@
-class Resource::Theme::ThemeType < HashWithIndifferentAccess
+class Theme::ThemeType < HashWithIndifferentAccess
   def initialize(theme, *a, &b)
     @theme = theme
     super(*a, &b)
@@ -43,7 +43,7 @@ class Resource::Theme::ThemeType < HashWithIndifferentAccess
   def Effect(*args)
     name, *args = args
     name = name.to_s if name.kind_of? Symbol
-    klass = name.kind_of?(String) ? "Interface::Theme::Effects::#{name.camelize}Effect".constantize : name
+    klass = name.kind_of?(String) ? "Theme::Effects::#{name.camelize}Effect".constantize : name
     klass.new(*args)
   end
 

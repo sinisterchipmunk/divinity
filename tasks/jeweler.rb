@@ -17,6 +17,7 @@ begin
     gem.add_dependency "activesupport", ">= 2.3.4"
     gem.add_dependency "ruby-opengl", ">= 0.60.1"
     gem.add_dependency "rmagick", ">= 2.12.0"
+    gem.add_dependency "log4r", ">= 1.1.2"
     # RubySDL is a tricky one
     gem.add_dependency((if RUBY_PLATFORM =~ /mingw32/ || RUBY_PLATFORM =~ /mswin32/
                           if RUBY_VERSION =~ /1\.8/ then "rubysdl-mswin32-1.8"  ## windows/ruby1.8

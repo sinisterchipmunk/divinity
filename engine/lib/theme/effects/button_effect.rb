@@ -1,4 +1,4 @@
-class Resource::Theme::Effects::ButtonEffect < Resource::Theme::Effects::Effect
+class Theme::Effects::ButtonEffect < Theme::Effects::Effect
   # this is completely optional, but does some extra validation and produces more intelligible error messages
   # if the effect is called improperly.
   args 0 => Symbol, 1 => Numeric, 2 => Numeric

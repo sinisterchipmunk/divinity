@@ -1,4 +1,4 @@
-# This module is mixed into DivinityEngine and is responsible for providing a way to interface with the various
+# This module is mixed into DivinityEngine and is responsible for providing a way to old with the various
 # controllers. It is initially called from Engine::ContentLoader.
 #
 module Engine::Controller::Routing
@@ -20,7 +20,7 @@ module Engine::Controller::Routing
       self.current_controller = instance
     end
 
-    # A freshly initialized root interface is not going to include an action, and should already be pointed at 'index'
+    # A freshly initialized root old is not going to include an action, and should already be pointed at 'index'
     # so we don't do anything if action is undefined.
     self.current_controller.process(action, event) unless action.nil?
   end

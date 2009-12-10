@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Colin MacKenzie IV (sinisterchipmunk)"]
-  s.date = %q{2009-12-09}
+  s.date = %q{2009-12-10}
   s.description = %q{A new kind of game engine}
   s.email = %q{sinisterchipmunk@gmail.com}
   s.extensions = ["ext/divinity/extconf.rb"]
@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
     ".gitignore",
      "LICENSE",
      "README.rdoc",
+     "Rakefile",
      "TODO.rdoc",
      "VERSION",
      "divinity.gemspec",
@@ -151,7 +152,6 @@ Gem::Specification.new do |s|
      "lib/textures/font.rb",
      "lib/textures/texture.rb",
      "lib/textures/texture_generator.rb",
-     "rakefile",
      "tasks/dev.rb",
      "tasks/docs.rb",
      "tasks/jeweler.rb",

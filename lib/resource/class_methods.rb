@@ -6,15 +6,22 @@ module Resource::ClassMethods
 #  }.with_indifferent_access
 
   def load_paths
-    @load_paths ||= [ "app/resource" ]
+    @load_paths ||= [ "app/models" ]
   end
 
   def content_types
     @content_types ||= { }.with_indifferent_access
   end
 
-  def inherited(base)
-    content_types[base.name.demodulize.underscore] = base
+  def register_content_type(klass = nil)
+    # We do it this way because it SEEMS to be maintaining different hashes for different subclasses.
+    # My mind is a bit fuzzy right now, but I think that makes sense. Multiple instances of Class or some such.
+    # In any case, this makes all content type registrations explicit, routing them directly into Resource::Base.
+    if klass.nil?
+      Resource::Base.register_content_type(self)
+    else
+      content_types[klass.name.demodulize.underscore] = klass
+    end
   end
 
   def content_type(name, klass = nil)
@@ -25,16 +32,21 @@ module Resource::ClassMethods
     end
   end
 
-  def create_resource_hooks(engine)
-    engine.glob_files(load_paths.collect { |i| File.join(i, "**/*.rb") }).each do |fi|
-      next unless File.file?(fi)
-      require_dependency(fi)
+  def remove_resource_hooks!(engine)
+    each_resource_hook do |name, klass, singular, plural, class_name|
+      Divinity.logger.debug "Removing resource hook: #{name} => #{klass})"
+      content_types.delete(name)
+      Engine::ContentModule.remove_resource_loader(plural)
+      engine.instance_eval "undef #{singular}" if engine.respond_to?(singular)
+      engine.instance_eval "undef #{plural}"   if engine.respond_to?(plural)
     end
+  end
 
-    content_types.each do |name, klass|
-      plural = name.pluralize
-      class_name = klass.name
-      singular = plural.singularize
+  def add_resource_hooks!(engine)
+    each_resource_hook do |name, klass, singular, plural, class_name|
+      next if Engine::ContentModule.resource_loaders.include?(plural)
+      Divinity.logger.debug "      Adding resource hook: #{name} => #{klass})"
+
       Engine::ContentModule.add_resource_loader(plural)
 
       line = __LINE__ + 2
@@ -60,6 +72,15 @@ module Resource::ClassMethods
         end
       end_code
       eval code, binding, __FILE__, line # so we can track the line number
+    end
+  end
+
+  def each_resource_hook
+    content_types.each do |name, klass|
+      plural = name.pluralize
+      class_name = klass.name
+      singular = plural.singularize
+      yield name, klass, singular, plural, class_name
     end
   end
 end

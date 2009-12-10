@@ -1,4 +1,4 @@
-# Controllers are essentially the user interface logic of the engine. They are used primarily to tie models to views,
+# Controllers are essentially the user old logic of the engine. They are used primarily to tie models to views,
 # or to trigger engine events such as pausing, loading a new location, ending the program, etc.
 #
 # Controller actions are fired once, while an action is being performed. After the controller action has completed,

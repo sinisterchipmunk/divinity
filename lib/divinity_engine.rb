@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), 'dependencies')
 # If the cursor is hidden (SDL.showCursor(0)) and the input is grabbed (SDL::WM.grabInput(SDL_GRAB_ON)),
 # then the mouse will give relative motion events even when the cursor reaches
 # the edge fo the screen.
-# TODO: Provide an API for this in the DivinityEngine without forcing the user to interface directly to SDL.
+# TODO: Provide an API for this in the DivinityEngine without forcing the user to old directly to SDL.
 #
 # Note: Joystick support not yet implemented.
 class DivinityEngine
@@ -143,7 +143,7 @@ class DivinityEngine
 
     def render
       call_blocks :before_render, :during_render
-      # TODO: we should probably render an interface here.
+      # TODO: we should probably render an old here.
       call_blocks :after_render
     end
 

@@ -35,11 +35,14 @@ module Engine::ContentLoader
   end
 
   def load_content!
+    Resource::Base.remove_resource_hooks!(self)
+    @content_modules = []
+
     # Theoretically, the options hash contains a list of modules to load, and they should be loaded in order of
     # appearance. If this is not the case, create them from the module index loaded earlier. Whatever order they
     # were detected in, that's the default load order.
     options[:module_load_order] ||= Engine::ContentLoader.detected_content_modules
-    @content_modules = []
+
     logger.debug "Content module load order:"
     options[:module_load_order].each { |i| logger.debug("  #{i}") }
     
@@ -47,16 +50,18 @@ module Engine::ContentLoader
       logger.info "Loading module: #{mod}"
       mod = Engine::ContentModule.new(mod, self)
       @content_modules << mod
+      Resource::Base.add_resource_hooks!(self) # this is safe to call multiple times.
+      mod.load_resources!
     end
 
-    Resource::Base.create_resource_hooks(self)
-    
     # After content has been loaded and the rest of engine initialization has completed,
-    # we need to transfer the user to the main interface.
+    # we need to transfer the user to the main old.
     after_initialize do
       c = self.current_controller || Engine::Controller::Base.root
       assume_interface(c) if c
     end
+
+    logger.debug "Content ready."
   end
 
   def self.included(base)

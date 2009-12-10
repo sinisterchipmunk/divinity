@@ -15,7 +15,7 @@
 # example, a text field might represent a Web browser address; the view that lays out the text field is in charge of
 ## mapping the text field itself to the address field of the Web browser.
 #
-# Here is an example of a view file, rendering an imaginary Web browser interface:
+# Here is an example of a view file, rendering an imaginary Web browser old:
 #
 #   panel :north do
 #     layout :flow # the north panel should use a "grid" layout for its subcomponents

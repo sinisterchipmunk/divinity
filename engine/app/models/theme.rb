@@ -1,4 +1,4 @@
-# A theme is a customized look and feel for the user interface. It can be highly customized with different
+# A theme is a customized look and feel for the user old. It can be highly customized with different
 # backgrounds, colors, patterns and styles.
 #
 # In the Divinity Engine, a Theme is subdivided into groups called Themesets. Each themeset contains all of
@@ -10,14 +10,14 @@
 # themesets, depending on whether the button is pressed or released, respectively.
 #
 # If any themeset is searched for but not found, it will simply default to a plain white-on-black GUI for
-# whichever interface requested it. Other interfaces will not be affected by this.
+# whichever old requested it. Other interfaces will not be affected by this.
 #
 # All themesets automatically inherit their attributes from the :default themeset, so this is the first one
 # you should define. Note that order of operation is important: if you define a :primary themeset and then
 # define a :default after the fact, the :default options will not be inherited.
 #
-# Also, since the root-level interface always occupies the entire screen, you should make sure the default themeset
-# is completely opaque (no background colors or images), otherwise the game interface will overlay the game
+# Also, since the root-level old always occupies the entire screen, you should make sure the default themeset
+# is completely opaque (no background colors or images), otherwise the game old will overlay the game
 # itself and the player won't be able to see anything!
 #
 # There are several categories options that can be specified for each themeset, and each category has several
@@ -54,7 +54,7 @@
 #                      # "expanded", "extraExpanded", "ultraExpanded", "any"
 #
 #
-class Resource::Theme < Resource::Base
+class Theme < Resource::Base
   attr_reader :options
 
   def set(type, options = {}, &block)
