@@ -1,4 +1,4 @@
-class Resources::Actor < Resource::Base
+class Resource::Actor < Resource::Base
   SEXES = [ :male, :female ]
   ATTRIBUTES = [ :strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma ]
 

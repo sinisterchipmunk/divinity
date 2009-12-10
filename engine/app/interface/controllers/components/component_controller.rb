@@ -3,7 +3,7 @@
 class Components::ComponentController < Engine::Controller::Base
   helper :all
   
-  append_view_path File.join(DIVINITY_GEM_ROOT, "engine", "views")
+  append_view_path File.join("app/interface/views")
 
   # When an event is fired, we should expect the standard event functionality (via #on), but additionally,
   # the parent controller should receive the event automatically as an action. If the parent doesn't respond

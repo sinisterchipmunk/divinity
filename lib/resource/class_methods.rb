@@ -6,7 +6,7 @@ module Resource::ClassMethods
 #  }.with_indifferent_access
 
   def load_paths
-    @load_paths ||= [ File.join(DIVINITY_GEM_ROOT, "engine/models/resources") ]
+    @load_paths ||= [ "app/resource" ]
   end
 
   def content_types
@@ -26,22 +26,20 @@ module Resource::ClassMethods
   end
 
   def create_resource_hooks(engine)
-    load_paths.each do |load_path|
-      Dir[File.join(load_path, "**", "*.rb")].each do |fi|
-        next unless File.file?(fi)
-        require_dependency(fi)
-      end
+    engine.glob_files(load_paths.collect { |i| File.join(i, "**/*.rb") }).each do |fi|
+      next unless File.file?(fi)
+      require_dependency(fi)
     end
 
     content_types.each do |name, klass|
       plural = name.pluralize
       class_name = klass.name
-      singular = plural.to_s.singularize
+      singular = plural.singularize
       Engine::ContentModule.add_resource_loader(plural)
 
       line = __LINE__ + 2
       code = <<-end_code
-        def #{singular}(id, *args, &block)
+        def engine.#{singular}(id, *args, &block)
           r = self.#{plural}[id]
           if r.nil? then r = self.#{plural}[id] = #{class_name}.new(id, self, *args)
           elsif args.length > 0 then r = r.with_args(*args)
@@ -50,7 +48,8 @@ module Resource::ClassMethods
           r
         end
 
-        def #{plural}
+        def engine.#{plural}(id = nil, *args, &block)
+          return #{singular}(id, *args, &block) unless id.nil?
           unless @#{plural}
             @#{plural} = HashWithIndifferentAccess.new
             content_modules.each do |mod|
@@ -60,7 +59,7 @@ module Resource::ClassMethods
           @#{plural}
         end
       end_code
-      eval code, engine.send(:binding), __FILE__, line # so we can track the line number
+      eval code, binding, __FILE__, line # so we can track the line number
     end
   end
 end

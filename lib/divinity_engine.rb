@@ -15,7 +15,7 @@ class DivinityEngine
   include Engine::DefaultUpdateBlock
   include Helpers::EventListeningHelper
 
-  attr_reader :state, :ticks, :interval, :options, :camera, :mouse, :keyboard
+  attr_reader :state, :ticks, :interval, :options, :camera, :mouse, :keyboard, :logger
   attr_accessor :current_theme
 
   def blocks(type)
@@ -24,24 +24,30 @@ class DivinityEngine
   private :blocks
 
   def initialize(*args, &blk)
+    @logger = Divinity.logger
+    #@logger.add(Log4r::Outputter.stdout)
+    @options = HashWithIndifferentAccess.new(args.extract_options!.reverse_merge(default_options))
+    @logger.level = options[:log_level]
     @blocks = {}
     @state = :waiting
     @camera = OpenGl::Camera.new
     @mouse = Devices::Mouse.new(self)
     @keyboard = Devices::Keyboard.new(self)
+    load_content!
 
     during_init do
-      self.current_theme = theme(options[:theme])
+      self.current_theme = themes(options[:theme])
     end
-
-    @options = HashWithIndifferentAccess.new(args.extract_options!.reverse_merge(default_options))
-    load_content!
 
     add_default_render_block
     add_default_update_block
 
     during_render &blk if block_given?
-    Resource::Base.create_resource_hooks(self)
+    @initialized = true
+  end
+
+  def initialized?
+    @initialized
   end
 
   [ :width, :height, :color_depth, :fullscreen, :clear_on_render ].each do |i|
@@ -52,6 +58,8 @@ class DivinityEngine
   #
   # When in "dry run" mode, Divinity will run without user interaction. User input events will only be processed if the
   # window is active, but the window itself will be invisible. Fullscreen mode is forcefully disabled during a dry run.
+  #
+  # Log mode is set to DEBUG during a dry run.
   #
   # During a dry run, the engine should be programmatically stopped via #stop! in order to exit.
   #
@@ -151,9 +159,10 @@ class DivinityEngine
 
     def init_video_mode
       if dry_run?
-        options[:width] = options[:height] = 0
+        options[:width] = options[:height] = 1
         options[:noframe] = true
         options[:fullscreen] = false
+        options[:log_level] = Log4r::DEBUG
       end
       Textures::Font.invalidate!
       err("set video mode") unless (@sdl_screen = SDL.setVideoMode(options[:width], options[:height],
@@ -231,7 +240,7 @@ class DivinityEngine
     {
       :width => 640, :height => 480, :color_depth => 32, :fullscreen => false,
       :clear_on_render => GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
-      :theme => :default, :dry_run => false
+      :theme => :default, :dry_run => ENV['DRY_RUN'] || false, :log_level => ENV['DRY_RUN'] ? Log4r::DEBUG : Log4r::INFO
     }
     end
 end

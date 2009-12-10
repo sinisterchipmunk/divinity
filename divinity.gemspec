@@ -53,7 +53,7 @@ Gem::Specification.new do |s|
      "engine/models/events/mouse_events/mouse_pressed.rb",
      "engine/models/events/mouse_events/mouse_released.rb",
      "engine/models/events/sdl_events.txt",
-     "engine/models/resources/actor.rb",
+     "engine/models/resource/actor.rb",
      "engine/views/components/button/index.rb",
      "engine/views/components/panel/index.rb",
      "ext/divinity/Makefile",

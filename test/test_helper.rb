@@ -1,3 +1,5 @@
+ENV['DRY_RUN'] = "true"
+
 require 'rubygems'
 require 'test/unit'
 require 'shoulda'
@@ -8,6 +10,7 @@ $LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), '..', 'ext', 'd
 
 begin
   require 'divinity_engine'
+  require 'test/unit/test_case'
 rescue
   puts "Engine error occurred while loading: #{$!.message}"
   puts "Please report this error!"

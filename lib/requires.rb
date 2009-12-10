@@ -15,6 +15,7 @@ require 'glu'
 require 'RMagick'
 require 'matrix'
 require 'mathn'
+require 'log4r'
 
 # core extensions
 require 'extensions/magick_extensions'

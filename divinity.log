@@ -1,0 +1,8 @@
+DEBUG C:/projects/divinity/engine/divinity.log: Loading module: C:/projects/divinity/engine/engine
+DEBUG C:/projects/divinity/engine/divinity.log: Loading resources: 
+DEBUG C:/projects/divinity/engine/divinity.log: add resource loader: themes
+DEBUG C:/projects/divinity/engine/divinity.log: add resource loader: actors
+DEBUG C:/projects/divinity/engine/divinity.log: Loading module: C:/projects/divinity/engine/engine
+DEBUG C:/projects/divinity/engine/divinity.log: Loading resources: themes and actors
+DEBUG C:/projects/divinity/engine/divinity.log: add resource loader: themes
+DEBUG C:/projects/divinity/engine/divinity.log: add resource loader: actors
