@@ -240,7 +240,8 @@ class DivinityEngine
     {
       :width => 640, :height => 480, :color_depth => 32, :fullscreen => false,
       :clear_on_render => GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
-      :theme => :default, :dry_run => ENV['DRY_RUN'] || false, :log_level => ENV['DRY_RUN'] ? Log4r::DEBUG : Log4r::INFO
+      :theme => :default, :dry_run => ENV['DRY_RUN'] || false, :log_level => ENV['DRY_RUN'] || $DEBUG || $VERBOSE ?
+            Log4r::DEBUG : Log4r::INFO
     }
     end
 end

@@ -16,6 +16,7 @@ require 'RMagick'
 require 'matrix'
 require 'mathn'
 require 'log4r'
+require File.join(File.dirname(__FILE__), "divinity")
 
 # core extensions
 require 'extensions/magick_extensions'

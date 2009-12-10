@@ -38,10 +38,13 @@ module Engine::ContentLoader
     # Theoretically, the options hash contains a list of modules to load, and they should be loaded in order of
     # appearance. If this is not the case, create them from the module index loaded earlier. Whatever order they
     # were detected in, that's the default load order.
-    options[:module_load_order] ||= Engine::ContentLoader.instance_variable_get("@content_module_index")
+    options[:module_load_order] ||= Engine::ContentLoader.detected_content_modules
     @content_modules = []
+    logger.debug "Content module load order:"
+    options[:module_load_order].each { |i| logger.debug("  #{i}") }
+    
     options[:module_load_order].each do |mod|
-      logger.debug "Loading module: #{mod}"
+      logger.info "Loading module: #{mod}"
       mod = Engine::ContentModule.new(mod, self)
       @content_modules << mod
     end
@@ -59,11 +62,19 @@ module Engine::ContentLoader
   def self.included(base)
     base.send(:attr_reader,   :content_modules)
     base.send(:attr_accessor, :current_controller)
+    detected_content_modules
+  end
+
+  def self.detected_content_modules
+    return @content_module_index if @content_module_index
     
     # Index the available modules. Note that this does not actually load them, only creates a list of those available.
     # This affords the user an opportunity to disable or reorder the modules.
-    @content_module_index = [ File.join(DIVINITY_GEM_ROOT, "engine") ]
+    @content_module_index = [ File.join(DIVINITY_GEM_ROOT, "engine") ] +
                             [ DIVINITY_ROOT ] +
                             Dir.glob(File.join(DIVINITY_ROOT, "vendor/modules", "*"))
+
+    Divinity.logger.debug "Detected content modules:"
+    @content_module_index.each { |i| Divinity.logger.debug "  #{i}" }
   end
 end

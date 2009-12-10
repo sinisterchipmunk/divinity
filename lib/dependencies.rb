@@ -1,5 +1,5 @@
 unless defined? DIVINITY_ROOT
-  DIVINITY_ROOT = File.expand_path(ENV['DIVINITY_ROOT'] || File.join(File.dirname(__FILE__), ".."))
+  DIVINITY_ROOT = File.expand_path(ENV['DIVINITY_ROOT'] || Dir.pwd)
 end
 
 unless defined? DIVINITY_GEM_ROOT
