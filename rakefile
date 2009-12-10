@@ -1,4 +1,4 @@
 require 'rubygems'
 require 'rake'
 
-Dir['tasks/**/*.rb'].each { |fi| require fi }
+Dir['tasks/**/*.rake'].each { |fi| load fi }

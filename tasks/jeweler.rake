@@ -13,17 +13,18 @@ begin
     gem.files.reject! { |i| i =~ /data\/cache/ }
     # dependencies
     gem.add_development_dependency "shoulda", ">= 0"
-    #gem.add_development_dependency "rake-compiler", ">= 0.7.0"
+    gem.add_development_dependency "rake-compiler", ">= 0.7.0"
     gem.add_dependency "activesupport", ">= 2.3.4"
     gem.add_dependency "ruby-opengl", ">= 0.60.1"
     gem.add_dependency "rmagick", ">= 2.12.0"
     gem.add_dependency "log4r", ">= 1.1.2"
+    gem.add_dependency "rubigen", ">= 1.5.2"
     # RubySDL is a tricky one
     gem.add_dependency((if RUBY_PLATFORM =~ /mingw32/ || RUBY_PLATFORM =~ /mswin32/
                           if RUBY_VERSION =~ /1\.8/ then "rubysdl-mswin32-1.8"  ## windows/ruby1.8
                           else                           "rubysdl-mswin32-1.9"  ## windows/ruby1.9
                           end
-                        else                             "rubysd"               ## *nix
+                        else                             "rubysdl"              ## *nix
                         end), ">= 2.1.0.1")
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end

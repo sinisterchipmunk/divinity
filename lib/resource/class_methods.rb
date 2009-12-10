@@ -34,7 +34,7 @@ module Resource::ClassMethods
 
   def remove_resource_hooks!(engine)
     each_resource_hook do |name, klass, singular, plural, class_name|
-      Divinity.logger.debug "Removing resource hook: #{name} => #{klass})"
+      Divinity.logger.debug "Removing resource hook: #{name} => #{klass}"
       content_types.delete(name)
       Engine::ContentModule.remove_resource_loader(plural)
       engine.instance_eval "undef #{singular}" if engine.respond_to?(singular)
@@ -45,7 +45,7 @@ module Resource::ClassMethods
   def add_resource_hooks!(engine)
     each_resource_hook do |name, klass, singular, plural, class_name|
       next if Engine::ContentModule.resource_loaders.include?(plural)
-      Divinity.logger.debug "      Adding resource hook: #{name} => #{klass})"
+      Divinity.logger.debug "      Adding resource hook: #{name} => #{klass}"
 
       Engine::ContentModule.add_resource_loader(plural)
 

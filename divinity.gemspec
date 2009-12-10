@@ -24,44 +24,45 @@ Gem::Specification.new do |s|
      "Rakefile",
      "TODO.rdoc",
      "VERSION",
+     "app_generators/divinity/divinity_generator.rb",
      "divinity.gemspec",
      "divinity.log",
-     "engine/app/interface/controllers/components/button_controller.rb",
-     "engine/app/interface/controllers/components/component_controller.rb",
-     "engine/app/interface/controllers/components/panel_controller.rb",
-     "engine/app/interface/helpers/components/button_helper.rb",
-     "engine/app/interface/helpers/components/component_helper.rb",
-     "engine/app/interface/helpers/components/panel_helper.rb",
-     "engine/app/interface/models/components/button.rb",
-     "engine/app/interface/models/components/panel.rb",
-     "engine/app/interface/models/errors.rb",
-     "engine/app/interface/models/errors/event_errors.rb",
-     "engine/app/interface/models/events.rb",
-     "engine/app/interface/models/events/generic.rb",
-     "engine/app/interface/models/events/input_event.rb",
-     "engine/app/interface/models/events/interface_events.rb",
-     "engine/app/interface/models/events/interface_events/controller_created_event.rb",
-     "engine/app/interface/models/events/interface_events/focus_event.rb",
-     "engine/app/interface/models/events/interface_events/interface_assumed.rb",
-     "engine/app/interface/models/events/interface_events/redirected.rb",
-     "engine/app/interface/models/events/keyboard_events.rb",
-     "engine/app/interface/models/events/keyboard_events/key_event.rb",
-     "engine/app/interface/models/events/keyboard_events/key_pressed.rb",
-     "engine/app/interface/models/events/keyboard_events/key_released.rb",
-     "engine/app/interface/models/events/mouse_events.rb",
-     "engine/app/interface/models/events/mouse_events/mouse_button_event.rb",
-     "engine/app/interface/models/events/mouse_events/mouse_event.rb",
-     "engine/app/interface/models/events/mouse_events/mouse_moved.rb",
-     "engine/app/interface/models/events/mouse_events/mouse_pressed.rb",
-     "engine/app/interface/models/events/mouse_events/mouse_released.rb",
-     "engine/app/interface/models/events/sdl_events.txt",
-     "engine/app/interface/views/components/button/index.rb",
-     "engine/app/interface/views/components/panel/index.rb",
-     "engine/app/resource/actor.rb",
-     "engine/app/resource/theme.rb",
+     "engine/app/controllers/components/button_controller.rb",
+     "engine/app/controllers/components/component_controller.rb",
+     "engine/app/controllers/components/panel_controller.rb",
+     "engine/app/helpers/components/button_helper.rb",
+     "engine/app/helpers/components/component_helper.rb",
+     "engine/app/helpers/components/panel_helper.rb",
+     "engine/app/models/actor.rb",
+     "engine/app/models/components/button.rb",
+     "engine/app/models/components/panel.rb",
+     "engine/app/models/events.rb",
+     "engine/app/models/events/generic.rb",
+     "engine/app/models/events/input_event.rb",
+     "engine/app/models/events/interface_events.rb",
+     "engine/app/models/events/interface_events/controller_created_event.rb",
+     "engine/app/models/events/interface_events/focus_event.rb",
+     "engine/app/models/events/interface_events/interface_assumed.rb",
+     "engine/app/models/events/interface_events/redirected.rb",
+     "engine/app/models/events/keyboard_events.rb",
+     "engine/app/models/events/keyboard_events/key_event.rb",
+     "engine/app/models/events/keyboard_events/key_pressed.rb",
+     "engine/app/models/events/keyboard_events/key_released.rb",
+     "engine/app/models/events/mouse_events.rb",
+     "engine/app/models/events/mouse_events/mouse_button_event.rb",
+     "engine/app/models/events/mouse_events/mouse_event.rb",
+     "engine/app/models/events/mouse_events/mouse_moved.rb",
+     "engine/app/models/events/mouse_events/mouse_pressed.rb",
+     "engine/app/models/events/mouse_events/mouse_released.rb",
+     "engine/app/models/events/sdl_events.txt",
+     "engine/app/models/theme.rb",
+     "engine/app/views/components/button/index.rb",
+     "engine/app/views/components/panel/index.rb",
      "engine/lib/theme/effects/button_effect.rb",
      "engine/lib/theme/effects/effect.rb",
      "engine/lib/theme/theme_type.rb",
+     "engine/resources/actors/player.rb",
+     "engine/resources/themes/default.rb",
      "ext/divinity/Makefile",
      "ext/divinity/array.c",
      "ext/divinity/divinity.c",
@@ -84,10 +85,12 @@ Gem::Specification.new do |s|
      "lib/devices/keyboard/modifiers.rb",
      "lib/devices/mouse.rb",
      "lib/divinity.rb",
+     "lib/divinity/version.rb",
      "lib/divinity_engine.rb",
      "lib/engine/cache.rb",
      "lib/engine/content_loader.rb",
      "lib/engine/content_module.rb",
+     "lib/engine/content_module/class_methods.rb",
      "lib/engine/controller.rb",
      "lib/engine/controller/base.rb",
      "lib/engine/controller/class_methods.rb",
@@ -106,6 +109,8 @@ Gem::Specification.new do |s|
      "lib/engine/model/base.rb",
      "lib/engine/view.rb",
      "lib/engine/view/base.rb",
+     "lib/errors.rb",
+     "lib/errors/event_errors.rb",
      "lib/extensions/array.rb",
      "lib/extensions/bytes.rb",
      "lib/extensions/fixnum.rb",
@@ -152,10 +157,6 @@ Gem::Specification.new do |s|
      "lib/textures/font.rb",
      "lib/textures/texture.rb",
      "lib/textures/texture_generator.rb",
-     "tasks/dev.rb",
-     "tasks/docs.rb",
-     "tasks/jeweler.rb",
-     "tasks/tests.rb",
      "template.rb",
      "test/camera_test.rb",
      "test/engine/engine_test_case_test.rb",
@@ -274,22 +275,31 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<shoulda>, [">= 0"])
+      s.add_development_dependency(%q<rake-compiler>, [">= 0.7.0"])
       s.add_runtime_dependency(%q<activesupport>, [">= 2.3.4"])
       s.add_runtime_dependency(%q<ruby-opengl>, [">= 0.60.1"])
       s.add_runtime_dependency(%q<rmagick>, [">= 2.12.0"])
+      s.add_runtime_dependency(%q<log4r>, [">= 1.1.2"])
+      s.add_runtime_dependency(%q<rubigen>, [">= 1.5.2"])
       s.add_runtime_dependency(%q<rubysdl-mswin32-1.8>, [">= 2.1.0.1"])
     else
       s.add_dependency(%q<shoulda>, [">= 0"])
+      s.add_dependency(%q<rake-compiler>, [">= 0.7.0"])
       s.add_dependency(%q<activesupport>, [">= 2.3.4"])
       s.add_dependency(%q<ruby-opengl>, [">= 0.60.1"])
       s.add_dependency(%q<rmagick>, [">= 2.12.0"])
+      s.add_dependency(%q<log4r>, [">= 1.1.2"])
+      s.add_dependency(%q<rubigen>, [">= 1.5.2"])
       s.add_dependency(%q<rubysdl-mswin32-1.8>, [">= 2.1.0.1"])
     end
   else
     s.add_dependency(%q<shoulda>, [">= 0"])
+    s.add_dependency(%q<rake-compiler>, [">= 0.7.0"])
     s.add_dependency(%q<activesupport>, [">= 2.3.4"])
     s.add_dependency(%q<ruby-opengl>, [">= 0.60.1"])
     s.add_dependency(%q<rmagick>, [">= 2.12.0"])
+    s.add_dependency(%q<log4r>, [">= 1.1.2"])
+    s.add_dependency(%q<rubigen>, [">= 1.5.2"])
     s.add_dependency(%q<rubysdl-mswin32-1.8>, [">= 2.1.0.1"])
   end
 end

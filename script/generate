@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'rubigen'
+require 'divinity'
+
+#if %w(-v --version).include? ARGV.first
+#  puts "#{File.basename($0)} #{Divinity::Version::STRING}"
+#  exit(0)
+#end
+#
+require 'rubigen/scripts/generate'
+RubiGen::Base.use_application_sources!
+RubiGen::Scripts::Generate.new.run(ARGV, :generator => 'divinity')
