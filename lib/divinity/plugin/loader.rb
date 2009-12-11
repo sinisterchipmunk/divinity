@@ -1,4 +1,5 @@
 require "divinity/plugin"
+require 'divinity/gem_plugin'
 
 module Divinity
   class Plugin
@@ -134,7 +135,7 @@ module Divinity
         end
 
         def application_lib_index
-          $LOAD_PATH.index(File.join(RAILS_ROOT, 'lib')) || 0
+          $LOAD_PATH.index(File.join(DIVINITY_ROOT, 'lib')) || 0
         end
 
         def enabled?(plugin)

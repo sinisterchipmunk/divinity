@@ -91,19 +91,39 @@ class Engine::View::Base
 
     case options
     when Hash
-      options = options.reverse_merge(:locals => {})
+      options = options.reverse_merge(:locals => local_assigns)
       if options[:layout]
+        raise "Not yet implemented" # FIXME: implement layouts
         _render_with_layout(options, local_assigns, &block)
       elsif options[:file]
+        render_file(options)
         #template = self.view_paths.find_template(options[:file], template_format)
         #template.render_template(self, options[:locals])
       elsif options[:partial]
-        render_partial(options)
+        render_file(options.merge({:file => _pick_partial_path(options.delete(:partial))}))
       end
     else
-      render_partial(:partial => options, :locals => local_assigns)
+      render_file(:file => _pick_partial_path(options), :locals => local_assigns)
     end
-  end  
+  end
+
+  def render_file(options)
+    r = Divinity.cache.read(options[:file])
+    Divinity.cache.write(options[:file], r = File.read(options[:file])) unless r
+    eval r, binding, options[:file], 1
+  end
+
+  def _pick_partial_path(partial_path) #:nodoc:
+    if partial_path.include?('/')
+      path = File.join(File.dirname(partial_path), "_#{File.basename(partial_path)}")
+    elsif controller
+      path = "#{controller.class.controller_path}/_#{partial_path}"
+    else
+      path = "_#{partial_path}"
+    end
+
+    controller.class.view_paths.find_view(engine, path)
+  end
 
   private
   def copy_ivars_from_controller

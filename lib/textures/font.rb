@@ -119,7 +119,7 @@ class Textures::Font < Textures::TextureGenerator
   end
   
   def do_generation(options)
-    fn = "data/cache/font"
+    fn = "tmp/cache/font"
     options.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |n,v| fn = "#{fn}_#{n}-#{v}" }; fn = "#{fn}.png"
     if File.exists? fn
       load_font(options, fn)

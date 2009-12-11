@@ -18,7 +18,7 @@ module Divinity
         deps.add(*specs) unless specs.empty?
 
         deps.dependency_order.collect do |spec|
-          Rails::GemPlugin.new(spec, gem_index[spec])
+          Divinity::GemPlugin.new(spec, gem_index[spec])
         end
       end
     end

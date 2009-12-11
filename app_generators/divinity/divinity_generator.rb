@@ -2,6 +2,7 @@ require 'rbconfig'
 require 'rubygems'
 gem 'rubigen'
 require 'rubigen'
+require File.join(File.dirname(__FILE__), "../../lib/divinity/version.rb")
 
 class DivinityGenerator < RubiGen::Base
   DEFAULT_SHEBANG = File.join(Config::CONFIG['bindir'],
@@ -23,34 +24,45 @@ class DivinityGenerator < RubiGen::Base
     script_options     = { :chmod => 0755, :shebang => options[:shebang] == DEFAULT_SHEBANG ? nil : options[:shebang] }
     #windows            = (RUBY_PLATFORM =~ /dos|win32|cygwin/i) || (RUBY_PLATFORM =~ /(:?mswin|mingw)/)
 
+    assigns = { :assigns => {
+      :module_name => module_name,
+      :app_name => app_name
+    } }
+
+    script_options.merge! assigns
+
     record do |m|
       # Root directory and all subdirectories.
       m.directory ''
       DIRS.each { |f| m.directory f }
+      m.directory "app/views/#{module_name.underscore}"
 
       # Test helper
-      m.file     "Rakefile",                                   "Rakefile"
-      m.template "application.rb",                             "application.rb",  script_options
-      m.file     "README",                                     "README"
-      m.file     "config/environments/development.rb",         "config/environments/development.rb"
-      m.file     "config/environments/production.rb",          "config/environments/production.rb"
-      m.file     "config/environments/test.rb",                "config/environments/test.rb"
-      m.file     "config/initializers/backtrace_silencers.rb", "config/initializers/backtrace_silencers.rb"
-      m.file     "config/initializers/inflections.rb",         "config/initializers/inflections.rb"
-      m.file     "config/locales/en.yml",                      "config/locales/en.yml"
-      m.file     "config/boot.rb",                             "config/boot.rb"
-      m.file     "config/environment.rb",                      "config/environment.rb"
-      m.file     "doc/README_FOR_APP",                         "doc/README_FOR_APP"
-      m.file     "log/development.log",                        "log/development.log"
-      m.file     "log/engine.log",                             "log/engine.log"
-      m.file     "log/production.log",                         "log/production.log"
-      m.file     "log/test.log",                               "log/test.log"
+      m.template "Rakefile",                                   "Rakefile", assigns
+      m.template "application.rb",                             "#{module_name.underscore}.rb",  script_options
+      m.template "app/controllers/application.rb",             "app/controllers/application_controller.rb",  script_options
+      m.template "app/controllers/application_controller.rb",  "app/controllers/#{module_name.underscore}_controller.rb", assigns
+      m.template "app/views/application/_framerate.rb",        "app/views/#{module_name.underscore}/_framerate.rb", assigns
+      m.template "app/views/application/index.rb",             "app/views/#{module_name.underscore}/index.rb", assigns
+      m.file     "README",                                     "README", assigns
+      m.template "config/environments/development.rb",         "config/environments/development.rb", assigns
+      m.template "config/environments/production.rb",          "config/environments/production.rb", assigns
+      m.template "config/environments/test.rb",                "config/environments/test.rb", assigns
+      m.template "config/initializers/backtrace_silencers.rb", "config/initializers/backtrace_silencers.rb", assigns
+      m.template "config/initializers/inflections.rb",         "config/initializers/inflections.rb", assigns
+      m.file     "config/locales/en.yml",                      "config/locales/en.yml", assigns
+      m.template "config/boot.rb",                             "config/boot.rb", assigns
+      m.template "config/environment.rb",                      "config/environment.rb", assigns
+      m.file     "doc/README_FOR_APP",                         "doc/README_FOR_APP", assigns
+      m.file     "log/development.log",                        "log/development.log", assigns
+      m.file     "log/production.log",                         "log/production.log", assigns
+      m.file     "log/test.log",                               "log/test.log", assigns
       m.template "script/about",                               "script/about",     script_options
       m.template "script/console",                             "script/console",   script_options
       m.template "script/destroy",                             "script/destroy",   script_options
       m.template "script/generate",                            "script/generate",  script_options
       m.template "script/plugin",                              "script/plugin",    script_options
-      m.file     "test/test_helper.rb",                        "test/test_helper.rb"
+      m.template "test/test_helper.rb",                        "test/test_helper.rb", assigns
     end
   end
 

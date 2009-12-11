@@ -31,7 +31,7 @@ class Textures::TextureGenerator < Textures::Texture
   def cache_key
     key = @options.sort { |a,b| a[0].to_s <=> b[0].to_s }.collect do |a|
       k,v= a[0],a[1]
-      if v.kind_of? Resources::Image
+      if v.kind_of? Resource::Image
         v = File.basename(v.path)
       else
         v = v.inspect
@@ -49,7 +49,7 @@ class Textures::TextureGenerator < Textures::Texture
       # (which we're not yet doing)
       free_resources
     end
-    File.makedirs(File.dirname("data/cache/#{cache_key}.img"))
+    File.makedirs(File.dirname("tmp/cache/#{cache_key}.img"))
     do_generation(@options)
     @_generating = false
   end

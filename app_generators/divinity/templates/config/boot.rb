@@ -8,6 +8,7 @@ module Divinity
       unless booted?
         preinitialize
         pick_boot.run
+        require File.join(DIVINITY_ROOT, "config/environment") ### FIXME: This belongs in the various startup scripts!
       end
     end
 
@@ -35,7 +36,7 @@ module Divinity
   class Boot
     def run
       load_initializer
-      Divinity::Initializer.run
+      Divinity::Initializer.run(:set_load_path)
     end
   end
 

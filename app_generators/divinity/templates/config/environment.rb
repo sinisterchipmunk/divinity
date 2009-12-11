@@ -1,5 +1,5 @@
 # Specifies gem version of Divinity to use when vendor/divinity is not present
-DIVINITY_GEM_VERSION = '0.0.0' unless defined? DIVINITY_GEM_VERSION
+DIVINITY_GEM_VERSION = '<%=Divinity::VERSION::STRING%>' unless defined? DIVINITY_GEM_VERSION
 
 # Bootstrap the Divinity environment, frameworks, and configuration
 require File.join(File.dirname(__FILE__), 'boot')

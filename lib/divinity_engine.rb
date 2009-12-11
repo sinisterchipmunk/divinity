@@ -52,7 +52,7 @@ class DivinityEngine
     action = (action || "index").to_s
     options[:delta] ||= 0
     raise ArgumentError, "Expected a controller name" unless controller
-    controller = "Engine::#{controller.to_s.camelize}Controller".constantize
+    controller = "#{controller.to_s.camelize}Controller".constantize
     logger.debug "Loading controller: #{controller}, action: #{action}"
     request = Engine::Controller::Request.new(self, Geometry::Rectangle.new(0,0,width,height), options)
     response = Engine::Controller::Response.new

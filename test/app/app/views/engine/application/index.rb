@@ -1,4 +1,5 @@
 # do some OpenGL rendering
+glDisable GL_TEXTURE_2D           # disable textures (we're not using them)
 engine.look!                      # apply the current camera transformations
 glTranslatef -5, 0, -5            # move forward and left 5 units
 3.times do |color|
@@ -14,3 +15,4 @@ glTranslatef -5, 0, -5            # move forward and left 5 units
 end
 
 render :partial => 'framerate'
+

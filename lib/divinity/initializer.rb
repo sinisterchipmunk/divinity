@@ -33,6 +33,8 @@ module Divinity
   # This will use the default configuration options from Divinity::Configuration,
   # but allow for overwriting on select areas.
   class Initializer
+    LOG_PATTERN = "[%5l] %d %20C - %m"
+
     # The Configuration instance used by this Initializer instance.
     attr_reader :configuration
 
@@ -76,7 +78,7 @@ module Divinity
 
       require_frameworks
       set_autoload_paths
-      add_plugin_load_paths
+      add_plugin_load_paths 
       load_environment
       preload_frameworks
 
@@ -85,13 +87,13 @@ module Divinity
 
       initialize_logger
       initialize_framework_logging
-      require 'divinity_engine'
 
       initialize_dependency_mechanism
       initialize_whiny_nils
 
       initialize_i18n
 
+      require 'divinity_engine'
       initialize_framework_settings
       initialize_framework_views
 
@@ -363,7 +365,7 @@ Run `rake gems:install` to install the missing gems.
       return if Divinity.logger
 
       unless logger = configuration.logger
-        formatter = Log4r::PatternFormatter.new(:pattern => "[%5l] %d %30C - %m")
+        formatter = Log4r::PatternFormatter.new(:pattern => LOG_PATTERN)
         Log4r::StderrOutputter.new('console', :formatter => formatter)
         begin
           Log4r::Logger.root.level = Log4r.const_get(configuration.log_level.to_s.upcase)
