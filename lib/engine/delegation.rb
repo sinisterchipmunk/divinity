@@ -1,7 +1,8 @@
 module Engine::Delegation
   # Camera methods
   delegate :strafe!, :move_to!, :translate_to!, :translate!, :look!, :move!, :look_at!,
-           :lock_up_vector?, :lock_up_vector!, :lock_y_axis?, :lock_y_axis!, :rotate_view!,
+           :strafe, :move_to, :translate_to, :translate, :move, :look_at, :rotate_view,
+           :lock_up_vector?, :lock_up_vector!, :lock_y_axis?, :lock_y_axis!,
            :point_visible?, :cube_visible?, :sphere_visible?, :rotate_view!, :to => :camera
 
   def write(x, y, text, options = {})

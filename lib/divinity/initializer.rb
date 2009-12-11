@@ -400,8 +400,10 @@ Run `rake gems:install` to install the missing gems.
 
     # Sets the logger.
     def initialize_framework_logging
-      ActiveSupport::Dependencies.logger ||= Divinity.logger
-      Divinity.cache.logger ||= Divinity.logger
+      ActiveSupport::Dependencies.logger ||= Divinity.system_logger
+      # This works fine for Rails, but in Divinity there's just too many calls to the cache. It hangs the engine and
+      # floods the logs.
+      #Divinity.cache.logger ||= Divinity.system_logger
     end
 
     # Sets +Engine::Controller::ViewPaths#default_view_paths+ to Configuration#view_path.

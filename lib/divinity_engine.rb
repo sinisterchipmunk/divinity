@@ -33,15 +33,33 @@ class DivinityEngine
     @logger = Divinity.engine_logger
     load_content!
 
-    during_init do
-      self.current_theme = themes(options[:theme])
-    end
+    during_init { self.current_theme = themes(options[:theme]) }
+    after_init { assume_controller(@options.delete(:controller), @options.delete(:action)) }
 
     add_default_render_block
     add_default_update_block
 
     during_render &blk if block_given?
     @initialized = true
+  end
+
+  def assume_controller(controller_name, action, options = {})
+    controller = controller_name
+    if action.kind_of? Hash
+      options.merge!(action)
+      action = options.delete(:action)
+    end
+    action = (action || "index").to_s
+    options[:delta] ||= 0
+    raise ArgumentError, "Expected a controller name" unless controller
+    controller = "Engine::#{controller.to_s.camelize}Controller".constantize
+    logger.debug "Loading controller: #{controller}, action: #{action}"
+    request = Engine::Controller::Request.new(self, Geometry::Rectangle.new(0,0,width,height), options)
+    response = Engine::Controller::Response.new
+    response.insets.bottom_right.x = width
+    response.insets.bottom_right.y = height
+    @controller = controller.new(self, request, response)
+    @controller.process(:index, Events::ControllerCreatedEvent.new(@controller))
   end
 
   def initialized?

@@ -27,6 +27,6 @@ class Engine::Controller::ViewPaths < Array
       return engine.find_file(File.join(path, name))
     end
   rescue
-    raise Engine::View::MissingInterfaceError, $!.message#"No view found for action: #{name} in view path #{self.inspect}"
+    raise Engine::View::MissingViewError, $!.message#"No view found for action: #{name} in view path #{self.inspect}"
   end
 end

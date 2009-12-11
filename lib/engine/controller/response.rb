@@ -51,7 +51,6 @@ class Engine::Controller::Response
 
   attr_accessor :insets, :default_theme
   attr_accessor :preferred_size, :minimum_size, :maximum_size, :request, :view, :redirected_to, :redirected_to_params
-  attr_reader :graphics_context, :draw
   delegate :engine, :bounds, :width, :height, :to => :request
   delegate :current_theme, :to => :engine
   delegate :controller, :components, :to => :view
@@ -79,7 +78,11 @@ class Engine::Controller::Response
       # controller hasn't changed, so we're just firing another action.
       self.controller.process(action, :event => revt)
     else
-      engine.assume_interface controller, redirected_to_params.merge(:action => action, :event => revt)
+      if engine.current_controller == self.controller # redirecting the engine controller...
+        engine.assume_controller controller, redirected_to_params.merge(:action => action, :event => revt)
+      else
+        engine.assume_interface controller, redirected_to_params.merge(:action => action, :event => revt)
+      end
     end
   end
 
@@ -100,9 +103,10 @@ class Engine::Controller::Response
     @_completed
   end
 
-  def process
+  def process(options = {})
     @_completed = false
     prepare_graphics_context!
+    return unless options[:defer_rendering]
     view.process
     finalize_graphics_context!
   rescue ArgumentError => err
@@ -113,9 +117,12 @@ class Engine::Controller::Response
   end
 
   def finalize_graphics_context!
-    @draw.draw(@graphics_context)
-    if theme[:colorization]
-      colorize!(theme[:colorization][:color], theme[:colorization][:amount])
+    if @graphics_context_valid
+      # Because if it's not valid during finalization, then it was never used!
+      draw.draw(graphics_context)
+      if theme[:colorization]
+        colorize!(theme[:colorization][:color], theme[:colorization][:amount])
+      end
     end
   end
 
@@ -130,14 +137,31 @@ class Engine::Controller::Response
 
     amount = [amount,amount,amount,0] unless amount.kind_of? Array
     if amount.inject { |a,b| a + b } > 0
-      @graphics_context = @graphics_context.colorize(*([amount, color].flatten))
+      @graphics_context = graphics_context.colorize(*([amount, color].flatten))
     end
   end
 
   def prepare_graphics_context!
+    @graphics_context_valid = false
+  end
+
+  def graphics_context
+    make_grahpics_context_valid unless @graphics_context_valid
+    @graphics_context
+  end
+
+  def draw
+    make_graphics_context_valid unless @graphics_context_valid
+  end
+
+  def make_graphics_context_valid
     if @graphics_context then
-      @graphics_context.resize!(bounds.width, bounds.height)
-      @resultant_image.resize! bounds.width, bounds.height
+      if bounds.width != @graphics_context.columns || bounds.height != @graphics_context.rows
+        @graphics_context.resize!(bounds.width, bounds.height)
+      end
+      if bounds.width != @resultant_image.columns || bounds.height != @resultant_image.rows
+        @resultant_image.resize! bounds.width, bounds.height
+      end
     else
       @graphics_context = Magick::Image.new(bounds.width, bounds.height)
       @resultant_image  = Magick::Image.new(bounds.width, bounds.height)
@@ -146,6 +170,7 @@ class Engine::Controller::Response
     @resultant_image.matte_reset!
     @draw = Magick::Draw.new
     theme(default_theme || controller.class.theme)
+    @graphics_context_valid = true
   end
 
   # Returns true if this and all subcomponents are valid (do not need their images regenerated)
@@ -159,7 +184,7 @@ class Engine::Controller::Response
 
   def resultant_image
     unless valid?
-      @resultant_image.composite!(@graphics_context, 0, 0, Magick::CopyCompositeOp)
+      @resultant_image.composite!(graphics_context, 0, 0, Magick::CopyCompositeOp)
       view.components.each do |child|
         x, y = child.bounds.x, child.bounds.y
         sub_image = child.resultant_image

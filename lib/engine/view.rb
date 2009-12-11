@@ -2,7 +2,7 @@ module Engine::View
   class ViewError < StandardError
   end
 
-  class MissingInterfaceError < ViewError
+  class MissingViewError < ViewError
   end
 
   class InterfaceError < ViewError

@@ -3,23 +3,32 @@ module Engine::ContentLoader
   # As a last resort, looks for the file in "data/#{filename}".
   # The last ContentModule loaded has the highest priority and will be searched first.
   def find_file(*filenames)
-    filenames.flatten.each do |filename|
+    locations = [ ]
+    filenames.flatten!
+    filenames.each do |filename|
       return filename if File.file? filename
-
-      # Search the user-defined overrides first
-      fi = File.join(DIVINITY_ROOT, 'data/override', filename)
-      return fi if File.file? fi
-      locations = [ fi ]
-
-      load_content! unless @content_modules
-      # Order is reversed because we want the LAST plugin loaded to override any preceding it
-      @content_modules.reverse.each do |cm|
-        fi = File.join(cm.base_path, filename)
+      locations << filename
+      unless filename =~ /^([\/\\]|.:[\/\\])/ # don't treat absolute paths as relative ones
+        # Search the user-defined overrides first
+        fi = File.join(DIVINITY_ROOT, 'data/override', filename)
         return fi if File.file? fi
         locations << fi
+
+        load_content! unless @content_modules
+        # Order is reversed because we want the LAST plugin loaded to override any preceding it
+        @content_modules.reverse.each do |cm|
+          fi = File.join(cm.base_path, filename)
+          return fi if File.file? fi
+          locations << fi
+        end
       end
+
+      # See if it turns up if we stick an extension on the end
+      filenames << "#{filename}.rb" unless filename =~ /\.rb$/
     end
-    raise "Could not find any of:\n\t#{locations.join("\n\t")}"
+
+    sentence = locations.to_sentence
+    raise "Could not find file! Looked in #{sentence}"
   end
 
   # Takes a pattern or series of patterns and searches for their occurrance in each registered ContentModule
@@ -79,7 +88,7 @@ module Engine::ContentLoader
                             [ DIVINITY_ROOT ] +
                             Dir.glob(File.join(DIVINITY_ROOT, "vendor/mods", "*"))
 
-    Divinity.logger.debug "Detected content modules:"
-    @content_module_index.each { |i| Divinity.logger.debug "  #{i}" }
+    Divinity.system_logger.debug "Detected content modules:"
+    @content_module_index.each { |i| Divinity.system_logger.debug "  #{i}" }
   end
 end

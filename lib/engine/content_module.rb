@@ -55,12 +55,12 @@ class Engine::ContentModule
 
   # Searches {base_path}/app/models/**/*.rb for valid resources and adds a loader for each one found
   def find_available_resources()
-    Divinity.logger.debug "   Scanning resources in #{base_path}..."
+    Divinity.system_logger.debug "   Scanning resources in #{base_path}..."
     Dir.glob(File.join(base_path, "app/models/**", "*.rb")).each do |fi|
       if File.file? fi
         klass = fi.sub(/^#{Regexp::escape File.join(base_path, "app/models")}(.*)\.rb$/, '\1').camelize.constantize
         if klass.respond_to? :register_content_type
-          Divinity.logger.debug "      Found resource #{klass.name}"
+          Divinity.system_logger.debug "      Found resource #{klass.name}"
           klass.register_content_type
         end
       end

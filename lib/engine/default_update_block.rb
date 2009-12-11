@@ -31,5 +31,14 @@ module Engine::DefaultUpdateBlock
         end
       end unless dry_run?
     end
+
+    during_update do |ticks, engine|
+      if @controller
+        @controller.request.parameters[:delta] = ticks
+        if @controller.respond_to? :update
+          @controller.process(:update)
+        end
+      end
+    end
   end
 end

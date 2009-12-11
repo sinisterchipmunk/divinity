@@ -4,7 +4,7 @@ require 'rubigen'
 require 'divinity'
 
 #if %w(-v --version).include? ARGV.first
-#  puts "#{File.basename($0)} #{Divinity::Version::STRING}"
+#  puts "#{File.basename($0)} #{Divinity::VERSION::STRING}"
 #  exit(0)
 #end
 #

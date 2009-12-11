@@ -54,11 +54,10 @@ module Divinity
     end
 
     def load_divinity_gem
-      $LOAD_PATH << File.join(DIVINITY_ROOT, "../../../lib")
       if version = self.class.gem_version
-        #gem 'divinity', version
+        gem 'divinity', version
       else
-        #gem 'divinity'
+        gem 'divinity'
       end
     rescue Gem::LoadError => load_error
       $stderr.puts "Missing the Divinity #{version} gem. Please `gem install -v=#{version} divinity`, update your " +

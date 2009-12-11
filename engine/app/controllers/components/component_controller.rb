@@ -1,5 +1,3 @@
-## Concept
-
 class Components::ComponentController < Engine::Controller::Base
   helper :all
   

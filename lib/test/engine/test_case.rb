@@ -31,7 +31,7 @@ class Test::Engine::TestCase < Test::Unit::TestCase
   end
 
   def teardown_engine
-    Divinity.logger.debug "! TEST COMPLETE\n"
+    Divinity.system_logger.debug "! TEST COMPLETE\n"
     engine.stop! if engine
   end
 

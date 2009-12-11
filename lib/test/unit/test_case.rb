@@ -3,14 +3,14 @@ class Test::Unit::TestCase
   alias _add_error   add_error
 
   def add_failure(message, backtrace)
-    Divinity.logger.warn message
-    Divinity.logger.warn backtrace.first
+    Divinity.system_logger.warn message
+    Divinity.system_logger.warn backtrace.first
     _add_failure(message, backtrace)
   end
 
   def add_error(err)
-    Divinity.logger.error err.message
-    Divinity.logger.error err.backtrace.first
+    Divinity.system_logger.error err.message
+    Divinity.system_logger.error err.backtrace.first
     _add_error(err)
   end
 end

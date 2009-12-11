@@ -64,9 +64,17 @@ class OpenGl::Camera
     matrix.look_at! position, view, up
   end
 
-  # Sets the view to point at the specified position in world space. Up and right vectors are automatically
-  # recalculated; you should set these explicitly using orient! if you need a specific orientation.
+  # Sets the view to point at the specified position in world space, and then updates the OpenGL matrix so that the
+  # changes take effect immediately. Up and right vectors are automatically recalculated; you should set these
+  # explicitly using orient! if you need a specific orientation.
   def look_at!(*args)
+    look_at(*args)
+    look!
+  end
+
+  # Sets the view to point at the specified position in world space. Up and right vectors are automatically
+  # recalculated; you should set these explicitly using orient if you need a specific orientation.
+  def look_at(*args)
     x, y, z = if args.length == 1 then args[0].to_a else args end
 
     new_view = Vector3d.new(x,y,z) - position
@@ -78,13 +86,22 @@ class OpenGl::Camera
   # Explicitly sets this camera's orientation. This is a dangerous method, because it does NOT do any
   # calculations. So you must first manually verify that view, up and right are all at right angles to
   # each other, that they are relative to position, and that they are normalized!
-  def orient!(view, up, right, position = self.position)
+  def orient(view, up, right, position = self.position)
     @view = view
     @up = up
     @right = right
     @position = position
     matrix.look_at! self.position, self.view, self.up
     self
+  end
+
+  # Explicitly sets this camera's orientation, and then updates the OpenGL matrix so that the
+  # changes take effect immediately. This is a dangerous method, because it does NOT do any
+  # calculations. So you must first manually verify that view, up and right are all at right angles to
+  # each other, that they are relative to position, and that they are normalized!
+  def orient!(view, up, right, position = self.position)
+    orient(view, up, right, position)
+    look!
   end
 
   # Rotates the view vector of this Camera, effecting a "look" in a rotated direction. This is very useful

@@ -45,7 +45,7 @@ class Engine::View::Base
   end
 
   #include Helpers::ComponentHelper
-  delegate :engine, :request, :response, :mouse, :keyboard, :to => :controller
+  delegate :engine, :request, :response, :mouse, :keyboard, :params, :to => :controller
   delegate :components, :to => :layout
   delegate :center, :width, :height, :bounds, :to => :request
   delegate :current_theme, :to => :engine
@@ -67,16 +67,53 @@ class Engine::View::Base
     @layout
   end
 
-  def process
+  def process(options = {:layout => true})
     load
+    copy_ivars_from_controller
     locals = ""
-    @locals.keys.each { |k| locals += "#{k} = @locals[#{k.inspect};" }
-    layout :border
-    eval "#{locals}; #{@content}; instance_eval(&request.block) if request.block", binding, __FILE__, __LINE__
-    do_layout
+    @locals.keys.each { |k| locals += "#{k} = @locals[#{k.inspect}];" }
+    layout :border if options[:layout]
+    eval locals
+    eval @content, binding, @path, 1
+    instance_eval &request.block if request.block
+    do_layout if options[:layout]
   end
 
+  # Returns the result of a render that's dictated by the options hash. The primary options are:
+  #
+  # * <tt>:partial</tt> - See ActionView::Partials.
+  # * <tt>:file</tt> - Renders an explicit file, add :locals to pass in those.
+  #
+  # If no options hash is passed, the default is to render a partial and use the second parameter
+  # as the locals hash.
+  def render(options = {}, local_assigns = {}, &block) #:nodoc:
+    local_assigns ||= {}
+
+    case options
+    when Hash
+      options = options.reverse_merge(:locals => {})
+      if options[:layout]
+        _render_with_layout(options, local_assigns, &block)
+      elsif options[:file]
+        #template = self.view_paths.find_template(options[:file], template_format)
+        #template.render_template(self, options[:locals])
+      elsif options[:partial]
+        render_partial(options)
+      end
+    else
+      render_partial(:partial => options, :locals => local_assigns)
+    end
+  end  
+
   private
+  def copy_ivars_from_controller
+    if @controller
+      variables = @controller.instance_variable_names
+      variables -= @controller.protected_instance_variables if @controller.respond_to?(:protected_instance_variables)
+      variables.each { |name| instance_variable_set(name, @controller.instance_variable_get(name)) }
+    end
+  end
+
   def load
     @content = File.read(@path)
   end

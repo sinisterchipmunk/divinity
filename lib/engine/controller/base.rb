@@ -80,8 +80,8 @@ class Engine::Controller::Base
       options = { :event => options } unless options.kind_of? Hash
 
       params['action'] = action.to_s
-      initialize_view
       assign_names
+      initialize_view
       @_event = options.delete :event
       find_models(options)
       erase_results if response.completed?
@@ -305,8 +305,11 @@ class Engine::Controller::Base
         hidden_actions
     end
 
-    def default_view(action_name = self.action_name)
-      self.class.view_paths.find_view(default_view_name(action_name))
+    def default_view(action_name = self.action_name, cache_key = "#{self.class.name}-#{action_name}")
+      c = Divinity.cache.read(cache_key)
+      return c if c
+      Divinity.cache.write(cache_key, r = self.class.view_paths.find_view(engine, default_view_name(action_name)))
+      r
     end
 
     def default_view_name(action_name = self.action_name)
