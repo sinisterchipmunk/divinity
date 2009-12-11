@@ -24,15 +24,13 @@ class DivinityEngine
   private :blocks
 
   def initialize(*args, &blk)
-    @logger = Divinity.logger
-    #@logger.add(Log4r::Outputter.stdout)
     @options = HashWithIndifferentAccess.new(args.extract_options!.reverse_merge(default_options))
-    @logger.level = options[:log_level]
     @blocks = {}
     @state = :waiting
     @camera = OpenGl::Camera.new
     @mouse = Devices::Mouse.new(self)
     @keyboard = Devices::Keyboard.new(self)
+    @logger = Divinity.engine_logger
     load_content!
 
     during_init do
@@ -162,7 +160,6 @@ class DivinityEngine
         options[:width] = options[:height] = 1
         options[:noframe] = true
         options[:fullscreen] = false
-        options[:log_level] = Log4r::DEBUG
       end
       Textures::Font.invalidate!
       err("set video mode") unless (@sdl_screen = SDL.setVideoMode(options[:width], options[:height],
@@ -240,8 +237,7 @@ class DivinityEngine
     {
       :width => 640, :height => 480, :color_depth => 32, :fullscreen => false,
       :clear_on_render => GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
-      :theme => :default, :dry_run => ENV['DRY_RUN'] || false, :log_level => ENV['DRY_RUN'] || $DEBUG || $VERBOSE ?
-            Log4r::DEBUG : Log4r::INFO
+      :theme => :default, :dry_run => ENV['DRY_RUN'] || false
     }
     end
 end

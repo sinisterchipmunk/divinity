@@ -10,7 +10,11 @@ begin
     gem.files.concat FileList["ext/**/*.c"].to_a
     gem.files.concat FileList["ext/**/*.h"].to_a
     gem.files.concat FileList["**/*.rb"].to_a
+    gem.files.concat FileList["app_generators/**/*"].to_a
     gem.files.reject! { |i| i =~ /data\/cache/ }
+    gem.bindir = "bin"
+    gem.executables = ["divinity"]
+    gem.default_executable = "divinity"
     # dependencies
     gem.add_development_dependency "shoulda", ">= 0"
     gem.add_development_dependency "rake-compiler", ">= 0.7.0"

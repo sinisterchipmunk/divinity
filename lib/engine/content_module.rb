@@ -1,4 +1,4 @@
-# A ContentModule is a "module" (or plugin) that contains data to be loaded into Divinity.
+# A ContentModule is a "plugin" (or plugin) that contains data to be loaded into Divinity.
 #
 class Engine::ContentModule
   include Helpers::ContentHelper

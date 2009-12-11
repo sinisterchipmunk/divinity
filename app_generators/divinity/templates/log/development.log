@@ -1,0 +1,26 @@
+[DEBUG] 2009-12-11 02:46:46            Divinity::Templates - Detected content modules:
+[DEBUG] 2009-12-11 02:46:46            Divinity::Templates -   C:/projects/divinity/engine/engine
+[DEBUG] 2009-12-11 02:46:46            Divinity::Templates -   C:/projects/divinity/engine/app_generators/divinity/templates
+[DEBUG] 2009-12-11 02:46:46            Divinity::Templates -   C:/projects/divinity/engine/app_generators/divinity/templates/vendor/mods/ttt
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine - Content plugin load order:
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine -   C:/projects/divinity/engine/engine
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine -   C:/projects/divinity/engine/app_generators/divinity/templates
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine -   C:/projects/divinity/engine/app_generators/divinity/templates/vendor/mods/ttt
+[ INFO] 2009-12-11 02:46:46               Divinity::Engine - Loading plugin: C:/projects/divinity/engine/engine
+[DEBUG] 2009-12-11 02:46:46            Divinity::Templates -    Scanning resources in C:/projects/divinity/engine/engine...
+[DEBUG] 2009-12-11 02:46:46            Divinity::Templates -       Found resource Actor
+[DEBUG] 2009-12-11 02:46:46            Divinity::Templates -       Found resource Theme
+[DEBUG] 2009-12-11 02:46:46            Divinity::Templates -       Adding resource hook: theme => Theme
+[DEBUG] 2009-12-11 02:46:46            Divinity::Templates -       Adding resource hook: actor => Actor
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine -    Loading resources: themes and actors
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine -     Loading resource: themes
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine -       theme: C:/projects/divinity/engine/engine/resources/themes/default.rb
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine -     Loading resource: actors
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine -       actor: C:/projects/divinity/engine/engine/resources/actors/player.rb
+[ INFO] 2009-12-11 02:46:46               Divinity::Engine - Loading plugin: C:/projects/divinity/engine/app_generators/divinity/templates
+[DEBUG] 2009-12-11 02:46:46            Divinity::Templates -    Scanning resources in C:/projects/divinity/engine/app_generators/divinity/templates...
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine -    Loading resources: themes and actors
+[ INFO] 2009-12-11 02:46:46               Divinity::Engine - Loading plugin: C:/projects/divinity/engine/app_generators/divinity/templates/vendor/mods/ttt
+[DEBUG] 2009-12-11 02:46:46            Divinity::Templates -    Scanning resources in C:/projects/divinity/engine/app_generators/divinity/templates/vendor/mods/ttt...
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine -    Loading resources: themes and actors
+[DEBUG] 2009-12-11 02:46:46               Divinity::Engine - Content ready.

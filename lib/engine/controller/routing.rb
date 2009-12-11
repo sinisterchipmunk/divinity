@@ -1,4 +1,4 @@
-# This module is mixed into DivinityEngine and is responsible for providing a way to old with the various
+# This plugin is mixed into DivinityEngine and is responsible for providing a way to old with the various
 # controllers. It is initially called from Engine::ContentLoader.
 #
 module Engine::Controller::Routing
@@ -50,7 +50,7 @@ module Engine::Controller::Routing
 
   def dispatch_event(type, event)
     fire_event type, event unless paused?
-    current_interface.dispatch_event type, event
+    current_interface.dispatch_event type, event if current_interface
   end
 
   alias find_interface find_controller_instance

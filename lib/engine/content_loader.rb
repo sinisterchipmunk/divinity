@@ -12,7 +12,7 @@ module Engine::ContentLoader
       locations = [ fi ]
 
       load_content! unless @content_modules
-      # Order is reversed because we want the LAST module loaded to override any preceding it
+      # Order is reversed because we want the LAST plugin loaded to override any preceding it
       @content_modules.reverse.each do |cm|
         fi = File.join(cm.base_path, filename)
         return fi if File.file? fi
@@ -39,15 +39,15 @@ module Engine::ContentLoader
     @content_modules = []
 
     # Theoretically, the options hash contains a list of modules to load, and they should be loaded in order of
-    # appearance. If this is not the case, create them from the module index loaded earlier. Whatever order they
+    # appearance. If this is not the case, create them from the plugin index loaded earlier. Whatever order they
     # were detected in, that's the default load order.
     options[:module_load_order] ||= Engine::ContentLoader.detected_content_modules
 
-    logger.debug "Content module load order:"
+    logger.debug "Content plugin load order:"
     options[:module_load_order].each { |i| logger.debug("  #{i}") }
     
     options[:module_load_order].each do |mod|
-      logger.info "Loading module: #{mod}"
+      logger.info "Loading plugin: #{mod}"
       mod = Engine::ContentModule.new(mod, self)
       @content_modules << mod
       Resource::Base.add_resource_hooks!(self) # this is safe to call multiple times.
@@ -77,7 +77,7 @@ module Engine::ContentLoader
     # This affords the user an opportunity to disable or reorder the modules.
     @content_module_index = [ File.join(DIVINITY_GEM_ROOT, "engine") ] +
                             [ DIVINITY_ROOT ] +
-                            Dir.glob(File.join(DIVINITY_ROOT, "vendor/modules", "*"))
+                            Dir.glob(File.join(DIVINITY_ROOT, "vendor/mods", "*"))
 
     Divinity.logger.debug "Detected content modules:"
     @content_module_index.each { |i| Divinity.logger.debug "  #{i}" }

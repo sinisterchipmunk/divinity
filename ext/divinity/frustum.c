@@ -112,7 +112,7 @@ static VALUE rb_fUpdate(VALUE self)
     glGetDoublev(GL_MODELVIEW_MATRIX, modl);
     VALUE right  = CALL_GETTER(self, "right"),  left = CALL_GETTER(self, "left"),
           bottom = CALL_GETTER(self, "bottom"), top  = CALL_GETTER(self, "top"),
-         _far   = CALL_GETTER(self, "far"),    _near = CALL_GETTER(self, "near");
+         _far    = CALL_GETTER(self, "far"),    _near = CALL_GETTER(self, "near");
 
     /*
     ## Brutally ripped from my old C++ code, then reformatted to match the new Ruby classes. Math hasn't changed.

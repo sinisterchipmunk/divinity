@@ -1,11 +1,78 @@
-require 'divinity_engine'
+DIVINITY_ENV = (ENV['DIVINITY_ENV'] || 'development').dup unless defined?(DIVINITY_ENV)
+
+#require 'divinity_engine'
 
 module Divinity
-  logfile = File.join(DIVINITY_ROOT, "divinity.log")
-  @@logger = Log4r::Logger.new("divinity")
-  @@logger.outputters = Log4r::FileOutputter.new(logfile, :filename => logfile)
+  class << self
+    # The Configuration instance used to configure the Divinity environment
+    def configuration
+      @@configuration
+    end
 
-  def self.logger
-    @@logger
+    def configuration=(configuration)
+      @@configuration = configuration
+    end
+
+    def initialized?
+      @initialized || false
+    end
+
+    def initialized=(initialized)
+      @initialized = true
+    end
+
+    def logger
+      if defined?(DIVINITY_DEFAULT_LOGGER)
+        DIVINITY_DEFAULT_LOGGER
+      else
+        nil
+      end
+    end
+
+    def engine_logger
+      if defined?(DIVINITY_ENGINE_LOGGER)
+        DIVINITY_ENGINE_LOGGER
+      else
+        nil
+      end
+    end
+
+    def system_logger
+      if defined?(DIVINITY_SYSTEM_LOGGER)
+        DIVINITY_SYSTEM_LOGGER
+      else
+        nil
+      end
+    end
+
+    def backtrace_cleaner
+      @@backtrace_cleaner ||= begin
+        require 'divinity/backtrace_cleaner'
+        Divinity::BacktraceCleaner.new
+      end
+    end
+
+    def root
+      Pathname.new(DIVINITY_ROOT) if defined?(DIVINITY_ROOT)
+    end
+
+    def env
+      @_env ||= ActiveSupport::StringInquirer.new(DIVINITY_ENV)
+    end
+
+    def cache
+      DIVINITY_CACHE
+    end
+
+    def version
+      VERSION::STRING
+    end
   end
+
+#  unless defined?(DIVINITY_DEFAULT_LOGGER)
+#    log_path = File.directory?(File.join(DIVINITY_ROOT, "log")) ? File.join(DIVINITY_ROOT, "log") : DIVINITY_ROOT
+#    log_file = File.join(log_path, "divinity.log")
+#    DIVINITY_DEFAULT_LOGGER = Log4r::Logger.new("divinity")
+#    DIVINITY_DEFAULT_LOGGER.outputters = Log4r::FileOutputter.new(log_file, :filename => log_file)
+#  end
 end

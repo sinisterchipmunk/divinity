@@ -3,7 +3,7 @@
 #
 module Engine::Controller::Helpers
   def self.included(base)
-    # Initialize the base module to aggregate its helpers.
+    # Initialize the base plugin to aggregate its helpers.
     base.class_inheritable_accessor :master_helper_module
     base.master_helper_module = Module.new
 
@@ -15,7 +15,7 @@ module Engine::Controller::Helpers
     base.extend(Engine::Controller::Helpers::ClassMethods)
 
     base.class_eval do
-      # Wrap inherited to create a new master helper module for subclasses.
+      # Wrap inherited to create a new master helper plugin for subclasses.
       class << self
         alias_method_chain :inherited, :helper
       end
@@ -56,25 +56,25 @@ module Engine::Controller::Helpers
       end
     end
 
-    # Makes all the (instance) methods in the helper module available to views rendered through this controller.
+    # Makes all the (instance) methods in the helper plugin available to views rendered through this controller.
     def add_template_helper(helper_module) #:nodoc:
       master_helper_module.module_eval { include helper_module }
     end
 
-    # The +helper+ class method can take a series of helper module names, a block, or both.
+    # The +helper+ class method can take a series of helper plugin names, a block, or both.
     #
     # * <tt>*args</tt>: One or more modules, strings or symbols, or the special symbol <tt>:all</tt>.
     # * <tt>&block</tt>: A block defining helper methods.
     #
     # ==== Examples
     # When the argument is a string or symbol, the method will provide the "_helper" suffix, require the file
-    # and include the module in the template class.  The second form illustrates how to include custom helpers
+    # and include the plugin in the template class.  The second form illustrates how to include custom helpers
     # when working with namespaced controllers, or other cases where the file containing the helper definition is not
     # in one of Divinity's standard load paths:
     #   helper :foo             # => requires 'foo_helper' and includes FooHelper
     #   helper 'resources/foo'  # => requires 'resources/foo_helper' and includes Resources::FooHelper
     #
-    # When the argument is a module it will be included directly in the view class.
+    # When the argument is a plugin it will be included directly in the view class.
     #   helper FooHelper # => includes FooHelper
     #
     # When the argument is the symbol <tt>:all</tt>, the controller will include all helpers beneath

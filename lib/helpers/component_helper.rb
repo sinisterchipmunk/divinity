@@ -1,4 +1,4 @@
-# This module is included to Engine::View::Base by default and generates helper methods to assist with adding and laying
+# This plugin is included to Engine::View::Base by default and generates helper methods to assist with adding and laying
 # out components. It searches the Components namespace for all inheritors of Components::ComponentController, generating
 # the helper methods automatically. That way, each usage is identical for all components unless it is explicitly
 # overridden elsewhere.
