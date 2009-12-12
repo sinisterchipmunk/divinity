@@ -223,6 +223,8 @@ class Engine::Controller::Base
       response.process
     end
 
+    hide_action :render_view
+
     def render_text(text)
       raise Engine::Controller::NotImplemented
     end
@@ -237,7 +239,7 @@ class Engine::Controller::Base
       else
         begin
           render
-        rescue Engine::View::MissingInterfaceError => e
+        rescue Engine::View::MissingViewError => e
           if respond_to?(action_name)
             raise
           else

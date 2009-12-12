@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Colin MacKenzie IV (sinisterchipmunk)"]
-  s.date = %q{2009-12-11}
+  s.date = %q{2009-12-12}
   s.default_executable = %q{divinity}
   s.description = %q{A new kind of game engine}
   s.email = %q{sinisterchipmunk@gmail.com}
@@ -29,8 +29,10 @@ Gem::Specification.new do |s|
      "app_generators/divinity/divinity_generator.rb",
      "app_generators/divinity/templates/README",
      "app_generators/divinity/templates/Rakefile",
-     "app_generators/divinity/templates/app/controllers/application.rb",
      "app_generators/divinity/templates/app/controllers/application_controller.rb",
+     "app_generators/divinity/templates/app/controllers/controller.rb",
+     "app_generators/divinity/templates/app/helpers/application_helper.rb",
+     "app_generators/divinity/templates/app/helpers/helper.rb",
      "app_generators/divinity/templates/app/views/application/_framerate.rb",
      "app_generators/divinity/templates/app/views/application/index.rb",
      "app_generators/divinity/templates/application.rb",
@@ -46,15 +48,20 @@ Gem::Specification.new do |s|
      "app_generators/divinity/templates/log/development.log",
      "app_generators/divinity/templates/log/production.log",
      "app_generators/divinity/templates/log/test.log",
-     "app_generators/divinity/templates/script/about",
      "app_generators/divinity/templates/script/console",
      "app_generators/divinity/templates/script/destroy",
      "app_generators/divinity/templates/script/generate",
-     "app_generators/divinity/templates/script/plugin",
+     "app_generators/divinity/templates/script/winscript.cmd",
      "app_generators/divinity/templates/test/test_helper.rb",
      "bin/divinity",
      "divinity.gemspec",
-     "divinity.log",
+     "divinity_generators/controller/USAGE",
+     "divinity_generators/controller/controller_generator.rb",
+     "divinity_generators/controller/templates/_framerate.rb",
+     "divinity_generators/controller/templates/controller.rb",
+     "divinity_generators/controller/templates/functional_test.rb",
+     "divinity_generators/controller/templates/helper.rb",
+     "divinity_generators/controller/templates/view.rb",
      "engine/app/controllers/components/button_controller.rb",
      "engine/app/controllers/components/component_controller.rb",
      "engine/app/controllers/components/panel_controller.rb",
@@ -234,7 +241,9 @@ Gem::Specification.new do |s|
      "test/engine/engine_test_case_test.rb",
      "test/frustum_test.rb",
      "test/octree_test.rb",
+     "test/test_controller_generator.rb",
      "test/test_divinity.rb",
+     "test/test_generator_helper.rb",
      "test/test_helper.rb",
      "test/unit/extensions/array_test.rb",
      "test/unit/extensions/fixnum_test.rb",
@@ -344,7 +353,9 @@ Gem::Specification.new do |s|
      "test/engine/engine_test_case_test.rb",
      "test/frustum_test.rb",
      "test/octree_test.rb",
+     "test/test_controller_generator.rb",
      "test/test_divinity.rb",
+     "test/test_generator_helper.rb",
      "test/test_helper.rb",
      "test/unit/extensions/array_test.rb",
      "test/unit/extensions/fixnum_test.rb",

@@ -59,7 +59,7 @@ class DivinityEngine
     response.insets.bottom_right.x = width
     response.insets.bottom_right.y = height
     @controller = controller.new(self, request, response)
-    @controller.process(:index, Events::ControllerCreatedEvent.new(@controller))
+    @controller.process(action, Events::ControllerCreatedEvent.new(@controller))# if @controller.respond_to? action
   end
 
   def initialized?

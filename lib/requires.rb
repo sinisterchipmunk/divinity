@@ -20,7 +20,6 @@ end
 #$LOAD_PATH << File.dirname(__FILE__)
 ActiveSupport::Dependencies.load_paths << File.dirname(__FILE__)
 ActiveSupport::Dependencies.load_once_paths << File.dirname(__FILE__)
-puts ActiveSupport::Dependencies.load_paths
 Dir[File.join(File.dirname(__FILE__), "dependencies", "**", "*.rb")].each do |fi|
   require fi if File.file?(fi)
 end

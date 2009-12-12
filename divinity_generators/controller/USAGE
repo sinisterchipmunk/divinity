@@ -1,0 +1,6 @@
+Description:
+    Creates a Divinity Engine controller. Engine controllers are the highest
+level of your application.
+  
+Usage:
+    script/generate controller controller_name [action1 action2]  

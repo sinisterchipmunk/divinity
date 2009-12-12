@@ -22,14 +22,7 @@ class DivinityGenerator < RubiGen::Base
   def manifest
     # Use /usr/bin/env if no special shebang was specified
     script_options     = { :chmod => 0755, :shebang => options[:shebang] == DEFAULT_SHEBANG ? nil : options[:shebang] }
-    #windows            = (RUBY_PLATFORM =~ /dos|win32|cygwin/i) || (RUBY_PLATFORM =~ /(:?mswin|mingw)/)
-
-    assigns = { :assigns => {
-      :module_name => module_name,
-      :app_name => app_name
-    } }
-
-    script_options.merge! assigns
+    windows            = (RUBY_PLATFORM =~ /dos|win32|cygwin/i) || (RUBY_PLATFORM =~ /(:?mswin|mingw)/)
 
     record do |m|
       # Root directory and all subdirectories.
@@ -37,32 +30,33 @@ class DivinityGenerator < RubiGen::Base
       DIRS.each { |f| m.directory f }
       m.directory "app/views/#{module_name.underscore}"
 
-      # Test helper
-      m.template "Rakefile",                                   "Rakefile", assigns
+      # templates
+      m.template "Rakefile",                                   "Rakefile"
       m.template "application.rb",                             "#{module_name.underscore}.rb",  script_options
-      m.template "app/controllers/application.rb",             "app/controllers/application_controller.rb",  script_options
-      m.template "app/controllers/application_controller.rb",  "app/controllers/#{module_name.underscore}_controller.rb", assigns
-      m.template "app/views/application/_framerate.rb",        "app/views/#{module_name.underscore}/_framerate.rb", assigns
-      m.template "app/views/application/index.rb",             "app/views/#{module_name.underscore}/index.rb", assigns
-      m.file     "README",                                     "README", assigns
-      m.template "config/environments/development.rb",         "config/environments/development.rb", assigns
-      m.template "config/environments/production.rb",          "config/environments/production.rb", assigns
-      m.template "config/environments/test.rb",                "config/environments/test.rb", assigns
-      m.template "config/initializers/backtrace_silencers.rb", "config/initializers/backtrace_silencers.rb", assigns
-      m.template "config/initializers/inflections.rb",         "config/initializers/inflections.rb", assigns
-      m.file     "config/locales/en.yml",                      "config/locales/en.yml", assigns
-      m.template "config/boot.rb",                             "config/boot.rb", assigns
-      m.template "config/environment.rb",                      "config/environment.rb", assigns
-      m.file     "doc/README_FOR_APP",                         "doc/README_FOR_APP", assigns
-      m.file     "log/development.log",                        "log/development.log", assigns
-      m.file     "log/production.log",                         "log/production.log", assigns
-      m.file     "log/test.log",                               "log/test.log", assigns
-      m.template "script/about",                               "script/about",     script_options
-      m.template "script/console",                             "script/console",   script_options
-      m.template "script/destroy",                             "script/destroy",   script_options
-      m.template "script/generate",                            "script/generate",  script_options
-      m.template "script/plugin",                              "script/plugin",    script_options
-      m.template "test/test_helper.rb",                        "test/test_helper.rb", assigns
+      m.template "app/controllers/application_controller.rb",  "app/controllers/application_controller.rb"
+      m.template "app/helpers/application_helper.rb",          "app/helpers/application_helper.rb"
+      m.template "app/controllers/controller.rb",              "app/controllers/#{module_name.underscore}_controller.rb"
+      m.template "app/helpers/helper.rb",                      "app/helpers/#{module_name.underscore}_helper.rb"
+      m.template "app/views/application/_framerate.rb",        "app/views/#{module_name.underscore}/_framerate.rb"
+      m.template "app/views/application/index.rb",             "app/views/#{module_name.underscore}/index.rb"
+      m.template "config/environments/development.rb",         "config/environments/development.rb"
+      m.template "config/environments/production.rb",          "config/environments/production.rb"
+      m.template "config/environments/test.rb",                "config/environments/test.rb"
+      m.template "config/initializers/backtrace_silencers.rb", "config/initializers/backtrace_silencers.rb"
+      m.template "config/initializers/inflections.rb",         "config/initializers/inflections.rb"
+      m.template "config/boot.rb",                             "config/boot.rb"
+      m.template "config/environment.rb",                      "config/environment.rb"
+      m.template "test/test_helper.rb",                        "test/test_helper.rb"
+
+      # static files
+      m.file_copy_each %w(README config/locales/en.yml doc/README_FOR_APP log/development.log log/production.log
+                          log/test.log)
+
+      # scripts
+      %w(console destroy generate plugin).each do |file|
+        m.template "script/#{file}", "script/#{file}", script_options
+        m.template "script/winscript.cmd", "script/#{file}.cmd", :assigns => { :filename => file } if windows
+      end
     end
   end
 
