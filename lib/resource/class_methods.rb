@@ -17,5 +17,9 @@ module Resource::ClassMethods
   def resource_map
     @resources ||= HashWithIndifferentAccess.new
   end
+
+  def attribute(*args)
+    random_access_attr *args
+  end
 end
   

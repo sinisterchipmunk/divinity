@@ -2,27 +2,33 @@ class InterfaceGenerator < RubiGen::Base
 
   default_options :author => nil
 
-  attr_reader :name
+  attr_reader :name, :file_name, :class_name
 
   def initialize(runtime_args, runtime_options = {})
     super
     usage if args.empty?
     @name = args.shift
+    @actions = args.dup
+    @file_name = @name.underscore
+    @class_name = @name.camelize
     extract_options
   end
 
   def manifest
     record do |m|
       # Ensure appropriate folder(s) exists
-      m.directory 'some_folder'
+      m.directory 'app/controllers/interfaces'
+      m.directory 'app/helpers/interfaces'
+      m.directory "app/views/interfaces/#{file_name}"
+      m.directory 'test/functional/interfaces'
 
       # Create stubs
-      # m.template           "template.rb.erb", "some_file_after_erb.rb"
-      # m.template_copy_each ["template.rb", "template2.rb"]
-      # m.template_copy_each ["template.rb", "template2.rb"], "some/path"
-      # m.file           "file", "some_file_copied"
-      # m.file_copy_each ["path/to/file", "path/to/file2"]
-      # m.file_copy_each ["path/to/file", "path/to/file2"], "some/path"
+      m.template 'app/controller.rb', "app/controllers/interfaces/#{file_name}_controller.rb"
+      m.template 'app/helper.rb',     "app/helpers/interfaces/#{file_name}_helper.rb"
+      actions.each do |action|
+        m.template 'app/view.rb',       "app/views/interfaces/#{file_name}/#{action}.rb",
+                   :assigns => { :action => action }
+      end
     end
   end
 

@@ -51,8 +51,7 @@ class DivinityEngine
     end
     #action = (action || "index").to_s
     options[:delta] ||= 0
-    raise ArgumentError, "Expected a controller name" unless controller
-    controller = "#{controller.to_s.camelize}Controller".constantize
+    controller = find_controller(controller)
     logger.debug "Loading controller: #{controller}, action: #{action}"
     if @current_controller.class != controller
       request = Engine::Controller::Request.new(self, Geometry::Rectangle.new(0,0,width,height), options)
@@ -64,6 +63,12 @@ class DivinityEngine
     if action
       @process_action = { :action => action, :event => Events::ControllerCreatedEvent.new(@current_controller) }
     end
+  end
+
+  # Returns the controller which the specified controller name routes to
+  def find_controller(controller)
+    raise ArgumentError, "Expected a controller name" unless controller
+    "#{controller.to_s.camelize}Controller".constantize
   end
 
   def initialized?

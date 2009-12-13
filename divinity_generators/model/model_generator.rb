@@ -17,18 +17,14 @@ class ModelGenerator < RubiGen::Base
 
   def manifest
     record do |m|
-      raise "Not implemented yet"
-      # Ensure appropriate folder(s) exists
-      #m.directory 'some_folder'
+      m.directory "app/models"
+      m.directory "test/unit"
+      #m.directory "test/fixtures"
 
       # Create stubs
-
-      # m.template           "template.rb.erb", "some_file_after_erb.rb"
-      # m.template_copy_each ["template.rb", "template2.rb"]
-      # m.template_copy_each ["template.rb", "template2.rb"], "some/path"
-      # m.file           "file", "some_file_copied"
-      # m.file_copy_each ["path/to/file", "path/to/file2"]
-      # m.file_copy_each ["path/to/file", "path/to/file2"], "some/path"
+      m.template "model.rb",     "app/models/#{file_name}.rb"
+      m.template "unit_test.rb", "test/unit/#{file_name}.rb"
+      #m.template "fixture.yml",  "test/fixtures/#{file_name}.yml"
     end
   end
 

@@ -16,6 +16,7 @@ class Test::Engine::TestCase < Test::Unit::TestCase
   # parameters to send as part of the request.
   def controller(name, action = nil, options = {})
     action, options = nil, options.merge(action) if action.kind_of? Hash
+    action = 'index' if action.nil? and @engine.find_controller(name).action_methods.include? 'index'
     @engine.assume_controller(name, action, options)
   end
 
@@ -30,7 +31,7 @@ class Test::Engine::TestCase < Test::Unit::TestCase
     @engine = DivinityEngine.new(:width => 800, :height => 600, :fullscreen => false)
     @time = 0
 
-    @engine.during_update do |ticks|
+    @engine.before_update do |ticks|
       # convert ticks to seconds and add it to timer; stop the engine if timer > timeout
       @time += (ticks / 1000.0)
       @engine.stop! if time > timeout

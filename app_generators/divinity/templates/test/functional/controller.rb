@@ -6,7 +6,6 @@ class <%=class_name%>Test < Test::Engine::TestCase
   end
 
   def test_index_works
-    action :index
     assert true
   end
 end
