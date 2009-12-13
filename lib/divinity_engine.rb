@@ -16,7 +16,7 @@ class DivinityEngine
   include Engine::DefaultBlocks
   include Helpers::EventListeningHelper
 
-  attr_reader :state, :ticks, :interval, :options, :camera, :mouse, :keyboard, :logger, :current_controller
+  attr_reader :state, :ticks, :interval, :options, :camera, :mouse, :keyboard, :logger, :current_controller, :framerate
   attr_accessor :current_theme
 
   def blocks(type)
@@ -39,23 +39,31 @@ class DivinityEngine
     @initialized = true
   end
 
-  def assume_controller(controller_name, action, options = {})
+  # Find the controller with the specified name and makes it the current controller. If it is already the current
+  # controller, then the current instance is retained. If action is nil, then it will not be processed; otherwise,
+  # the specified action will be processed (either immediately or, if the engine is not yet running, when it is
+  # started). Any other options will be sent to the controller as part of the request parameters.
+  def assume_controller(controller_name, action = 'index', options = {})
     controller = controller_name
     if action.kind_of? Hash
       options.merge!(action)
       action = options.delete(:action)
     end
-    action = (action || "index").to_s
+    #action = (action || "index").to_s
     options[:delta] ||= 0
     raise ArgumentError, "Expected a controller name" unless controller
     controller = "#{controller.to_s.camelize}Controller".constantize
     logger.debug "Loading controller: #{controller}, action: #{action}"
-    request = Engine::Controller::Request.new(self, Geometry::Rectangle.new(0,0,width,height), options)
-    response = Engine::Controller::Response.new
-    response.insets.bottom_right.x = width
-    response.insets.bottom_right.y = height
-    @current_controller = controller.new(self, request, response)
-    @current_controller.process(action, Events::ControllerCreatedEvent.new(@current_controller))# if @current_controller.respond_to? action
+    if @current_controller.class != controller
+      request = Engine::Controller::Request.new(self, Geometry::Rectangle.new(0,0,width,height), options)
+      response = Engine::Controller::Response.new
+      response.insets.bottom_right.x = width
+      response.insets.bottom_right.y = height
+      @current_controller = controller.new(self, request, response)
+    end
+    if action
+      @process_action = { :action => action, :event => Events::ControllerCreatedEvent.new(@current_controller) }
+    end
   end
 
   def initialized?
@@ -141,6 +149,11 @@ class DivinityEngine
 
       while @state != :stopping
         @state = :running unless @state == :paused
+        if @process_action
+          @current_controller.process(@process_action[:action],
+                                      @process_action[:event])# if @current_controller.respond_to? @process_action[:action]
+          @process_action = false
+        end
         update
         render
         SDL.GLSwapBuffers()

@@ -11,8 +11,23 @@ class Test::Engine::TestCase < Test::Unit::TestCase
     @timeout
   end
 
+  # Sets the controller to the one named. If action is not specified, it defaults to 'index', although if the engine
+  # hasn't been started yet, this can be changed to another action before it fires. The options hash can contain any
+  # parameters to send as part of the request.
+  def controller(name, action = nil, options = {})
+    action, options = nil, options.merge(action) if action.kind_of? Hash
+    @engine.assume_controller(name, action, options)
+  end
+
+  # Sets the action to the one named. This takes place immediately if the engine is already running, or it takes place
+  # when the engine is started if it's currently stopped or paused. The options hash can contain any parameters to send
+  # as part of the request.
+  def action(name, options = {})
+    @engine.assume_controller(@engine.current_controller.controller_name, name, options)
+  end
+
   def setup_engine
-    @engine = DivinityEngine.new(:dry_run => true)
+    @engine = DivinityEngine.new(:width => 800, :height => 600, :fullscreen => false)
     @time = 0
 
     @engine.during_update do |ticks|

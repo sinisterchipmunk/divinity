@@ -7,8 +7,8 @@ module Divinity
     def boot!
       unless booted?
         preinitialize
-        require File.join(DIVINITY_ROOT, "config/environment") ### FIXME: This belongs in the various startup scripts!
         pick_boot.run
+        require File.join(DIVINITY_ROOT, "config/environment") ### FIXME: This belongs in the various startup scripts!
       end
     end
 
@@ -44,6 +44,7 @@ module Divinity
     def load_initializer
       require File.join(DIVINITY_ROOT, "vendor/divinity/lib/divinity/initializer")
       Divinity::Initializer.run(:install_gem_spec_stubs)
+      Divinity::GemDependency.add_frozen_gem_path
     end
   end
 

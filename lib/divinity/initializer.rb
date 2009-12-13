@@ -333,7 +333,9 @@ Run `rake gems:install` to install the missing gems.
         config = configuration
         constants = self.class.constants
 
-        eval(IO.read(configuration.environment_path), binding, configuration.environment_path)
+        if File.exist? configuration.environment_path
+          eval(IO.read(configuration.environment_path), binding, configuration.environment_path)
+        end
 
         (self.class.constants - constants).each do |const|
           Object.const_set(const, self.class.const_get(const))
@@ -392,7 +394,7 @@ Run `rake gems:install` to install the missing gems.
           Log4r::FileOutputter.new('logfile', :formatter => formatter, :filename => configuration.log_path)
           logger = Log4r::Logger.new('Divinity')
           logger.add('logfile')
-          logger.add('console') unless configuration.environment == 'production'
+          logger.add('console') if configuration.environment == 'development'
           logger = Log4r::Logger.new("Divinity::#{configuration.logger_name}")
         rescue StandardError => e
           Log4r::Logger.root.level = Log4r::WARN

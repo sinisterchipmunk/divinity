@@ -1,3 +1,4 @@
+$LOAD_PATH << File.join(File.dirname(__FILE__), "../ext/divinity")
 require File.join('divinity.so')
 
 # gem dependencies and core files

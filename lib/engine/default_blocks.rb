@@ -14,7 +14,7 @@ module Engine::DefaultBlocks
       end
     end
     
-    after_init { assume_controller(@options.delete(:controller), @options.delete(:action)) }
+    after_init { assume_controller(@options.delete(:controller), @options.delete(:action) || 'index') if options.key? :controller }
   end
 
   def add_default_render_blocks
@@ -64,10 +64,24 @@ module Engine::DefaultBlocks
     end
 
     during_update do |ticks, engine|
+      @framecount = @framecount.to_i + 1
+      @seconds_passed = @seconds_passed.to_i + ticks
+      if @seconds_passed > 1000 # update framerate every 1 second
+        @framerate = @framecount
+        @framecount = 0
+        @seconds_passed = 0
+      end
+
       if current_controller
         current_controller.request.parameters[:delta] = ticks
         if current_controller.respond_to? :update
-          current_controller.process(:update)
+          # By saving the overhead of calling #process for an action as frequently-called as #update, we can
+          # save 500 frames per second (on my box)! I'm not seeing any side effects, either, so far.
+          #current_controller.send(:erase_results)
+          #current_controller.update if current_controller.respond_to? :update
+          #current_controller.send(:render, :action => 'update') ## this is what's killing the FPS
+          #current_controller.process(:update)
+          current_controller.process(:update, :render => false, :models => false)
         end
       end
     end

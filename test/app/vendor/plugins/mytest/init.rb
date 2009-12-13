@@ -1,1 +1,1 @@
-puts "PLUGIN LOADED"
+Divinity.system_logger.debug "PLUGIN LOADED"

@@ -8,7 +8,8 @@ namespace :test do
     t.verbose = true
   end
 
-  Rake::TestTask.new(:engine => [:check_dependencies]) do |t|
+  desc "Run all functional tests"
+  Rake::TestTask.new(:functional => [:check_dependencies]) do |t|
     t.libs << "lib"
     t.libs << "test"
     t.test_files = "test/engine/**/*_test.rb"
@@ -18,7 +19,7 @@ namespace :test do
   desc 'Run all tests'
   task :all do |t|
     Rake::Task['test:unit'].invoke
-    Rake::Task['test:engine'].invoke
+    Rake::Task['test:functional'].invoke
   end
 end
 

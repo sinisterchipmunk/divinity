@@ -7,9 +7,6 @@ class <%=module_name%>Controller < ApplicationController
     @colors = [[1,0,0,1],             # red, green, blue, alpha
                [0,1,0,1],
                [0,0,1,1]]
-    @framerate = 0
-    @framecount = 0
-    @seconds_passed = 0
   end
 
   # The #update method fires between frames, every frame. You can use this to safely process application logic that
@@ -27,13 +24,5 @@ class <%=module_name%>Controller < ApplicationController
 
     # we want the camera to always be pointed at the squares
     engine.look_at 0, 0, -5
-
-    @framecount += 1
-    @seconds_passed += delta
-    if @seconds_passed > 1000 # update framerate every 1 second
-      @framerate = @framecount
-      @framecount = 0
-      @seconds_passed = 0
-    end
   end
 end

@@ -18,7 +18,6 @@ class Engine::Controller::Base
   # PanelController). Note that the View and Model do not maintain this relationship; component hierarchy is a function
   # of the controllers. The actual assignment of the parent controller, however, takes place in
   # Helpers::ComponentHelper.
-  #
   attr_accessor :parent
 
   attr_internal :request
@@ -27,7 +26,7 @@ class Engine::Controller::Base
   attr_internal :event
   attr_internal :engine
 
-  attr_reader :mouse, :keyboard#, :event_queue
+  attr_reader :mouse, :keyboard
   delegate :width, :height, :bounds, :bounds=, :translate, :translate_absolute, :contains?, :to => :request
   delegate :insets, :preferred_size, :minimum_size, :maximum_size, :resultant_image, :valid?, :to => :response
   delegate :components, :to => :response
@@ -59,14 +58,8 @@ class Engine::Controller::Base
             options[:event] = Events::Generic.new(action, model)
           end
 
-          #TODO: Replace with real logging.
-          puts "#{controller_name} - #{action}: #{options.inspect}" if dump_events(action)
+          engine.logger.debug "#{controller_name} - #{action}: #{options.inspect}" if dump_events(action)
 
-          # decided to let the proxies scan the devices directly for the most up-to-date info
-    #      case options[:event]
-    #        when Events::MouseEvent then @mouse.update(options[:event])
-    #        when Events::KeyEvent   then @keyboard.update(options[:event])
-    #      end
           # All events are optional, and only result in actions if the controller responds_to? them.
           if self.class.action_methods.include? action
             process action, options
@@ -74,31 +67,23 @@ class Engine::Controller::Base
         end
       end
     end
-  
+
     def process(action, options = {})
       @processing = true
       options = { :event => options } unless options.kind_of? Hash
+
+      should_render = options.delete(:render) == false ? false : true
+      should_find_models = options.delete(:models) == false ? false : true
 
       params['action'] = action.to_s
       assign_names
       initialize_view
       @_event = options.delete :event
-      find_models(options)
-      erase_results if response.completed?
-      perform_action
+      find_models(options) if should_find_models
+      perform_action(should_render)
       @processing = false
 
       response.do_redirect if performed_redirect?
-
-      
-#      # these are calls to #fire_event! that could not be processed because an action was already processing.
-#      # basically we just treat each of them as a call to redirect_to, and since there's nothing else to do,
-#      # we do each redirect in turn. If one of those results in another action firing, it's added to the queue,
-#      # and processed last.
-#      event_queue.each do |action|
-#        redirect_to action
-#        response.do_redirect
-#      end
     end
 
     # Fired events have the expected functionality (they are sent to any action listeners), and additionally
@@ -229,16 +214,16 @@ class Engine::Controller::Base
       raise Engine::Controller::NotImplemented
     end
 
-    def perform_action
+    def perform_action(should_render)
       if action_methods.include?(action_name)
         send(action_name)
-        render unless performed?
+        render unless performed? || !should_render
       elsif respond_to? :method_missing
         method_missing action_name
-        render unless performed?
+        render unless performed? || !should_render
       else
         begin
-          render
+          render unless !should_render
         rescue Engine::View::MissingViewError => e
           if respond_to?(action_name)
             raise
@@ -252,8 +237,10 @@ class Engine::Controller::Base
     end
 
     def initialize_view
-      response.view = Engine::View::Base.new(self)
-      response.view.helpers.send :include, self.class.master_helper_module
+      unless response.view
+        response.view = Engine::View::Base.new(self)
+        response.view.helpers.send :include, self.class.master_helper_module
+      end
       erase_results
     end
 

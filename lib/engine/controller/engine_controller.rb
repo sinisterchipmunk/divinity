@@ -13,7 +13,9 @@ class Engine::Controller::EngineController < Engine::Controller::Base
     response.process(:defer_rendering => true)
   rescue Engine::View::MissingViewError => err
     # Fail silently if an update view can't be found -- but only if it's the Update view :)
-    raise unless action_name == 'update' and err.message =~ /\/update\.rb/
+    unless action_name == 'update' and err.message =~ /\/update\.rb/
+      raise
+    end
   end
 
   private
