@@ -1,6 +1,4 @@
-## Concept
-
-class Components::Button < Engine::Model::Base
+class Components::Button
   attr_accessor :state
   attr_accessor :caption
 

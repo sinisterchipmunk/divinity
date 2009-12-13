@@ -1,3 +1,3 @@
-class Engine::Model::Base
-  
+class Engine::Model::Base < Resource::Base
+
 end

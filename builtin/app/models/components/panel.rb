@@ -1,2 +1,2 @@
-class Components::Panel < Engine::Model::Base
+class Components::Panel
 end

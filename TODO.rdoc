@@ -5,7 +5,7 @@ Figured I'd better start making a list of to-do items somewhere. Comments in sou
   "interface do [setup interface] end" syntax. If both are supplied, it should evaluate the interface specified by the
   controller followed by the one in the view.
 
-* Add generators for: interface, plugin, content_module, mod (same as content_module), resource
+* Add generators for: interface, plugin, content_module, mod (same as content_module), model (resource)
 
 * Implement :mouse_entered, :mouse_exited interface events.
 
