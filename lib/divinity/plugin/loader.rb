@@ -82,14 +82,15 @@ module Divinity
         end
 
         def add_engine_controller_paths
-          ActionController::Routing.controller_paths += engines.collect(&:controller_path)
+#          ActionController::Routing.controller_paths += engines.collect(&:controller_path)
         end
 
         def add_engine_view_paths
+          Engine::Controller::ViewPaths.default_view_paths.concat engines.collect(&:view_path).reverse
           # reverse it such that the last engine can overwrite view paths from the first
-          paths = ActionView::PathSet.new(engines.collect(&:view_path).reverse)
-          ActionController::Base.view_paths.concat(paths)
-          ActionMailer::Base.view_paths.concat(paths) if configuration.frameworks.include?(:action_mailer)
+#          paths = ActionView::PathSet.new(engines.collect(&:view_path).reverse)
+#          ActionController::Base.view_paths.concat(paths)
+#          ActionMailer::Base.view_paths.concat(paths) if configuration.frameworks.include?(:action_mailer)
         end
 
         # The locate_plugins method uses each class in config.plugin_locators to

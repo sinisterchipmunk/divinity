@@ -1,3 +1,0 @@
-module Components::PanelHelper
-
-end

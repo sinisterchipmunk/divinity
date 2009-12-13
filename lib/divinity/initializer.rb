@@ -8,6 +8,7 @@ require 'divinity/version'
 require 'divinity/plugin/locator'
 require 'divinity/plugin/gem_locator'
 require 'divinity/plugin/loader'
+require 'divinity/content_module/loader'
 require 'divinity/gem_dependency'
 
 DIVINITY_ENV = (ENV['DIVINITY_ENV'] || 'development').dup unless defined?(DIVINITY_ENV)
@@ -41,6 +42,9 @@ module Divinity
     # The set of loaded plugins.
     attr_reader :loaded_plugins
 
+    # The set of loaded content modules.
+    attr_reader :loaded_content_modules
+
     # Whether or not all the gem dependencies have been met
     attr_reader :gems_dependencies_loaded
 
@@ -64,6 +68,7 @@ module Divinity
     def initialize(configuration)
       @configuration = configuration
       @loaded_plugins = []
+      @loaded_content_modules = []
     end
 
     # Sequentially step through all of the available initialization routines,
@@ -103,6 +108,7 @@ module Divinity
 
       load_gems
       load_plugins
+      load_content_modules
 
       # pick up any gems that plugins depend on
       add_gem_load_paths
@@ -299,6 +305,20 @@ Run `rake gems:install` to install the missing gems.
       plugin_loader.load_plugins
     end
 
+    # Loads all content modules in <tt>config.content_module_paths</tt>, which defaults to <tt>vendor/mods</tt> but
+    # may also be set to a list of paths, such as
+    #   config.content_module_paths = ["#{DIVINITY_ROOT}/lib/mods", "#{DIVINITY_ROOT}/vendor/mods"]
+    #
+    # If the file config/content_modules.yml is found, then the modules will be loaded in the order specified there.
+    # Otherwise, all content modules will be loaded alphabetically.
+    def load_content_modules
+      content_module_loader.load_modules
+    end
+
+    def content_module_loader
+      @module_loader ||= configuration.content_module_loader.new(self)
+    end
+
     def plugin_loader
       @plugin_loader ||= configuration.plugin_loader.new(self)
     end
@@ -372,19 +392,12 @@ Run `rake gems:install` to install the missing gems.
           Log4r::FileOutputter.new('logfile', :formatter => formatter, :filename => configuration.log_path)
           logger = Log4r::Logger.new('Divinity')
           logger.add('logfile')
-          logger.add('console')
+          logger.add('console') unless configuration.environment == 'production'
           logger = Log4r::Logger.new("Divinity::#{configuration.logger_name}")
-#          logger = ActiveSupport::BufferedLogger.new(configuration.log_path)
-#          logger.level = ActiveSupport::BufferedLogger.const_get(configuration.log_level.to_s.upcase)
-#          if configuration.environment == "production"
-#            logger.auto_flushing = false
-#          end
         rescue StandardError => e
           Log4r::Logger.root.level = Log4r::WARN
           Log4r::Logger.new('Divinity').add('console')
           logger = Log4r::Logger.new("Divinity::#{configuration.logger_name}")
-#          logger = ActiveSupport::BufferedLogger.new(STDERR)
-#          logger.level = ActiveSupport::BufferedLogger::WARN
           logger.warn $!.message
           logger.warn(
             "Divinity Error: Unable to access log file. Please ensure that #{configuration.log_path} exists and is chmod 0666. " +

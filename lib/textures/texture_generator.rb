@@ -38,7 +38,7 @@ class Textures::TextureGenerator < Textures::Texture
       end
       "#{v}-"
     end
-    "#{self.class.name.underscore}-#{key.join(".")}".gsub(/[^a-zA-Z0-9\.\-_\[\]\=\+\^\\\/]/, '')
+    Digest::MD5.hexdigest("#{self.class.name.underscore}-#{key.join(".")}")
   end
 
   def generate

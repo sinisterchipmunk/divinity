@@ -1,5 +1,9 @@
 DIVINITY_ENV = (ENV['DIVINITY_ENV'] || 'development').dup unless defined?(DIVINITY_ENV)
 
+unless defined? DIVINITY_FRAMEWORK_ROOT
+  DIVINITY_FRAMEWORK_ROOT = File.expand_path(ENV['DIVINITY_FRAMEWORK_ROOT'] || File.join(File.dirname(__FILE__), ".."))
+end
+
 #require 'divinity_engine'
 
 module Divinity

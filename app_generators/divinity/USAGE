@@ -1,0 +1,5 @@
+divinity [app_name]
+
+This will create a directory called [app_name] containing a skeleton
+application. This skeleton will, by default, include a controller called
+AppNameController and a startup script called [app_name].rb.

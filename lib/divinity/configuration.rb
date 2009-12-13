@@ -104,6 +104,12 @@ module Divinity
     # the implementation of Divinity::Plugin::Loader for more details.
     attr_accessor :plugin_loader
 
+    # The path to the root of the content module directory. By default, it is in <tt>vendor/mods</tt>.
+    attr_accessor :content_module_paths
+
+    # The class that handles loading each Content Module. Defaults to Divinity::ContentModule::Loader.
+    attr_accessor :content_module_loader
+
     # Enables or disables plugin reloading.  You can get around this setting per plugin.
     # If <tt>reload_plugins?</tt> is false, add this to your plugin's <tt>init.rb</tt>
     # to make it reloadable:
@@ -196,6 +202,8 @@ module Divinity
       self.plugin_paths                 = default_plugin_paths
       self.plugin_locators              = default_plugin_locators
       self.plugin_loader                = default_plugin_loader
+      self.content_module_paths         = default_content_module_paths
+      self.content_module_loader        = default_content_module_loader
       self.database_configuration_file  = default_database_configuration_file
       self.routes_configuration_file    = default_routes_configuration_file
       self.gems                         = default_gems
@@ -309,10 +317,10 @@ module Divinity
         paths.concat(Dir["#{root_path}/test/mocks/#{environment}"]) if File.exists?("#{root_path}/test/mocks/#{environment}")
 
         # Add the app's controller directory
-        paths.concat(Dir["#{root_path}/app/controllers/"])
+        paths.concat(Dir["#{root_path}/app/controllers"])
 
         # Followed by the standard includes.
-        paths.concat %w(
+        dirs = %w(
           app
           app/models
           app/controllers
@@ -320,7 +328,11 @@ module Divinity
           app/services
           lib
           vendor
-        ).map { |dir| "#{root_path}/#{dir}" }.select { |dir| File.directory?(dir) }
+        )
+        paths.concat dirs.map { |dir| "#{root_path}/#{dir}" }.select { |dir| File.directory?(dir) }
+        paths.concat dirs.map { |dir| "#{framework_root_path}/builtin/#{dir}" }.select { |dir| File.directory?(dir) }
+        
+        paths.uniq
       end
 
       # Doesn't matter since plugins aren't in load_paths yet.
@@ -397,6 +409,14 @@ module Divinity
 
       def default_plugin_loader
         Plugin::Loader
+      end
+
+      def default_content_module_paths
+        ["#{root_path}/vendor/mods"]
+      end
+
+      def default_content_module_loader
+        ContentModule::Loader
       end
 
       def default_cache_store

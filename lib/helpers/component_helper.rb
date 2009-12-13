@@ -5,7 +5,7 @@
 #
 
 module Helpers::ComponentHelper
-  Dir.glob(File.join(DIVINITY_GEM_ROOT, "engine/app/interface/controllers/components/*.rb")).each do |fi|
+  Dir.glob(File.join(DIVINITY_FRAMEWORK_ROOT, "builtin/app/interface/controllers/components/*.rb")).each do |fi|
     next unless File.file?(fi) and not fi =~ /\.svn/
     require_dependency fi
   end
@@ -23,8 +23,8 @@ module Helpers::ComponentHelper
       code = <<-end_code
         def #{const.controller_name}(*args, &block)
           layout_arguments = get_layout_arguments(args)
-          request = Engine::Controller::Request.new(engine, Geometry::Rectangle.new(0,0,1,1), *args, &block)
-          comp = #{const.name}.new(engine, request, Engine::Controller::Response.new)
+          request = Engine::Controller::Request.new(builtin, Geometry::Rectangle.new(0,0,1,1), *args, &block)
+          comp = #{const.name}.new(builtin, request, Engine::Controller::Response.new)
           comp.parent = controller
           layout.add_layout_component(comp, *layout_arguments) if layout
         end

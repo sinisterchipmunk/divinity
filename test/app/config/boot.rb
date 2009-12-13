@@ -7,8 +7,8 @@ module Divinity
     def boot!
       unless booted?
         preinitialize
-        pick_boot.run
         require File.join(DIVINITY_ROOT, "config/environment") ### FIXME: This belongs in the various startup scripts!
+        pick_boot.run
       end
     end
 
@@ -55,11 +55,11 @@ module Divinity
     end
 
     def load_divinity_gem
-      $LOAD_PATH << File.join(DIVINITY_ROOT, "../../lib")
+      $LOAD_PATH << File.join(File.dirname(__FILE__), '../../../lib')
       if version = self.class.gem_version
-      #  gem 'divinity', version
+        #gem 'divinity', version
       else
-      #  gem 'divinity'
+        #gem 'divinity'
       end
     rescue Gem::LoadError => load_error
       $stderr.puts "Missing the Divinity #{version} gem. Please `gem install -v=#{version} divinity`, update your " +

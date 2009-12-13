@@ -31,6 +31,7 @@ class DivinityGenerator < RubiGen::Base
       m.directory "app/views/#{module_name.underscore}"
 
       # templates
+      m.template "winapp.cmd",                                 "#{module_name.underscore}.cmd", :assigns => { :filename => module_name.underscore }
       m.template "Rakefile",                                   "Rakefile"
       m.template "application.rb",                             "#{module_name.underscore}.rb",  script_options
       m.template "app/controllers/application_controller.rb",  "app/controllers/application_controller.rb"
@@ -50,7 +51,7 @@ class DivinityGenerator < RubiGen::Base
 
       # static files
       m.file_copy_each %w(README config/locales/en.yml doc/README_FOR_APP log/development.log log/production.log
-                          log/test.log)
+                          log/test.log resources/resource_map.yml)
 
       # scripts
       %w(console destroy generate plugin).each do |file|
@@ -84,12 +85,13 @@ class DivinityGenerator < RubiGen::Base
     doc
     lib/tasks
     log
-    resources
+    resources/actors
     script
     test/fixtures
     test/functional
     test/unit
     tmp/cache
     vendor/mods
+    vendor/plugins
   )
 end

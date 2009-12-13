@@ -51,16 +51,16 @@ module Divinity
         # Attempts to create a plugin from the given path. If the created plugin is valid?
         # (see Rails::Plugin#valid?) then the plugin instance is returned; otherwise nil.
         def create_plugin(path)
-          plugin = Rails::Plugin.new(path)
+          plugin = Divinity::Plugin.new(path)
           plugin.valid? ? plugin : nil
         end
 
-        # This starts at the base path looking for valid plugins (see Rails::Plugin#valid?).
+        # This starts at the base path looking for valid plugins (see Divinity::Plugin#valid?).
         # Since plugins can be nested arbitrarily deep within an unspecified number of intermediary
         # directories, this method runs recursively until it finds a plugin directory, e.g.
         #
         #     locate_plugins_under('vendor/plugins/acts/acts_as_chunky_bacon')
-        #     => <Rails::Plugin name: 'acts_as_chunky_bacon' ... >
+        #     => <Divinity::Plugin name: 'acts_as_chunky_bacon' ... >
         #
         def locate_plugins_under(base_path)
            Dir.glob(File.join(base_path, '*')).sort.inject([]) do |plugins, path|

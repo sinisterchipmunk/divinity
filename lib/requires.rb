@@ -8,6 +8,7 @@ else
 end
 require 'matrix'
 require 'mathn'
+require 'digest/md5'
 
 # core extensions
 require 'extensions/magick_extensions'

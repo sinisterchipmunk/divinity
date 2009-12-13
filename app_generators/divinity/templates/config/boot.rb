@@ -7,8 +7,8 @@ module Divinity
     def boot!
       unless booted?
         preinitialize
-        pick_boot.run
         require File.join(DIVINITY_ROOT, "config/environment") ### FIXME: This belongs in the various startup scripts!
+        pick_boot.run
       end
     end
 

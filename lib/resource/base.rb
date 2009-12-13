@@ -4,9 +4,9 @@ class Resource::Base
   attr_reader :engine
   random_access_attr :id, :name, :description
 
-  def initialize(id, engine, &block)
+  def initialize(id, &block)
     @id = id
-    @engine = engine
+    #@engine = engine
 
     name @id.to_s.titleize
     description "No description."
@@ -18,11 +18,11 @@ class Resource::Base
   def revert_to_defaults!
   end
 
-  def respond_to?(*args, &block)
-    super or engine.respond_to? *args, &block
-  end
-
-  def method_missing(*args, &block)
-    engine.respond_to?(args[0]) ? engine.send(*args, &block) : super
-  end
+#  def respond_to?(*args, &block)
+#    super or engine.respond_to? *args, &block
+#  end
+#
+#  def method_missing(*args, &block)
+#    engine.respond_to?(args[0]) ? engine.send(*args, &block) : super
+#  end
 end

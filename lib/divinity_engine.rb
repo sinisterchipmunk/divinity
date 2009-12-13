@@ -3,19 +3,20 @@ require File.join(File.dirname(__FILE__), 'dependencies')
 # If the cursor is hidden (SDL.showCursor(0)) and the input is grabbed (SDL::WM.grabInput(SDL_GRAB_ON)),
 # then the mouse will give relative motion events even when the cursor reaches
 # the edge fo the screen.
+#
 # TODO: Provide an API for this in the DivinityEngine without forcing the user to old directly to SDL.
+# (This is an ongoing effort -- some parts of SDL are wrapped nicely, and some parts are quite hokey.)
 #
 # Note: Joystick support not yet implemented.
 class DivinityEngine
   include Gl
-  include Engine::ContentLoader
+  include Engine::Resources
   include Engine::Controller::Routing
   include Engine::Delegation
-  include Engine::DefaultRenderBlock
-  include Engine::DefaultUpdateBlock
+  include Engine::DefaultBlocks
   include Helpers::EventListeningHelper
 
-  attr_reader :state, :ticks, :interval, :options, :camera, :mouse, :keyboard, :logger
+  attr_reader :state, :ticks, :interval, :options, :camera, :mouse, :keyboard, :logger, :current_controller
   attr_accessor :current_theme
 
   def blocks(type)
@@ -31,13 +32,8 @@ class DivinityEngine
     @mouse = Devices::Mouse.new(self)
     @keyboard = Devices::Keyboard.new(self)
     @logger = Divinity.engine_logger
-    load_content!
 
-    during_init { self.current_theme = themes(options[:theme]) }
-    after_init { assume_controller(@options.delete(:controller), @options.delete(:action)) }
-
-    add_default_render_block
-    add_default_update_block
+    add_default_blocks
 
     during_render &blk if block_given?
     @initialized = true
@@ -58,8 +54,8 @@ class DivinityEngine
     response = Engine::Controller::Response.new
     response.insets.bottom_right.x = width
     response.insets.bottom_right.y = height
-    @controller = controller.new(self, request, response)
-    @controller.process(action, Events::ControllerCreatedEvent.new(@controller))# if @controller.respond_to? action
+    @current_controller = controller.new(self, request, response)
+    @current_controller.process(action, Events::ControllerCreatedEvent.new(@current_controller))# if @current_controller.respond_to? action
   end
 
   def initialized?

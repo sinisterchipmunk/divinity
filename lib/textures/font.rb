@@ -119,12 +119,13 @@ class Textures::Font < Textures::TextureGenerator
   end
   
   def do_generation(options)
-    fn = "tmp/cache/font"
-    options.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |n,v| fn = "#{fn}_#{n}-#{v}" }; fn = "#{fn}.png"
+    fn = File.expand_path(File.join(DIVINITY_ROOT, "tmp/cache/font/#{cache_key}.png"))
+    #options.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |n,v| fn = "#{fn}_#{n}-#{v}" }; fn = "#{fn}.png"
     if File.exists? fn
       load_font(options, fn)
     else
       gen_font(options)
+      File.makedirs(File.dirname(fn))
       File.open(fn, "wb") { |file| file.print self.image.to_blob { self.format = 'PNG' } }
     end
   end

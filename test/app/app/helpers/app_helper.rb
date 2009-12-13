@@ -1,0 +1,3 @@
+module AppHelper
+
+end

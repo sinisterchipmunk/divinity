@@ -1,0 +1,13 @@
+# This file is used to map your resources to the objects they represent.
+#
+# You don't need to use this file unless you have a nonstandard folder layout.
+# For instance, you could call the "actors" folder "characters" instead, and then
+# your map file would contain:
+#
+#   characters: Actor
+#
+# Divinity will be smart enough to create a "characters" method within the engine,
+# as well, so you can reference characters(:player) within the engine just like
+# you can reference actors(:player) by default.
+#
+actors: Actor
