@@ -1,12 +1,6 @@
 Figured I'd better start making a list of to-do items somewhere. Comments in source code only go so far. Following is
 **probably** the order I'll work in, but I reserve the right to jump around in a completely unpredictable fashion.
 
-* Add an "interface" class method for engine controllers. Alternatively, an engine controller's view should accept an
-  "interface do [setup interface] end" syntax. If both are supplied, it should evaluate the interface specified by the
-  controller followed by the one in the view.
-
-* Add generators for: interface, plugin, content_module, mod (same as content_module), model (resource)
-
 * Implement :mouse_entered, :mouse_exited interface events.
 
 * Implement keyboard events of all flavors, namely :key_pressed, :key_released, :key_typed
