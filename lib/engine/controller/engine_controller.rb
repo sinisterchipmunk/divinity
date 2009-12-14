@@ -32,6 +32,10 @@ class Engine::Controller::EngineController < Engine::Controller::Base
     end
   end
 
+  def components
+    response.view.interface ? [response.view.interface] : []
+  end
+
   def render_view(path, locals = {})
     @performed_render = true
     response.view.path = path

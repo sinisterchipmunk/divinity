@@ -195,6 +195,9 @@ class Engine::Controller::Base
     end
 
     def render_view(path, locals = {})
+      unless respond_to?(action_name)
+        eval "def #{action_name}; end", (class << self; self; end).send(:binding)
+      end
       @performed_render = true
       ## TODO: something like view.copy_ivars_from(self)
       response.view.path = path
@@ -223,7 +226,8 @@ class Engine::Controller::Base
             raise
           else
             raise Engine::Controller::UnknownAction,
-                  "No action responded to #{action_name}. Actions: #{action_methods.sort.to_sentence(:locale => :en)}",
+                  "No action responded to #{action_name} in controller #{self.class.name}. " +
+                        "Actions: #{action_methods.sort.to_sentence(:locale => :en)}",
                   caller
           end
         end

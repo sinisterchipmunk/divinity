@@ -18,6 +18,7 @@ class ModelGenerator < RubiGen::Base
   def manifest
     record do |m|
       m.directory "app/models"
+      m.directory "resources/#{name.pluralize.underscore}"
       m.directory "test/unit"
       #m.directory "test/fixtures"
 

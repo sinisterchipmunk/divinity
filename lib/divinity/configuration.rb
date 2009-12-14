@@ -369,7 +369,8 @@ module Divinity
       end
 
       def default_view_path
-        File.join(root_path, 'app', 'views')
+        File.join('app', 'views')
+        #File.join(root_path, 'app', 'views')
       end
 
       def default_controller_paths

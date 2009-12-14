@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Colin MacKenzie IV (sinisterchipmunk)"]
-  s.date = %q{2009-12-13}
+  s.date = %q{2009-12-14}
   s.default_executable = %q{divinity}
   s.description = %q{A new kind of game engine}
   s.email = %q{sinisterchipmunk@gmail.com}
@@ -159,7 +159,6 @@ Gem::Specification.new do |s|
      "lib/divinity_engine.rb",
      "lib/divinity_test_help.rb",
      "lib/engine/cache.rb",
-     "lib/engine/content_module/class_methods.rb",
      "lib/engine/controller.rb",
      "lib/engine/controller/base.rb",
      "lib/engine/controller/class_methods.rb",
@@ -167,6 +166,7 @@ Gem::Specification.new do |s|
      "lib/engine/controller/event_dispatching.rb",
      "lib/engine/controller/helpers.rb",
      "lib/engine/controller/input_device_proxy.rb",
+     "lib/engine/controller/interface_controller.rb",
      "lib/engine/controller/keyboard_proxy.rb",
      "lib/engine/controller/mouse_proxy.rb",
      "lib/engine/controller/request.rb",
@@ -182,6 +182,7 @@ Gem::Specification.new do |s|
      "lib/engine/view/engine_view.rb",
      "lib/errors.rb",
      "lib/errors/event_errors.rb",
+     "lib/errors/file_missing.rb",
      "lib/errors/resource_mapping.rb",
      "lib/errors/resource_not_found.rb",
      "lib/extensions/array.rb",
@@ -248,15 +249,18 @@ Gem::Specification.new do |s|
      "test/app/app/controllers/another_controller.rb",
      "test/app/app/controllers/app_controller.rb",
      "test/app/app/controllers/application_controller.rb",
+     "test/app/app/controllers/interfaces/main_menu_controller.rb",
      "test/app/app/controllers/t_controller.rb",
      "test/app/app/helpers/another_helper.rb",
      "test/app/app/helpers/app_helper.rb",
      "test/app/app/helpers/application_helper.rb",
+     "test/app/app/helpers/interfaces/main_menu_helper.rb",
      "test/app/app/helpers/t_helper.rb",
      "test/app/app/views/another/_framerate.rb",
      "test/app/app/views/another/test.rb",
      "test/app/app/views/app/_framerate.rb",
      "test/app/app/views/app/index.rb",
+     "test/app/app/views/interfaces/main_menu/index.rb",
      "test/app/app/views/t/_framerate.rb",
      "test/app/app/views/t/index.rb",
      "test/app/config/boot.rb",
@@ -393,15 +397,18 @@ Gem::Specification.new do |s|
     "test/app/app/controllers/another_controller.rb",
      "test/app/app/controllers/application_controller.rb",
      "test/app/app/controllers/app_controller.rb",
+     "test/app/app/controllers/interfaces/main_menu_controller.rb",
      "test/app/app/controllers/t_controller.rb",
      "test/app/app/helpers/another_helper.rb",
      "test/app/app/helpers/application_helper.rb",
      "test/app/app/helpers/app_helper.rb",
+     "test/app/app/helpers/interfaces/main_menu_helper.rb",
      "test/app/app/helpers/t_helper.rb",
      "test/app/app/views/another/test.rb",
      "test/app/app/views/another/_framerate.rb",
      "test/app/app/views/app/index.rb",
      "test/app/app/views/app/_framerate.rb",
+     "test/app/app/views/interfaces/main_menu/index.rb",
      "test/app/app/views/t/index.rb",
      "test/app/app/views/t/_framerate.rb",
      "test/app/app.rb",

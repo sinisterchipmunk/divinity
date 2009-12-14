@@ -1,7 +1,7 @@
-class Components::ComponentController < Engine::Controller::Base
+class Components::ComponentController < Engine::Controller::InterfaceController#Base
   helper :all
   
-  append_view_path File.join("app/interface/views")
+  #append_view_path File.join("app/views/interface")
 
   # When an event is fired, we should expect the standard event functionality (via #on), but additionally,
   # the parent controller should receive the event automatically as an action. If the parent doesn't respond

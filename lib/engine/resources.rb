@@ -14,13 +14,19 @@ module Engine::Resources
         return fi if File.file? fi
         locations << fi
 
-        load_content! unless @content_modules
-        # Order is reversed because we want the LAST plugin loaded to override any preceding it
-        @content_modules.reverse.each do |cm|
-          fi = File.join(cm.base_path, filename)
-          return fi if File.file? fi
-          locations << fi
-        end
+        # Then search the divinity engine core
+        fi = File.join(DIVINITY_FRAMEWORK_ROOT, "builtin", filename)
+        return fi if File.file? fi
+        locations << fi
+
+
+#        load_content! unless @content_modules
+#        # Order is reversed because we want the LAST plugin loaded to override any preceding it
+#        @content_modules.reverse.each do |cm|
+#          fi = File.join(cm.base_path, filename)
+#          return fi if File.file? fi
+#          locations << fi
+#        end
       end
 
       # See if it turns up if we stick an extension on the end
@@ -28,7 +34,7 @@ module Engine::Resources
     end
 
     sentence = locations.to_sentence
-    raise "Could not find file! Looked in #{sentence}"
+    raise Errors::FileMissing, "Could not find file! Looked in #{sentence}"
   end
 
   # Takes a pattern or series of patterns and searches for their occurrance in each registered ContentModule

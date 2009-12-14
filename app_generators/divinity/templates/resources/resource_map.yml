@@ -10,4 +10,4 @@
 # as well, so you can reference characters(:player) within the engine just like
 # you can reference actors(:player) by default.
 #
-actors: Actor
+characters: Actor

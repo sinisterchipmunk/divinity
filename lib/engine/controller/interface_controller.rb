@@ -15,6 +15,8 @@
 # Mouse inputs directly via #keyboard and #mouse.
 #
 class Engine::Controller::InterfaceController < Engine::Controller::Base
+  hide_action :initialize_view
+
   def initialize_view
     super
     singleton_class = class << response.view; self; end

@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+ENV['DIVINITY_ENV'] = 'test'
 APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
 begin

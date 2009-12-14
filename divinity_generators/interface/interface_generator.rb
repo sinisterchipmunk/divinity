@@ -3,7 +3,6 @@ class InterfaceGenerator < RubiGen::Base
   default_options :author => nil
 
   attr_reader :name, :file_name, :class_name, :actions
-  hide_action :initialize_view
   
   def initialize(runtime_args, runtime_options = {})
     super

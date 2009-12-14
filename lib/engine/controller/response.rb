@@ -143,7 +143,6 @@ class Engine::Controller::Response
   end
 
   def prepare_graphics_context!
-    puts "preparing #{controller.class}"
     #@graphics_context_valid = false
     make_graphics_context_valid
   end
@@ -192,7 +191,6 @@ class Engine::Controller::Response
   def resultant_image
     unless valid?
       #make_graphics_context_valid
-      #puts controller.class
       @resultant_image.composite!(graphics_context, 0, 0, Magick::CopyCompositeOp)
       view.components.each do |child|
         x, y = child.bounds.x, child.bounds.y

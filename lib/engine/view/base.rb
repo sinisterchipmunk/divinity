@@ -47,6 +47,7 @@ class Engine::View::Base
   delegate :current_theme, :to => :engine
   delegate :theme, :to => :response
 
+  attr_reader :interface
   attr_accessor :path, :locals
   attr_reader :controller, :helpers
 
@@ -71,11 +72,11 @@ class Engine::View::Base
     copy_ivars_from_controller
     locals = ""
     @locals.keys.each { |k| locals += "#{k} = @locals[#{k.inspect}];" }
-    layout :border if options[:layout]
+    layout :border# if options[:layout]
     eval locals
     eval @content, binding, @path, 1
     instance_eval &request.block if request.block
-    do_layout if options[:layout]
+    do_layout# if options[:layout]
 
     if controller.respond_to?(:interface) && controller.interface && !rendered_interface?
       render :interface => controller.interface
@@ -132,13 +133,12 @@ class Engine::View::Base
         raise ArgumentError, "Not an #{i}" unless interface.ancestors.include? i
     end
 
-    puts interface
-    if interface.respond_to?(:ancestors)
+    if interface.respond_to?(:ancestors) && !@interface.kind_of?(interface)
       request = Engine::Controller::Request.new(engine, Geometry::Rectangle.new(controller.request.bounds))
       request.parameters.merge!(params.reverse_merge(:theme => response.default_theme))
       @interface = interface.new(engine, request, Engine::Controller::Response.new)
       @interface.process(:index)
-    else
+    elsif !@interface.kind_of?(interface)
       @interface = interface
     end
 

@@ -27,7 +27,7 @@ class Engine::Controller::ViewPaths < Array
     return c if c
     Divinity.cache.write(cache_key, r = engine.find_file(self.collect { |path| File.join(path, name) }))
     r
-  rescue
+  rescue Errors::FileMissing
     raise Engine::View::MissingViewError, $!.message#"No view found for action: #{name} in view path #{self.inspect}"
   end
 end
