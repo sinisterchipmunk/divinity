@@ -1,2 +1,4 @@
-# TODO: Add some default view
-# similar to "Interfaces::<%=class_name%>#<%=action%>, find me in app/views/interfaces/<%=file_name%>/<%=action%>.rb"
+panel :center do
+  button :north, "Interfaces::<%=class_name%>#<%=action%>"
+  button :center, "Find me in app/views/interfaces/<%=file_name%>/<%=action%>.rb"
+end
