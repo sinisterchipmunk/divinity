@@ -2,7 +2,7 @@ class InterfaceGenerator < RubiGen::Base
 
   default_options :author => nil
 
-  attr_reader :name, :file_name, :class_name
+  attr_reader :name, :file_name, :class_name, :actions
 
   def initialize(runtime_args, runtime_options = {})
     super
@@ -35,9 +35,9 @@ class InterfaceGenerator < RubiGen::Base
   protected
     def banner
       <<-EOS
-Creates a ...
+Creates a user interface for the Divinity engine
 
-USAGE: #{$0} #{spec.name} name
+USAGE: #{$0} #{spec.name} name [action1 action2 ...]
 EOS
     end
 

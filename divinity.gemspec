@@ -52,6 +52,7 @@ Gem::Specification.new do |s|
      "app_generators/divinity/templates/script/console",
      "app_generators/divinity/templates/script/destroy",
      "app_generators/divinity/templates/script/generate",
+     "app_generators/divinity/templates/script/plugin",
      "app_generators/divinity/templates/script/winscript.cmd",
      "app_generators/divinity/templates/test/functional/controller.rb",
      "app_generators/divinity/templates/test/test_helper.rb",
