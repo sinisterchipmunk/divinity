@@ -1,4 +1,6 @@
 class AppController < ApplicationController
+  interface :main_menu
+
   # The only action that fires every frame is the #update action. Each other action fires only once, when it is first
   # triggered. By default the #index action will fire when the engine is initialized.
   def index

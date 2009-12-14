@@ -3,12 +3,15 @@ class InterfaceGenerator < RubiGen::Base
   default_options :author => nil
 
   attr_reader :name, :file_name, :class_name, :actions
-
+  hide_action :initialize_view
+  
   def initialize(runtime_args, runtime_options = {})
     super
     usage if args.empty?
     @name = args.shift
-    @actions = args.dup
+    @actions = %w(index mouse_pressed mouse_released mouse_clicked mouse_moved mouse_dragged key_pressed key_released
+                  key_typed)
+    #@actions = args.dup
     @file_name = @name.underscore
     @class_name = @name.camelize
     extract_options
@@ -37,7 +40,7 @@ class InterfaceGenerator < RubiGen::Base
       <<-EOS
 Creates a user interface for the Divinity engine
 
-USAGE: #{$0} #{spec.name} name [action1 action2 ...]
+USAGE: #{$0} #{spec.name} name
 EOS
     end
 

@@ -1,32 +1,25 @@
-# Controllers are essentially the user old logic of the engine. They are used primarily to tie models to views,
-# or to trigger engine events such as pausing, loading a new location, ending the program, etc.
-#
-# Controller actions are fired once, while an action is being performed. After the controller action has completed,
-# its corresponding view is rendered to an offscreen buffer. That buffer is displayed every frame until a new action
-# is performed, and the process repeats.
-#
 class Engine::Controller::Base
   include Helpers::EventListeningHelper
   include Engine::Controller::Helpers
   include Engine::Controller::EventDispatching
   extend  Engine::Controller::ClassMethods
 
-  attr_accessor :action_name
-
   # Some controllers have parent controllers. For instance, if you add a Button to a Panel, that Button's controller
   # (an instance of ButtonController) would have its parent set to the Panel's controller (an instance of
   # PanelController). Note that the View and Model do not maintain this relationship; component hierarchy is a function
   # of the controllers. The actual assignment of the parent controller, however, takes place in
-  # Helpers::ComponentHelper.
+  # Helpers::ComponentHelper. That means that unless those helpers are added to the View (*not* this Controller),
+  # parent will always be nil.
   attr_accessor :parent
 
+  attr_accessor :action_name
   attr_internal :request
   attr_internal :response
   attr_internal :params
   attr_internal :event
   attr_internal :engine
-
   attr_reader :mouse, :keyboard
+  
   delegate :width, :height, :bounds, :bounds=, :translate, :translate_absolute, :contains?, :to => :request
   delegate :insets, :preferred_size, :minimum_size, :maximum_size, :resultant_image, :valid?, :to => :response
   delegate :components, :to => :response
@@ -41,6 +34,7 @@ class Engine::Controller::Base
       
       @focused = self
       assign_shortcuts(engine, request, response)
+      initialize_view
 
       response.default_theme = params.delete(:theme) if params.key?(:theme)
     end

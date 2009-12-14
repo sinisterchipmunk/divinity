@@ -2,6 +2,9 @@ class Geometry::Rectangle
   attr_accessor :x, :y, :width, :height
   
   def initialize(x=0, y=0, w=0, h=0)
+    if x.kind_of? Geometry::Rectangle
+      x, y, w, h = x.to_a
+    end
     @x = x
     @y = y
     @width = w

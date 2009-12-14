@@ -29,10 +29,6 @@
 #   end
 #
 class Engine::View::Base
-  # Should we be doing this??? An alternative would be to include it into a singleton view during #process...
-  include Helpers::ComponentHelper
-
-
   class ProxyModule < Module
     def initialize(receiver)
       @receiver = receiver
@@ -67,8 +63,11 @@ class Engine::View::Base
     @layout
   end
 
-  def process(options = {:layout => true})
+  def process(options = {:layout => components_pending?})
     load
+    # If components are pending before the view is processed, then it must have been processed recently
+    # or there'd be no components. So disable component building this time.
+    #@allow_interface_building = !!components_pending?
     copy_ivars_from_controller
     locals = ""
     @locals.keys.each { |k| locals += "#{k} = @locals[#{k.inspect}];" }
@@ -77,6 +76,21 @@ class Engine::View::Base
     eval @content, binding, @path, 1
     instance_eval &request.block if request.block
     do_layout if options[:layout]
+
+    if controller.respond_to?(:interface) && controller.interface && !rendered_interface?
+      render :interface => controller.interface
+    end
+  end
+
+  def rendered_interface?
+    @rendered_interface
+  end
+
+  # Returns true if there are components waiting to be laid out for this action.
+  # This is most useful for optimization: Helpers::ComponentHelper logs when a component is created,
+  # and if no components are created then we don't need to bother with the layout.
+  def components_pending?
+    not layout.components.empty?
   end
 
   # Returns the result of a render that's dictated by the options hash. The primary options are:
@@ -101,10 +115,54 @@ class Engine::View::Base
         #template.render_template(self, options[:locals])
       elsif options[:partial]
         render_file(options.merge({:file => _pick_partial_path(options.delete(:partial))}))
+      elsif options[:interface]
+        render_interface(options[:interface])
+      else raise ArgumentError, "Valid arguments for render are :layout, :file, :partial, :interface; received #{options.inspect}"
       end
     else
       render_file(:file => _pick_partial_path(options), :locals => local_assigns)
     end
+  end
+
+  def render_interface(interface)
+    case interface
+      when Symbol, String
+        interface = Engine::Controller::Base.find(interface)
+        i = Engine::Controller::InterfaceController
+        raise ArgumentError, "Not an #{i}" unless interface.ancestors.include? i
+    end
+
+    puts interface
+    if interface.respond_to?(:ancestors)
+      request = Engine::Controller::Request.new(engine, Geometry::Rectangle.new(controller.request.bounds))
+      request.parameters.merge!(params.reverse_merge(:theme => response.default_theme))
+      @interface = interface.new(engine, request, Engine::Controller::Response.new)
+      @interface.process(:index)
+    else
+      @interface = interface
+    end
+
+    if i = @interface.response.resultant_image
+      ortho(engine.width, engine.height) do
+        glEnable GL_TEXTURE_2D
+        glColor4f 1,1,1,1
+        (gl = i.to_gl).bind do
+          x, y = @interface.request.bounds.x, @interface.request.bounds.y
+          w, h = @interface.request.bounds.width, @interface.request.bounds.height
+          glBegin GL_QUADS
+            gl.coord2f 0, 0
+            glVertex3i(x, y,0)
+            gl.coord2f 0, 1
+            glVertex3i(x, y+h,0)
+            gl.coord2f 1, 1
+            glVertex3i(x+w, y+h, 0)
+            gl.coord2f 1, 0
+            glVertex3i(x+w, y, 0)
+          glEnd
+        end
+      end
+    end
+    @rendered_interface = true
   end
 
   def render_file(options)
@@ -135,7 +193,8 @@ class Engine::View::Base
   end
 
   def load
-    @content = File.read(@path)
+    @rendered_interface = false
+    @content ||= File.read(@path)
   end
 
   def do_layout

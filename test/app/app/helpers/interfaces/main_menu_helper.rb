@@ -1,0 +1,3 @@
+module Interfaces::MainMenuHelper
+
+end

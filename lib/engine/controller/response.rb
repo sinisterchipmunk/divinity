@@ -54,6 +54,7 @@ class Engine::Controller::Response
   delegate :engine, :bounds, :width, :height, :to => :request
   delegate :current_theme, :to => :engine
   delegate :controller, :components, :to => :view
+  delegate :parent, :to => :controller
 
   def initialize()
     @_completed = false
@@ -94,7 +95,7 @@ class Engine::Controller::Response
       ## need to apply theme settings to the Draw object. This might be a method of Interface::Theme:
       @theme_sel.apply_to(draw)
     end
-    @theme_sel
+    @theme_sel ||= current_theme.select(:default)
   end
 
   def theme=(sel); theme sel; end
@@ -106,7 +107,7 @@ class Engine::Controller::Response
   def process(options = {})
     @_completed = false
     prepare_graphics_context!
-    return unless options[:defer_rendering]
+    #return if options[:defer_rendering]
     view.process
     finalize_graphics_context!
   rescue ArgumentError => err
@@ -117,13 +118,13 @@ class Engine::Controller::Response
   end
 
   def finalize_graphics_context!
-    if @graphics_context_valid
+    #if @graphics_context_valid
       # Because if it's not valid during finalization, then it was never used!
       draw.draw(graphics_context)
       if theme[:colorization]
         colorize!(theme[:colorization][:color], theme[:colorization][:amount])
       end
-    end
+    #end
   end
 
   def colorize!(color, amount)
@@ -142,35 +143,41 @@ class Engine::Controller::Response
   end
 
   def prepare_graphics_context!
-    @graphics_context_valid = false
+    puts "preparing #{controller.class}"
+    #@graphics_context_valid = false
+    make_graphics_context_valid
   end
 
   def graphics_context
-    make_grahpics_context_valid unless @graphics_context_valid
+    #make_graphics_context_valid unless @graphics_context_valid
     @graphics_context
   end
 
   def draw
-    make_graphics_context_valid unless @graphics_context_valid
+    #make_graphics_context_valid unless @graphics_context_valid
+    @draw
   end
 
   def make_graphics_context_valid
-    if @graphics_context then
-      if bounds.width != @graphics_context.columns || bounds.height != @graphics_context.rows
-        @graphics_context.resize!(bounds.width, bounds.height)
+    #unless @graphics_context_valid
+      #@graphics_context_valid = true
+      if @graphics_context then
+        if bounds.width != @graphics_context.columns || bounds.height != @graphics_context.rows
+          @graphics_context.resize!(bounds.width, bounds.height)
+        end
+        if bounds.width != @resultant_image.columns || bounds.height != @resultant_image.rows
+          @resultant_image.resize! bounds.width, bounds.height
+        end
+      else
+        @graphics_context = Magick::Image.new(bounds.width, bounds.height)
+        @resultant_image  = Magick::Image.new(bounds.width, bounds.height)
       end
-      if bounds.width != @resultant_image.columns || bounds.height != @resultant_image.rows
-        @resultant_image.resize! bounds.width, bounds.height
-      end
-    else
-      @graphics_context = Magick::Image.new(bounds.width, bounds.height)
-      @resultant_image  = Magick::Image.new(bounds.width, bounds.height)
-    end
-    @graphics_context.matte_reset!
-    @resultant_image.matte_reset!
-    @draw = Magick::Draw.new
-    theme(default_theme || controller.class.theme)
-    @graphics_context_valid = true
+      @graphics_context.matte_reset!
+      @resultant_image.matte_reset!
+      @draw = Magick::Draw.new
+      theme(default_theme || controller.class.theme)
+    #end
+    #parent.response.make_graphics_context_valid if parent
   end
 
   # Returns true if this and all subcomponents are valid (do not need their images regenerated)
@@ -184,6 +191,8 @@ class Engine::Controller::Response
 
   def resultant_image
     unless valid?
+      #make_graphics_context_valid
+      #puts controller.class
       @resultant_image.composite!(graphics_context, 0, 0, Magick::CopyCompositeOp)
       view.components.each do |child|
         x, y = child.bounds.x, child.bounds.y

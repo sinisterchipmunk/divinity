@@ -4,9 +4,9 @@ class Engine::View::EngineView < Engine::View::Base
   end
 
   private
-    def load
-      return @content if @loaded_path == @path
-      @loaded_path = @path
-      @content = File.read(@path)
-    end
+    #def load
+    #  return @content if @loaded_path == @path
+    #  @loaded_path = @path
+    #  @content = File.read(@path)
+    #end
 end

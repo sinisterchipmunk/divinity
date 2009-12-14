@@ -16,6 +16,13 @@ module Helpers::ComponentHelper
     end
   end
 
+  Divinity.configuration.load_paths.each do |lp|
+    Dir.glob(File.join(lp, "**/*_controller.rb")).each do |fi|
+      next unless File.file? fi
+      require_dependency fi
+    end
+  end
+  
   Components.constants.each do |const|
     const = Components.const_get(const)
     if const.respond_to? :controller_name
@@ -23,9 +30,10 @@ module Helpers::ComponentHelper
       code = <<-end_code
         def #{const.controller_name}(*args, &block)
           layout_arguments = get_layout_arguments(args)
-          request = Engine::Controller::Request.new(builtin, Geometry::Rectangle.new(0,0,1,1), *args, &block)
-          comp = #{const.name}.new(builtin, request, Engine::Controller::Response.new)
+          request = Engine::Controller::Request.new(engine, Geometry::Rectangle.new(0,0,1,1), *args, &block)
+          comp = #{const.name}.new(engine, request, Engine::Controller::Response.new)
           comp.parent = controller
+          comp.process(:index)
           layout.add_layout_component(comp, *layout_arguments) if layout
         end
       end_code

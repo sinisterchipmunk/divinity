@@ -6,6 +6,32 @@
 # action (but, obviously, any variables you've changed will stay changed).
 #
 class Engine::Controller::EngineController < Engine::Controller::Base
+  class << self
+    # Sets this EngineController's interface to the InterfaceController with the specified name.
+    # If you use "render :interface => '...'" in your View, it will override this one.
+    #
+    # Only one interface can be used with a given controller.
+    #
+    def interface(*name)
+      if name = name.shift
+        interface = Engine::Controller::Base.find(name)
+        if interface.ancestors.include? Engine::Controller::InterfaceController
+          @interface = interface
+        else
+          raise ArgumentError, "Expected to find an Engine::Controller::InterfaceController, found #{interface}"
+        end
+      end
+      @interface
+    end
+  end
+
+  def interface
+    if self.class.interface
+      self.class.interface
+    else nil
+    end
+  end
+
   def render_view(path, locals = {})
     @performed_render = true
     response.view.path = path

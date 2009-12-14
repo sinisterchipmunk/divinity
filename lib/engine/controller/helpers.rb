@@ -23,6 +23,23 @@ module Engine::Controller::Helpers
   end
 
   module ClassMethods
+    def find(controller_name)
+      unless controller_name.kind_of?(String) || controller_name.kind_of?(Symbol)
+        return controller_name if controller_name.ancestors.include? Engine::Controller::Base
+        raise ArgumentError, "Expected a String or a Symbol, got a #{controller_name.inspect}"
+      else
+        begin
+          "#{controller_name.to_s.camelize}Controller".constantize
+        rescue NameError => err
+          begin
+            return "Interfaces::#{controller_name.to_s.camelize}Controller".constantize
+          rescue NameError
+            raise err
+          end
+        end
+      end
+    end
+
     # Causes any events to be dumped to stdout. If arguments are specified, then only those arguments are dumped.
     #
     # Example:

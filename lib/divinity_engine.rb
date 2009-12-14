@@ -68,7 +68,7 @@ class DivinityEngine
   # Returns the controller which the specified controller name routes to
   def find_controller(controller)
     raise ArgumentError, "Expected a controller name" unless controller
-    "#{controller.to_s.camelize}Controller".constantize
+    Engine::Controller::Base.find(controller)
   end
 
   def initialized?
