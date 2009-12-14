@@ -8,7 +8,7 @@ class ContentModuleGenerator < RubiGen::Base
     super
     usage if args.empty?
     @name = args.shift
-    @base = "#{DIVINITY_ROOT}/vendor/mods/#{name}"
+    @base = "vendor/mods/#{name}"
     extract_options
   end
 
