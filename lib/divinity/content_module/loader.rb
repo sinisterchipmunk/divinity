@@ -1,4 +1,4 @@
-require "divinity/content_module"
+require File.join(File.dirname(__FILE__), "../content_module")
 
 module Divinity
   class ContentModule

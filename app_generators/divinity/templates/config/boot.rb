@@ -42,7 +42,7 @@ module Divinity
 
   class VendorBoot < Boot
     def load_initializer
-      require File.join(DIVINITY_ROOT, "vendor/divinity/lib/divinity/initializer")
+      require File.join(DIVINITY_ROOT, "vendor/divinity/divinity/lib/divinity/initializer")
       Divinity::Initializer.run(:install_gem_spec_stubs)
     end
   end

@@ -2,18 +2,20 @@ require 'logger'
 require 'set'
 require 'pathname'
 
-require 'divinity/configuration'
-require 'divinity/ordered_options'
-require 'divinity/version'
-require 'divinity/plugin/locator'
-require 'divinity/plugin/gem_locator'
-require 'divinity/plugin/loader'
-require 'divinity/content_module/loader'
-require 'divinity/gem_dependency'
+%w(divinity/configuration
+   divinity/ordered_options
+   divinity/version
+   divinity/plugin/locator
+   divinity/plugin/gem_locator
+   divinity/plugin/loader
+   divinity/content_module/loader
+   divinity/gem_dependency
+   divinity).each do |requirement|
+  require File.join(File.dirname(__FILE__), "..", requirement)
+end
 
 DIVINITY_ENV = (ENV['DIVINITY_ENV'] || 'development').dup unless defined?(DIVINITY_ENV)
 
-require 'divinity'
 require File.join(File.dirname(__FILE__), 'configuration')
 
 module Divinity
@@ -158,7 +160,7 @@ module Divinity
       if Divinity.vendor_divinity?
         begin; require "rubygems"; rescue LoadError; return; end
 
-        stubs = divinity_frameworks
+        stubs = configuration.divinity_frameworks
         stubs << "divinity"
         stubs.reject! { |s| Gem.loaded_specs.key?(s) }
 

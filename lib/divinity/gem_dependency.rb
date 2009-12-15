@@ -1,4 +1,4 @@
-require 'divinity/vendor_gem_source_index'
+require File.join(File.dirname(__FILE__), "vendor_gem_source_index")
 
 module Gem
   def self.source_index=(index)

@@ -1,5 +1,5 @@
-require "divinity/plugin"
-require 'divinity/gem_plugin'
+require File.join(File.dirname(__FILE__), "../plugin")
+require File.join(File.dirname(__FILE__), "../gem_plugin")
 
 module Divinity
   class Plugin
