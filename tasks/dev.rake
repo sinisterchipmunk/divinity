@@ -1,8 +1,9 @@
-desc "Rakes gemspec and build, then reinstalls the gem"
+desc "Rakes gemspec and build, then reinstalls the gem."
+# To ease my testing.
 task :reinstall do
   Rake::Task['gemspec'].invoke
   Rake::Task['build'].invoke
-  `gem install --local pkg/divinity-0.0.0.gem --no-ri --no-rdoc`
+  `gem install --local pkg/divinity-0.1.0.gem --no-ri --no-rdoc`
 end
 
 desc "Removes rdoc and makes clean the C extensions"

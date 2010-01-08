@@ -161,7 +161,7 @@ class DivinityEngine
         end
         update
         render
-        SDL.GLSwapBuffers()
+        SDL.GL_SwapBuffers()
       end
 
       @main_loop_running = false
@@ -179,7 +179,7 @@ class DivinityEngine
 
     def update
       @last_ticks ||= 0
-      @ticks = SDL.getTicks
+      @ticks = SDL.GetTicks
       @interval = @ticks - @last_ticks
       @last_ticks = @ticks
 
@@ -194,7 +194,7 @@ class DivinityEngine
         options[:fullscreen] = false
       end
       Textures::Font.invalidate!
-      err("set video mode") unless (@sdl_screen = SDL.setVideoMode(options[:width], options[:height],
+      err("set video mode") unless (@sdl_screen = SDL.SetVideoMode(options[:width], options[:height],
                                                                    options[:color_depth], sdl_video_mode_flags))
       glViewport(0, 0, options[:width], options[:height])
       glMatrixMode(GL_PROJECTION)
@@ -214,20 +214,20 @@ class DivinityEngine
       @state = :initializing
 
       call_blocks :before_init, :before_initialize
-      SDL.init(SDL::INIT_VIDEO) and err("initialize SDL")
-      SDL.setGLAttr(SDL::GL_DOUBLEBUFFER,1) and err("enable double-buffering")
-      SDL.setGLAttr(SDL::GL_DEPTH_SIZE, 16) and err("set depth buffer size")
-      SDL.setGLAttr(SDL::GL_RED_SIZE, 8) and err("set red bit depth")
-      SDL.setGLAttr(SDL::GL_GREEN_SIZE, 8) and err("set green bit depth")
-      SDL.setGLAttr(SDL::GL_BLUE_SIZE, 8) and err("set blue bit depth")
-      SDL.setGLAttr(SDL::GL_ALPHA_SIZE, 8) and err("set alpha bit depth")
-      SDL::Event.enable_unicode
+      SDL.Init(SDL::INIT_VIDEO) || err("initialize SDL")
+      SDL.GL_SetAttribute(SDL::GL_DOUBLEBUFFER,1) || err("enable double-buffering")
+      SDL.GL_SetAttribute(SDL::GL_DEPTH_SIZE, 16) || err("set depth buffer size")
+      SDL.GL_SetAttribute(SDL::GL_RED_SIZE,    8) || err("set red bit depth")
+      SDL.GL_SetAttribute(SDL::GL_GREEN_SIZE,  8) || err("set green bit depth")
+      SDL.GL_SetAttribute(SDL::GL_BLUE_SIZE,   8) || err("set blue bit depth")
+      SDL.GL_SetAttribute(SDL::GL_ALPHA_SIZE,  8) || err("set alpha bit depth")
+      SDL.EnableUNICODE(1)
       init_video_mode
     end
 
     def shutdown
       call_blocks :before_shutdown
-      err "shut down SDL" if SDL.quit
+      err "shut down SDL" if SDL.Quit
       call_blocks :during_shutdown, :after_shutdown
     end
 

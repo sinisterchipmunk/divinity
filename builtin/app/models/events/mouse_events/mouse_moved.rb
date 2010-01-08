@@ -12,9 +12,9 @@ class Events::MouseEvents::MouseMoved < Events::MouseEvents::MouseEvent
   def pressed?(button = :any)
     case button
       when :any then pressed?(:left) || pressed?(:middle) || pressed?(:right)
-      when :left,   SDL::Mouse::BUTTON_LEFT   then state & SDL::Mouse::BUTTON_LEFT   > 0
-      when :middle, SDL::Mouse::BUTTON_MIDDLE then state & SDL::Mouse::BUTTON_MIDDLE > 0
-      when :right,  SDL::Mouse::BUTTON_RIGHT  then state & SDL::Mouse::BUTTON_RIGHT  > 0
+      when :left,   SDL::BUTTON_LEFT   then state & SDL::BUTTON_LEFT   > 0
+      when :middle, SDL::BUTTON_MIDDLE then state & SDL::BUTTON_MIDDLE > 0
+      when :right,  SDL::BUTTON_RIGHT  then state & SDL::BUTTON_RIGHT  > 0
       else raise "Expected button to be :left, :middle, :right or :any. Found #{button.inspect}"
     end
   end

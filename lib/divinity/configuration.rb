@@ -293,7 +293,7 @@ module Divinity
     end
 
     def divinity_frameworks
-      %w(active_support opengl RMagick log4r rubigen sdl gl glu)
+      %w(active_support opengl RMagick log4r rubigen ruby-sdl-ffi gl glu)
     end
 
     def framework_paths
@@ -307,7 +307,7 @@ module Divinity
       end
 
       def default_frameworks
-        %w(active_support opengl RMagick log4r rubigen sdl gl glu)
+        %w(active_support opengl RMagick log4r rubigen ruby-sdl-ffi gl glu)
       end
 
       def default_load_paths

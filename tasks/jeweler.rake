@@ -23,13 +23,7 @@ begin
     gem.add_dependency "rmagick", ">= 2.12.0"
     gem.add_dependency "log4r", ">= 1.1.2"
     gem.add_dependency "rubigen", ">= 1.5.2"
-    # RubySDL is a tricky one
-    gem.add_dependency((if RUBY_PLATFORM =~ /mingw32/ || RUBY_PLATFORM =~ /mswin32/
-                          if RUBY_VERSION =~ /1\.8/ then "rubysdl-mswin32-1.8"  ## windows/ruby1.8
-                          else                           "rubysdl-mswin32-1.9"  ## windows/ruby1.9
-                          end
-                        else                             "rubysdl"              ## *nix
-                        end), ">= 2.1.0.1")
+    gem.add_dependency "ruby-sdl-ffi", ">= 0.2"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

@@ -1,17 +1,21 @@
 module Devices
   class Keyboard < Devices::InputDevice
-    extend Devices::Keyboard::Modifiers
+    extend Modifiers
 
-    # TODO: key should have a Divinity wrapper around it; as is, it expects its SDL counterpart.
-    def pressed?(key) SDL::Key.press?(key) end
-    # TODO: key should have a Divinity wrapper around it; as is, it expects its SDL counterpart.
-    def key_name(key) SDL::Key.get_key_name(key) end
+    # FIXME: Keyboard class needs a total reimplementation.
 
-    def update() SDL::Key.scan end
-    def mod_state() SDL::Key.mod_state end
+
+    
+    # TODO: key should have a Divinity wrapper around it; as is, it expects its SDL counterpart.
+    #def pressed?(key) SDL::Key.press?(key) end
+    # TODO: key should have a Divinity wrapper around it; as is, it expects its SDL counterpart.
+    #def key_name(key) SDL::Key.get_key_name(key) end
+
+    def update() raise 'n/a' end#SDL::Key.scan end
+    def mod_state() SDL.GetModState end
     def modifiers() self.class.array_of_modifiers(mod_state) end
-    def enable_key_repeat!(delay = 100, interval = 100) SDL::Key.enable_key_repeat(delay, interval) end
-    def disable_key_repeat!() SDL::Key.disable_key_repeat end
+    def enable_key_repeat!(delay = 100, interval = 100) SDL.EnableKeyRepeat(delay, interval) end
+    def disable_key_repeat!() SDL.EnableKeyRepeat(0, 0) end #SDL::Key.disable_key_repeat end
     def key_repeat=(a) a ? enable_key_repeat!(a, a) : disable_key_repeat! end
 
     alias scan update

@@ -20,9 +20,9 @@ class Events::MouseEvents::MouseButtonEvent < Events::MouseEvents::MouseEvent
 
   def button
     case sdl_event.button
-      when SDL::Mouse::BUTTON_LEFT   then :left
-      when SDL::Mouse::BUTTON_MIDDLE then :middle
-      when SDL::Mouse::BUTTON_RIGHT  then :right
+      when SDL::BUTTON_LEFT   then :left
+      when SDL::BUTTON_MIDDLE then :middle
+      when SDL::BUTTON_RIGHT  then :right
       when 4 then :wheel_up
       when 5 then :wheel_down
       else raise "Mouse button not recognized: #{sdl_event.button}"

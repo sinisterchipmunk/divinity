@@ -3,8 +3,8 @@ module Devices
     class State
       attr_reader :x, :y
 
-      def initialize(x, y, left, middle, right)
-        @x, @y, @left, @middle, @right = x, y, left, middle, right
+      def initialize(buttons, x, y)#initialize(x, y, left, middle, right)
+        @x, @y, @left, @middle, @right = x, y, *buttons #left, middle, right
       end
 
       def pressed?(which)
@@ -21,7 +21,7 @@ module Devices
     delegate :x, :y, :pressed?, :to => :state
     attr_reader :cursor
 
-    def state() State.new(*SDL::Mouse.state) end
+    def state() State.new(*SDL.GetMouseState) end# State.new(*SDL::Mouse.state) end
     def warp_to!(x, y) SDL::Mouse.warp(x, y) end
     def show!() SDL::Mouse.show end
     def hide!() SDL::Mouse.hide end

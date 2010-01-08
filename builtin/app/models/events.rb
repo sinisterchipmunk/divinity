@@ -4,11 +4,19 @@ module Events
   include Events::InterfaceEvents
 
   def self.sdl_to_divinity(event)
-    if event.kind_of? SDL::Event::MouseButtonDown  then Events::MousePressed.new(event)
-    elsif event.kind_of? SDL::Event::MouseButtonUp then Events::MouseReleased.new(event)
-    elsif event.kind_of? SDL::Event::MouseMotion   then Events::MouseMoved.new(event)
-    elsif event.kind_of? SDL::Event::KeyDown       then Events::KeyPressed.new(event)
-    elsif event.kind_of? SDL::Event::KeyUp         then Events::KeyReleased.new(event)
+    if event.kind_of? SDL::MouseButtonEvent
+      if event.type == SDL::MOUSEBUTTONDOWN
+        Events::MousePressed.new(event)
+      else
+        Events::MouseReleased.new(event)
+      end
+    elsif event.kind_of? SDL::MouseMotionEvent then Events::MouseMoved.new(event)
+    elsif event.kind_of? SDL::KeyboardEvent
+      if event.type == SDL::KEYDOWN
+        Events::KeyPressed.new(event)
+      else
+        Events::KeyReleased.new(event)
+      end
     else raise Errors::EventNotRecognized, "event not recognized: #{event.inspect}"
     end
   end

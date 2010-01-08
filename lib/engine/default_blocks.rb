@@ -35,7 +35,7 @@ module Engine::DefaultBlocks
   #
   def add_default_update_blocks
     before_update do |ticks, engine|
-      while event = SDL::Event2.poll
+      while event = SDL.PollEvent
 #        #for some reason these aren't defined in my version of rubysdl. Hopefully that'll be fixed so I don't feel
 #        #horrible for doing this:
 #        app_mouse_focus = 1 # should be SDL::Event::APPMOUSEFOCUS
@@ -43,7 +43,7 @@ module Engine::DefaultBlocks
 #        app_active      = 4 # should be SDL::Event::APPACTIVE
 
         case event
-          when SDL::Event::Active then
+          when SDL::ActiveEvent then
 #            if event.state & app_mouse_focus > 0 || event.state & app_input_focus > 0
 #              if event.gain
 #                #SDL::WM.grabInput(SDL::WM::GRAB_ON)
@@ -51,7 +51,7 @@ module Engine::DefaultBlocks
 #                #SDL::WM.grabInput(SDL::WM::GRAB_OFF)
 #              end
 #            end
-          when SDL::Event::Quit then stop!
+          when SDL::QuitEvent then stop!
           else
             begin
               event = Events::sdl_to_divinity(event)
