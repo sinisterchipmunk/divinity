@@ -1,17 +1,17 @@
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - PLUGIN LOADED
-[ INFO] 2010-01-07 22:14:30     Divinity::System - Loading content module engine (at C:/projects/divinity/engine/builtin/resources)
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [engine] Mapping resources
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [engine] Dynamically mapping resource hook 'themes' to class Theme
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [engine] Loading content
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [engine/actors] Found 1 entries
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [engine/actors] Loading player from C:/projects/divinity/engine/builtin/resources/actors/player.rb
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [engine/themes] Found 1 entries
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [engine/themes] Loading default from C:/projects/divinity/engine/builtin/resources/themes/default.rb
-[ INFO] 2010-01-07 22:14:30     Divinity::System - Loading content module main (at C:/projects/divinity/engine/test/app/resources)
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [main] Mapping resources
-[ INFO] 2010-01-07 22:14:30     Divinity::System - Loading content module test_mod (at C:/projects/divinity/engine/test/app/vendor/mods/test_mod)
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [test_mod] Mapping resources
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [test_mod] Dynamically mapping resource hook 'actors' to class Actor
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [test_mod] Loading content
-[DEBUG] 2010-01-07 22:14:30     Divinity::System - [test_mod/actors] Found 0 entries
-[DEBUG] 2010-01-07 22:14:30     Divinity::Engine - Loading controller: AppController, action: index
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - PLUGIN LOADED
+[ INFO] 2010-01-07 22:39:44     Divinity::System - Loading content module engine (at C:/projects/divinity/engine/builtin/resources)
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [engine] Mapping resources
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [engine] Dynamically mapping resource hook 'themes' to class Theme
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [engine] Loading content
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [engine/actors] Found 1 entries
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [engine/actors] Loading player from C:/projects/divinity/engine/builtin/resources/actors/player.rb
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [engine/themes] Found 1 entries
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [engine/themes] Loading default from C:/projects/divinity/engine/builtin/resources/themes/default.rb
+[ INFO] 2010-01-07 22:39:44     Divinity::System - Loading content module main (at C:/projects/divinity/engine/test/app/resources)
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [main] Mapping resources
+[ INFO] 2010-01-07 22:39:44     Divinity::System - Loading content module test_mod (at C:/projects/divinity/engine/test/app/vendor/mods/test_mod)
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [test_mod] Mapping resources
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [test_mod] Dynamically mapping resource hook 'actors' to class Actor
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [test_mod] Loading content
+[DEBUG] 2010-01-07 22:39:44     Divinity::System - [test_mod/actors] Found 0 entries
+[DEBUG] 2010-01-07 22:39:45     Divinity::Engine - Loading controller: AppController, action: index

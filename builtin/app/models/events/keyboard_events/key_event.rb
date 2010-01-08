@@ -17,10 +17,14 @@
 class Events::KeyboardEvents::KeyEvent < Events::InputEvent
   include Devices::Keyboard::Modifiers
 
-  delegate :sym, :mod, :to => :sdl_event
+  delegate :type, :which, :state, :window_id, :to => :sdl_event
+  delegate :sym, :mod, :to => :key
+
+  def key; @key ||= Devices::Keyboard::Key.new(sdl_event.keysym) end
+  alias keysym key
 
   def device_type; :keyboard end
-  def pressed?() sdl_event.press end
-  def name() SDL::Key.get_key_name(sym) end
-  def modifiers() array_of_modifiers(sdl_event.mod) end
+  def pressed?() (state == SDL_PRESSED) end
+  def name() SDL::GetKeyName(sym) end
+  def modifiers() array_of_modifiers(mod) end
 end
