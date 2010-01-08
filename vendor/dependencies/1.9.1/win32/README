@@ -1,6 +1,0 @@
-All of the dependencies in this dir install; unfortunately, RMagick is missing. I can't get it to install on my box.
-Even the one that claims to be built for Ruby 1.9.1 pukes at the postinstall, asking for Ruby 1.8 libraries. If anyone
-figures it out, drop me a line. Until then, I'm waiting for something more solid to be compiled and posted on
-rmagick.rubyforge.org. That said, I'm grudgingly going back to Ruby 1.8. I'm leaving the 1.9 deps attached as a reminder
-to myself, mostly, of what is required -- and this file is my reminder to self that RMagick was the reason I never
-upgraded. Doubt I'll need a reminder of that.

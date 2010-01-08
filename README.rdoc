@@ -1,69 +1,76 @@
 = Divinity
 
-== About
+== What It Is
 
-The Divinity Engine is an ongoing experiment into the world of open game development. The paradigm revolves around you,
-the player. It's your game, so you can do what you want with it. Want to just try it out and play for awhile? Feel free.
-Want to dig in and add your own content? Go ahead. No more of this "you buy it, but we control it" mentality. And I'm not
-just talking about little things like the game world, either. Sure, you can add a powerful new sword, but you can also
-crunch out a new piece of core functionality. Add special effects, change the game interface, even modify the nitty
-gritty details of the game mechanics themselves. Maybe you'd like to turn it into more of a first-person game, rather
-than the default top-down third-person view. Well, with Divinity, there are no limits, so go for it!
+The Divinity Engine is an ongoing experiment into the world of 3D graphics rendering. Based heavily on the Ruby on Rails
+framework, Divinity attempts to do for games what Rails has done for web sites: provide a robust, highly productive
+environment in which to write your applications.
 
-Official web site: http://www.divinityengine.com
-Source code: http://github.com/sinisterchipmunk/divinity
+Divinity provides a lot of the same things that Ruby on Rails brings to the table, largely because it's got a very
+similar initialization. (OK, yeah, most of the initialization was ripped directly from the Rails source.) For instance,
+internationalization is in place and works identically to Rails. There are three environments: development, production
+and test, which are used for similar purposes. Backtrace cleaners aren't quite ready to go, but they're in there waiting
+to be turned on. You can even declare gem dependencies and freeze them to your Divinity application.
+
+The Divinity Engine follows a Model/View/Controller architecture, and so it should feel very similar to your average
+Ruby on Rails application. It also carries over the concept of plugins, allowing you to add common content from the
+community (though as of the this preliminary release, there's no "script/plugin"-like mechanism for installing plugins).
+
+The latest source code can be cloned from github at http://github.com/sinisterchipmunk/divinity and I maintain a blog
+at http://www.divinityengine.com to periodically report on what's going on behind the scenes or make mention of some new
+functionality.
+
+
+== What It's Not
+
+Divinity is not Rails. Let me be very clear on that. As much as is similar, at least that much is completely different.
+For instance, models are not based on ActiveRecord (though I'm trying to decide whether this would be a better approach,
+especially since SQLite can simply carry the database file with the application). They are based on the Resource class,
+which is entirely of my own design, and which loads the engine data from files.
+
+The vast majority of Divinity does cater to Rails programmers, so that (hopefully) you can take most of the basic Rails
+idioms and conventions into Divinity. But you need to keep in mind that Divinity and Rails are not the same, and this is
+reflected under the hood. Behind the scenes, the two frameworks diverge almost instantaneously after the app has been
+initialized.
+
+As of this release, Divinity is not complete. It is intended to become a full-fledged game engine, and at such time that
+it is ready to be considered "game-worthy," a 1.0 release number will be applied. Until then, it's an MVC graphics
+engine. There's a camera, display lists, and a few of the minor ground-level details that might go into a game, but
+there currently aren't, for example, particle generators. There's no current support for sound (you need to program this
+yourself until it's officially implemented). The engine is still a baby, a pre-alpha at best, so be nice and play fair.
+It's not a magic wand, but, with your help, I hope to turn it into one.
+
+== Where To Start
+
+Let's generate an application. I'll pretend I'm on a Windows box, but technically Divinity should run on any platform
+that supports its dependencies.
+
+    C:\projects> gem install divinity       #=> installs the Divinity gem.
+    C:\projects> divinity my_shiny_app      #=> generates a new Divinity application, just like Rails.
+    C:\projects> cd my_shiny_app
+
+    C:\projects\my_shiny_app> my_shiny_app  #=> the generated app is ready to run, so go ahead and give it a shot.
+
+    C:\projects\my_shiny_app> rake doc                              #=> generate Divinity documentation
+    C:\projects\my_shiny_app> script/generate controller world_map  #=> let's generate a "world map" controller.
+    C:\projects\my_shiny_app> script/generate model settlement      #=> ...and a "Settlement" model.
+
+That should at least give you an idea of how this thing works. You should see the generated documentation for more help.
 
 
 == Testing
 
-To build the documentation, use:
-  rake doc
+Like Rails, the Divinity Engine automatically generates unit and functional tests for you. Functional tests actually
+instantiate the engine (run the program), switch to whatever controller, fire whatever action, and run whatever is in
+your test code. That code gets run every frame for a set amount of time (defaulting to 1 second to keep the tests moving
+at a decent speed). You can, of course, stop this early if you need to test something that should only run once.
 
-To run all tests, use:
-  rake test:all
+Unit tests are generated when you create a new model, and are very similar to Rails model unit tests.
 
-
-== Usage
-
-Because this is what you're here for, isn't it? Here's the quickest way to instantiate and start using the engine for
-a new project (a game of your own design):
-
-  require 'divinity_engine'
-
-  engine = DivinityEngine.new(:width => 800, :height => 600, :fullscreen => true)
-
-  engine.during_render do
-    # do some OpenGL rendering
-  end
-
-  engine.during_update do |delta|
-    # update some stuff, like 3D models, etc. Delta is the time differential between last update and this update,
-    # in milliseconds.
-  end
-
-  engine.go! # start the engine
-
-See the web site at http://www.divinityengine.com for more examples, or read through this documentation. You can also
-check out the source file in the DivinityEngine root directory called "template.rb," which demonstrates all of this with
-a small demo application. (It also demonstrates camera
-
-Note that you can call things like DivinityEngine#during_render and DivinityEngine#during_update multiple times, and
-each block you pass it will be called in the order it was given. Other callbacks include:
-
-* DivinityEngine#before_init
-* DivinityEngine#during_init
-* DivinityEngine#after_init
-* DivinityEngine#before_update
-* DivinityEngine#during_update
-* DivinityEngine#after_update
-* DivinityEngine#before_render
-* DivinityEngine#during_render
-* DivinityEngine#after_render
-* DivinityEngine#before_shutdown
-* DivinityEngine#during_shutdown
-* DivinityEngine#after_shutdown.
-
-Description goes here.
+Currently, fixtures are not implemented. I started to write them, but I realized that they were essentially just more
+of Resources (see the Resource class documentation for information on them) and, since Divinity (currently) doesn't
+make use of any database, it'd just be redundant data and a more confusing framework. So I left them out. I promise, if
+I make the switch to ActiveRecord (I'd welcome feedback on this, by the way), fixtures will be brought into the mix.
 
 == Note on Patches/Pull Requests
  
@@ -76,6 +83,12 @@ Description goes here.
   pull)
 * Send me a pull request. Bonus points for topic branches.
 
+== Known Issues
+
+* The documentation is more sparse at the moment than I want it to be. I'm working on it, I promise.
+* I think it's basically compatible with Ruby 1.9, but I can't test it because I can't get Rmagick installed on my box.
+  I plan to revisit that issue shortly.
+
 == Copyright
 
-Copyright (c) 2009 Colin MacKenzie IV. See LICENSE for details.
+Copyright (c) 2010 Colin MacKenzie IV. See LICENSE for details.
